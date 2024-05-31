@@ -1,0 +1,35 @@
+
+<div class="px-4 py-5 chat-box bg-white" #chatPane>
+  <div *ngFor="let chat of chats" class="d-flex justify-content-{{chat.userId === user.id ? 'end': 'start'}} mb-3 media">
+    <div class="media-body ml-3 d-flex justify-content-between">
+      <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="35" class="rounded-circle">
+      <div class="{{chat.userId === user.id ? 'bg-primary text-white': 'bg-light'}} rounded py-2 px-3 mb-2">
+        <p class="{{chat.userId === user.id ? 'bg-primary text-white': 'bg-light'}} text-small mb-0" (click)="!container.showtime">{{ chat.message }}</p>
+        <small *ngIf="container.showtime" class="text-muted">{{ chat.timestamp | date }}</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Typing area -->
+  <!-- <form [formGroup]="msgForm" (ngSubmit)="onChatSubmit(msgForm.value)" class="bg-light">
+    <div class="input-group">
+      <input type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light" formControlName="message">
+      <div class="input-group-append">
+        <button id="button-addon2" type="submit" class="btn btn-link">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+  </form> -->
+  <form [formGroup]="msgForm" (ngSubmit)="onChatSubmit(msgForm.value)" class="bg-light" *ngIf="sessionId">
+    <div class="input-group">
+      <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+        <mat-label>Type a message</mat-label>
+        <input matInput class="form-control " formControlName="message" >
+        <button type="submit" matSuffix mat-icon-button aria-label="Submit">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </form>

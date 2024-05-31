@@ -1,0 +1,52 @@
+<div class="container-fluid" *ngIf="!container['banksLoading']">
+  <app-view-wallet></app-view-wallet>
+
+  <div class="transaction-wrapper">
+    <div class="transaction-header">
+      <h6>Bank Accounts</h6>
+      <span> Add or remove an account</span>
+    </div>
+
+    <div class="transaction-content">
+      <div class="row g-3 h-100">
+        <div class="col-6 col-sm-6 col-md-4 h-100" *ngFor="let bank of banks">
+          <div class="transaction-card col-md-12">
+            <!-- <div class="transaction-card-img">
+              <img src="/assets/img/zenith.svg" alt="Payment image" />
+            </div> -->
+
+            <div class="transaction-card-title col-md-12">
+              <h6 class="m-0">{{bank?.bankName}}</h6>
+            </div>
+            <div class="col-md-12 transaction-card-subtitle d-flex justify-content-between align-items-center">
+              <span>{{bank?.accountNumber}}</span>
+              <a><i class="ri-delete-bin-line"></i></a>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-6 col-sm-6 col-md-4 h-100">
+          <div class="transaction-card pointer" routerLink="/app/wallet/create-bank">
+            <div class="transaction-card-img">
+              <img src="/assets/img/plus.svg" alt="More image" />
+            </div>
+
+            <div class="transaction-card-title">
+              <h6 class="m-0">Add Bank</h6>
+            </div>
+            <div class="transaction-card-subtitle">
+              <span>Add a new bank account</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="container['banksLoading']">
+  <app-loader></app-loader>
+</div>

@@ -1,0 +1,60 @@
+<div class="container-fluid mb-5">
+  <div class="bills-wrapper">
+    <div class="back-button-v2">
+      <a
+        (click)="goBack()"
+        class="d-flex justify-content-between align-items-center m-0 p-0"
+        ><i class="ri-arrow-left-line"></i><span>Bills and Utilities</span></a
+      >
+    </div>
+
+    <div class="bills-subtitle">
+      <h6>Select a bill to pay</h6>
+      <p>Select a card for quick Transaction</p>
+    </div>
+
+    <div class="bills-content">
+      <div class="row g-3">
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="bills-card pointer" routerLink="/app/wallet/purchase-airtime">
+            <div
+              class="vertical-center"
+            >
+              <div
+                class="bills-card-body d-flex justify-content-center align-items-center"
+              >
+                <div class="bills-card-img px-4">
+                  <img src="/assets/img/calling.svg" alt="Bill image" />
+                </div>
+
+                <div class="bills-card-title px-4">
+                  <h6 class="m-0">Airtime</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="bills-card pointer" routerLink="/app/wallet/purchase-electricity">
+            <div
+              class="vertical-center"
+            >
+              <div
+                class="bills-card-body d-flex justify-content-center align-items-center"
+              >
+                <div class="bills-card-img px-4">
+                  <img src="/assets/img/electric.svg" alt="Bill image" />
+                </div>
+
+                <div class="bills-card-title px-4">
+                  <h6 class="m-0">Electricity</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="container-fluid pb-5">
+  <div class="service-provider-content h-100">
+    <div class="row g-3 h-100">
+      <div class="col-12 col-sm-12 col-md-6 h-100" *ngFor="let recommended of container['recommended']">
+        <div class="services-provider-details">
+          <div class="d-flex bd-highlight mb-3 align-items-start">
+            <div class="bd-highlight">
+              <div class="services-provider-details-img-wrapper">
+                <img [src]="recommended?.Media[0]?.response?.url || '/assets/img/gallery-add.svg'" width="100" height="100" class="rounded img-thumbnail" alt="Discount image" />
+              </div>
+            </div>
+            <div class="px-2 px-sm-2 px-md-2 bd-highlight">
+              <div class="d-flex flex-column">
+                <div class="services-provider-details-text">
+                  <p class="p-0 m-0">{{recommended?.name}}</p>
+                </div>
+                <div class="services-provider-details-text mt-1 d-flex align-items-center">
+                  <span>
+                    <span class="icon"> <i class="ri-star-fill"></i></span>
+                    <span class="px-1 rating">5.0</span>
+                    <span class="no">(642)</span>
+                  </span>
+                  <!-- <span class="px-3">
+                    <span class="icon1 px-1"><i class="ri-exchange-fill"></i></span>
+                    <span class="rating">#3,200</span>
+                    <span class="no">/hr</span>
+                  </span> -->
+                </div>
+                <div class="services-provider-details-text mt-2 d-flex align-items-center">
+                  <ng-container *ngFor="let product of recommended?.Products">
+                    <ng-container *ngIf="product?.pId">
+                      <div class="text">{{product?.title}}</div>
+                      <div class="px-1 icon2"><i class="ri-checkbox-blank-circle-fill"></i></div>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="ms-auto bd-highlight">
+              <div class="services-provider-details-icon-wrapper">
+                <!-- <i class="ri-heart-fill"></i> -->
+              </div>
+            </div>
+          </div>
+
+          <div class="description">
+            <span>{{ (recommended?.summary?.length>6)? (recommended?.summary | slice:0:100)+'...':(recommended?.summary) }}</span>
+          </div>
+
+          <div class="btn-wrapper d-flex justify-content-between">
+            <div class="btn-more"><button></button></div>
+            <div class="btn-book"><button (click)="onViewProviderDetails(recommended)">More Details</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

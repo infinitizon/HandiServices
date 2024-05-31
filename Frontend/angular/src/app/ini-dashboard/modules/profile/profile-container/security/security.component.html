@@ -1,0 +1,229 @@
+<div class="security-wrapper">
+  <div class="col-md-10">
+    <div class="card">
+      <div class="card-header security-header">
+        <h3 class="m-0 p-0">Security</h3>
+      </div>
+
+      <div class="card-body p-0 security-content-wrapper">
+        <div class="security-content">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Sign-in Email</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <a class="value">{{userInformation?.email}}</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Password</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <a class="value p cursor-pointer" (click)="onChangePassword()">Change Password</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="line-s"></div>
+
+        <div class="security-content">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>2-FA authentication</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <mat-slide-toggle [checked]="userInformation.twoFactorAuth" (change)="onToggle2FA($event)"></mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+
+        <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Phone number</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <a class="value">{{userInformation?.phone}}</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Reserve codes</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <a class="value">9 of 10 left</a>
+            </div>
+          </div>
+        </div> -->
+
+
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span></span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <button  class="generate-button">Generate new codes</button>
+            </div>
+          </div>
+        </div> -->
+
+        <div class="line-s"></div>
+
+        <!-- <div class="security-content">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-column flex-lg-column align-items-start"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex  align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Last sign in</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info mt-3">
+              <a class="value-time">today at 18:34, Safary 198.123.23.23</a>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Total active sessions (5)</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <a class="value p">All</a>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-column flex-lg-column align-items-start"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex  align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>DESKTOP-6TIG6EC • Abuja, Nigeria</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info mt-2">
+              <a class="value-time">Chrome • Used right now</a>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="line-s col-md-9"></div> -->
+
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-column flex-lg-column align-items-start"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex  align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span>Iphone 11 • Abuja, Nigeria</span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info mt-2">
+              <a class="value-time">Chrome • 04/19/2022</a>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="line-s col-md-9"></div> -->
+        <!-- <div class="security-content-s">
+          <div
+            class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+          >
+            <div class="col col-md-8">
+              <div class="d-flex align-items-center">
+                  <div
+                    class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                  >
+                    <div class="key"><span></span></div>
+                  </div>
+              </div>
+            </div>
+            <div class="col p-0 notify-info">
+              <button  class="generate-button">Reset all active sessions</button>
+            </div>
+          </div>
+        </div> -->
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+.ng-autocomplete {
+  width: 250px;
+  box-shadow: none;
+}
+
+
+::ng-deep.autocomplete-container .input-container input {
+  font-size: 14px;
+  border: 1px solid #000 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  /* outline: none; */
+  /* background-color: #fff; */
+  color: #000000de;
+  width: 100%;
+  padding: 0 15px;
+  line-height: 40px;
+  height: 40px;
+}
+::ng-deep.autocomplete-container .suggestions-container ul li a {
+  padding: 0px 10px !important;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+  color: #000000de;
+  font-size: 15px;
+}
+
+::ng-deep.autocomplete-container .suggestions-container ul li span {
+  padding: 0px 10px !important;
+  display: block;
+  text-decoration: none;
+  color: gray;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+::ng-deep.autocomplete-container .suggestions-container ul li {
+  position: relative;
+  list-style: none;
+  padding: 0;
+  margin: 7px 0px !important;
+  cursor: pointer;
+}

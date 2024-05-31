@@ -1,0 +1,63 @@
+<div class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4 pb-5">
+  <div class="col-md-12 back-wrapper">
+    <in-backbutton></in-backbutton>
+  </div>
+
+  <div class="providers-wrapper">
+    <div class="services-header d-flex justify-content-between align-items-center">
+      <div class="services-header-title v1">
+        <h4>Select a service provider</h4>
+        <p>
+          You can pick one out of our wide selection of providers.
+        </p>
+      </div>
+    </div>
+    <div>
+      <form [formGroup]="priceForm" [autocomplete]="'off'" *ngIf="providerXterData" (ngSubmit)="onSubmit()">
+        <div class="d-flex mb-3 align-items-center" *ngFor="let p of providerXterData let i = index;">
+          <div *ngIf="p?.ProductCharacter?.type == 'inc_dcr'">
+            <div class="d-flex justify-content-between">
+              <div class="form-group mt-4 col-md-12">
+                <label>{{p?.ProductCharacter?.name}}</label>
+                <div class="input mt-1 ">
+                  <mat-form-field class="col-md-12 w-100">
+                    <button mat-button matPrefix mat-stroked-button aria-label="search" type="button" (click)="decrement(p)">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <input autocomplete="off" class="col-md-12 w-100" matInput name="lastName" type="text" [formControlName]="p?.id" >
+                    <button mat-button matSuffix mat-stroked-button aria-label="search" type="button" (click)="increment(p)">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <div class="error-wrapper" *ngIf="priceForm.get(p?.id)?.touched && priceForm.get(p?.id)?.invalid">
+                    <span class="error" *ngIf="priceForm.get(p?.id)?.errors?.['required']">{{p?.ProductCharacter?.name}} is required</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="['string','number'].includes(p?.ProductCharacter?.type)">
+            <div class="form-group mt-4 col-md-12">
+              <label>{{p?.ProductCharacter?.name}}</label>
+              <div class="input mt-1 ">
+                <mat-form-field class="col-md-12 w-100">
+                  <input autocomplete="off" class="col-md-12 w-100" matInput name="lastName" [type]="p?.ProductCharacter?.type" [formControlName]="p?.id">
+                </mat-form-field>
+                <div class="error-wrapper" *ngIf="priceForm.get(p?.id)?.touched && priceForm.get(p?.id)?.invalid">
+                  <span class="error" *ngIf="priceForm.get(p?.id)?.errors?.['required']">{{p?.ProductCharacter?.name}} is required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="button-wrapper mt-4">
+          <button type="submit" class="action-btn col-md-12 w-100" [disabled]="container['submitting']">
+            <div class="d-flex justify-content-center align-items-center">
+            <span>Add to cart</span> &nbsp;<i *ngIf="container['submitting']" style="font-size: 14px;" class="ri-arrow-right-line"></i>
+          </div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

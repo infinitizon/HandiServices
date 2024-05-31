@@ -1,0 +1,197 @@
+#overlay {
+  /* we set all of the properties for our overlay */
+  height: 100%;
+  width: 40%;
+  margin: 0;
+  background: white;
+  border-left: 1px solid #ccc;
+  color: black;
+  // padding: 10px;
+  position: fixed;
+  top: 0%;
+  right: 0%;
+  z-index: 1000;
+  display: none;
+  overflow: scroll;
+}
+
+button {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  color: #002b43;
+  margin-bottom: 10px;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+label {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: #002b43;
+}
+
+.overlay-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  // gap: 10px;
+  // position: absolute;
+  // width: 453px;
+  height: 100px;
+  // left: calc(50% - 453px/2);
+  // top: calc(50% - 100px/2 + 163px);
+  background: #8cd6ff;
+  border-radius: 8px;
+  margin: 10px 15px 60px 15px;
+
+  span {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #002b43;
+  }
+}
+
+.total-cover-wrapper {
+  background: #e2e0ed;
+
+  .total-cover {
+    color: #6200ee;
+    font-family: "DM Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%; /* 32px */
+    letter-spacing: -1.2px;
+    padding: 20px 0 20px;
+
+    &.v2 {
+      color: #BE271F;
+    }
+  }
+}
+
+.print-wrapper {
+  background: #6200EE;
+
+  &.v3 {
+    background: #aa7de9;
+  }
+
+  .print {
+    color: #fff;
+    font-family: "DM Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%; /* 32px */
+    letter-spacing: -1.2px;
+    padding: 20px 0 20px;
+
+    &.v2 {
+      color: #BE271F;
+    }
+  }
+}
+
+.overlay-detail {
+  font-family: "DM Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%; /* 32px */
+  letter-spacing: -1.2px;
+  padding: 20px 0 20px;
+}
+
+.overlay-body-wrapper {
+  padding: 20px 52px;
+  &.v2 {
+    padding: 0 52px;
+  }
+  .overlay-body {
+    border: 1px solid grey;
+    padding: 10px;
+    border-radius: 4px;
+
+    span {
+      color: #2e2e2e;
+      font-family: "DM Sans";
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%; /* 32px */
+      letter-spacing: -1.2px;
+    }
+  }
+
+  .overlay-address-header {
+
+    &.v2 {
+      margin-left: 30px;
+    }
+
+    span {
+      color: #2e2e2e;
+      font-family: "DM Sans";
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 160%; /* 32px */
+      letter-spacing: -1.2px;
+    }
+  }
+
+  .overlay-address-body {
+    &.v2 {
+      margin-left: 30px;
+    }
+
+    span {
+      color: #2E2E2E;
+
+      font-family: "DM Sans";
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%; /* 32px */
+      letter-spacing: -1.2px;
+    }
+  }
+}
+
+.overlay-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+
+
+.submit-btn {
+  background: #00868d;
+  border-radius: 8px;
+  color: #fff;
+  height: 59px;
+}
+
+@media only screen and (max-width: 480px) {
+  #overlay {
+    /* we set all of the properties for our overlay */
+    width: 75%;
+  }
+}
+
+
+.text-d {
+  font-size: 14px;
+  color: grey;
+}

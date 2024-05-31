@@ -1,0 +1,64 @@
+<div class="container-fluid">
+  <div class="outer">
+    <div class="middle">
+      <div class="row align-items-center">
+        <div class="col-md-6 p-0 m-0 auth-first-column">
+          <app-auth-left-bar></app-auth-left-bar>
+        </div>
+        <div class="col d-flex justify-content-md-center">
+          <div class="user-category-wrapper col-md-8">
+            <div class="user-category">
+              <div class="title col-md-11">
+                <h4 class="mb-0 signup">Change email address</h4>
+                <p class="mb-0">
+                  We sent a six-digit code to your registered email address
+                </p>
+              </div>
+
+              <div class="user-category-body col-md-12">
+                <form [formGroup]="emailForm" [autocomplete]="'off'">
+
+                  <div class="form-group mt-4">
+                    <label>Original email Address</label>
+                    <div class="input mt-1 ">
+                     <div class="orignal-email col-md-12">
+                        <span>{{'francisoge@gmail.com'}}</span>
+                     </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label>New email Address</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input autocomplete="off" matInput name="email" type="email" class="" placeholder="Enter your email address"
+                          formControlName="newEmail" (keyup)="controlChanged('newEmail')">
+
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.newEmail" class="error ">{{uiErrors.newEmail}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
+
+                  <div class="button-wrapper mt-4">
+                    <button [routerLink]="['/auth/verify-otp']"  type="submit" class="action-btn col-md-12 w-100" [disabled]="emailForm.invalid">
+                      <div class="d-flex justify-content-center align-items-center">
+                      <span>Confirm change</span>
+                    </div>
+                    </button>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

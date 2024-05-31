@@ -1,0 +1,20 @@
+<div>
+  <ng-lottie
+    class="center"
+    background="transparent"
+    speed="1"
+    style="width: 500px; height: 340px"
+    loop
+    autoplay
+    [options]="options"
+    (animationCreated)="animationCreated($event)"
+  ></ng-lottie>
+  <!-- <lottie-player class="center" src="https://assets2.lottiefiles.com/packages/lf20_olbyptqd.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" loop  autoplay></lottie-player> -->
+  <p class="text-center noData-text">{{emptyData?.subTitle}}</p>
+  <!-- <button
+class="border center rounded text-light text-uppercase text-center mb-4 py-1"
+style="background-color: #649AE9; border-color: #649AE9; width: 180px;"
+>
+clear all filters
+</button> -->
+</div>

@@ -1,0 +1,21 @@
+<div class="container-fluid">
+  <div class="profile-nav-wrapper">
+    <nav class="link-tab">
+      <a class="mx-4" (click)="tab='info'">
+        <span class="px-2 p"><i class="ri-user-3-line"></i></span> Personal Info
+      </a>
+      <a class="mx-4" (click)="tab='orders'">
+        <span class="px-2 m"><i class="ri-file-text-line"></i></span> My Orders
+      </a>
+      <a class="mx-4" (click)="tab='address'">
+        <span class="px-2 a"><i class="ri-book-open-line"></i></span> Address Book
+      </a>
+    </nav>
+  </div>
+
+  <div class="profile-content-wrapper">
+    <d-personal-info *ngIf="tab === 'info'" [data]="data"></d-personal-info>
+    <d-my-orders *ngIf="tab === 'orders'" [data]="data"></d-my-orders>
+    <d-addresses *ngIf="tab === 'address'" [data]="data"></d-addresses>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="get-started-wrapper">
+  <div class="get-started-header">
+    <h2 class="mb-0 text-center">Hi, {{ data?.users?.firstName }}</h2>
+    <p class="text-center">Select a profile to Login with</p>
+  </div>
+
+  <div class="get-started-content">
+
+    <div class="category-wrapper" *ngFor="let user of data?.users?.Tenant" (click)="tabChanged(user)"  [ngClass]="{'active': tab === user?.name }">
+      <div class="d-flex">
+        <div class="">
+          <div class="icon-wrapper">
+            <i class="ri-user-3-line"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-start flex-column ml-4 mt-0">
+          <div class="category-title px-2 mb-0">
+            <p class="mb-0">{{user?.name}}</p>
+          </div>
+          <div class="category-subtitle px-2">
+            <!-- <small
+              >I want to use [app name] to send money quickly to
+              friends and family, and quick payments at stores and
+              outlets</small
+            > -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div
+    class="btn-wrapper b2 mt-5"
+    >
+    <button class="submit-btn" [mat-dialog-close]="true" [disabled]="tab === ''" (click)=" processToHome()">Proceed</button>
+  </div>
+
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="container pb-5">
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div class="auth-image-wrapper">
+      <img src="/assets/logo/primary-offer-logo.svg" alt="Primary Logo" height="40">
+    </div>
+    <div class="btn-wrapper">
+      <button routerLink="/auth/login" class="action-btn text-nowrap">Log in</button>
+    </div>
+  </div>
+
+  <div class="get-wrapper d-flex justify-content-center mt-5">
+    <div class="col-md-7">
+      <div class="contact-card row">
+        <div class="col">
+          <div class="card-column">
+            <div class="card-column-content">
+              <div class="img-wrapper d-flex justify-content-center">
+                <img src="/assets/img/Call.svg" alt="Phone" width="80" height="80">
+              </div>
+              <div class="text-wrapper mt-3 text-nowrap">
+                <h3>0700 2345 6789</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card-column col">
+            <div class="card-column-content">
+              <div class="img-wrapper d-flex justify-content-center">
+                <img src="/assets/img/Mail.svg" alt="Mail" width="80" height="80">
+              </div>
+              <div class="text-wrapper mt-3 text-nowrap">
+                <h3>customer@po.com.ng</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-help-wrapper mt-5">
+        <div class="title d-flex justify-content-start col-md-12">
+          <h3>Quick help</h3>
+        </div>
+        <div class="quick-help mt-4">
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <span class="mat-title"> What is BVN ?</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <span>BVN means Bank Verification Number is an eleven digit unique identifier or number given
+                to individuals operating a bank account in Nigeria.
+              </span>
+            </mat-expansion-panel>
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <span class="mat-title"> I can't use my BVN to sign up? </span>
+                </mat-panel-title>
+
+              </mat-expansion-panel-header>
+              <span>BVN means Bank Verification Number is an eleven digit unique identifier or number given
+                to individuals operating a bank account in Nigeria.
+              </span>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

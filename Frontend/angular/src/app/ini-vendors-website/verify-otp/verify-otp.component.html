@@ -1,0 +1,71 @@
+<div class="container-fluid">
+  <div class="outer">
+    <div class="middle">
+      <div class="row align-items-center">
+        <div class="col-md-6 p-0 m-0 auth-first-column">
+          <app-auth-left-bar></app-auth-left-bar>
+        </div>
+        <div class="col d-flex justify-content-md-center">
+          <div class="user-category-wrapper col-md-8">
+            <div class="back-button-v2 back-top">
+              <in-backbutton></in-backbutton>
+            </div>
+            <div class="user-category">
+              <div class="title col-md-11">
+                <h4 class="mb-0 signup">Verify your account</h4>
+                <p class="mb-3">
+                  We sent a six-digit code to your registered email address
+                </p>
+                <!-- <a routerLink="/auth/change-email" class="mb-0 mt-3 pointer" style="color: #6862C2;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 700;
+                text-decoration: none;
+                line-height: 160%;">
+                  Change email address
+              </a> -->
+              </div>
+
+              <div class="user-category-body col-md-12">
+                <div class="otp-form d-flex justify-content-start">
+                  <ngx-otp-input [config]="otpInputConfig" (otpChange)="handeOtpChange($event)" (fill)="handleFillEvent($event)">
+                  </ngx-otp-input>
+                </div>
+
+                <div class="auth-footer-wrapper mt-2">
+                  <div class="auth-footer text-center">
+                    <div class="countdown" style="color: var(--foundation-text-text-600, #2E2E2E);
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 160%;"> OTP expires in{{countdown}}</div>
+                  </div>
+                </div>
+
+                <div class="auth-footer-wrapper mt-2">
+                  <div class="auth-footer text-center">
+                    <span>Didn’t receive the code? <a class="pointer" (click)="resendOtp()" style="color: var(--foundation-primary-primary-500, #6862C2);
+                      font-size: 14px;
+                      font-style: normal;
+                      font-weight: 500;
+                      line-height: 160%;">Resend</a></span>
+                  </div>
+                </div>
+
+                <div class="button-wrapper mt-4">
+                  <button (click)="onSubmit()"  type="submit" class="action-btn col-md-12 w-100" [disabled]="otp?.length != 6">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <span class="">Next </span> <app-loader2 *ngIf="submitting"></app-loader2>
+                  </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

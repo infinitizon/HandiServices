@@ -1,0 +1,80 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="gateway-wrapper">
+  <div class="title gateway-header">
+    <h2 class="mb-0 text-center">Payment Method</h2>
+  </div>
+
+  <div class="gateway-content mt-4">
+    <form [formGroup]="gatewayForm" [autocomplete]="'off'">
+      <!-- <div class="form-group">
+        <label>
+          <div class="gateway-label d-flex justify-content-between">
+            <div>Enter amount (NGN)</div>
+          </div>
+        </label>
+        <div class="input mt-1">
+          <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+            <input
+              autocomplete="off"
+              matInput
+              name="amount"
+              type="number"
+              class=""
+              placeholder=""
+              formControlName="amount"
+              (keyup)="controlChanged('amount')"
+            />
+          </mat-form-field>
+          <div class="error-wrapper">
+            <span *ngIf="uiErrors.amount" class="error">{{
+              uiErrors.amount
+            }}</span>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="form-group mt-3">
+        <label>Select gateway</label>
+        <div class="input mt-1 ">
+          <mat-form-field appearance="outline" class="col-md-12 w-100">
+            <mat-select formControlName="gateway">
+              <mat-option *ngIf="data.currency === 'NGN'" value="paystack"> <img src="/assets/logo/paystack.svg" alt="Paystack Logo" /> &nbsp; Paystack </mat-option>
+              <!-- <mat-option *ngIf="data.currency === 'NGN'" value="css"><img src="/assets/logo/Flutterwave.svg" alt="Flutterwave Logo" /> &nbsp; Flutterwave</mat-option>
+              <mat-option *ngIf="data.currency === 'NGN'" value="js"><img src="/assets/logo/Interswitch.svg" alt="Interswitch Logo" /> &nbsp; Interswitch</mat-option> -->
+
+              <mat-option *ngIf="data.currency === 'USD'" value="card"><img src="/assets/img/paywithcard.svg" alt="Pay with card" /> &nbsp; Pay with card</mat-option>
+              <mat-option *ngIf="data.currency === 'USD'" value="bank"><img src="/assets/img/paywithbank.svg" alt="Pay with bank" /> &nbsp; Pay with bank</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="error-wrapper">
+            <span *ngIf="uiErrors.gateway" class="error ">{{uiErrors.gateway}}</span>
+          </div>
+        </div>
+      </div>
+<!--
+      <div class="auth-footer-wrapper mt-5 mb-2">
+        <div class="auth-footer mt-3 ">
+          <mat-checkbox class=""> <span>I've read and agree to the <a routerLink="/auth/terms">Terms of Service</a> for this purchase</span></mat-checkbox>
+        </div>
+      </div> -->
+
+      <div class="button-wrapper mt-3">
+        <button
+          type="submit"
+          class="action-btn col-md-12 w-100"
+          [disabled]="container['submitting']"
+          (click)=" submit()"
+        >
+        <div class="d-flex justify-content-center align-items-center">
+          <span class="">Continue purchase</span> <app-loader2 *ngIf="container['submitting']"></app-loader2>
+        </div>
+
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

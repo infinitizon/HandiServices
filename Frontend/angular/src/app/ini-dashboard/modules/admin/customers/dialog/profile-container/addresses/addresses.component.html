@@ -1,0 +1,54 @@
+<div class="address-wrapper" *ngIf="!container['addressLoading']">
+  <div class="address-header-wrapper">
+    <div class="address-header d-flex justify-content-between align-items-center">
+      <h6 class="m-0">Addresses ({{addresses?.length}})</h6>
+      <div class="address-header-btn" *ngIf="container['role'] === 'SUPER_ADMIN'">
+        <button (click)="addAddress()">Add New Address</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="line-a"></div>
+  <div class="address-body-wrapper">
+    <div class="row g-3">
+      <div class="col-12 col-sm-12 col-md-4" *ngFor="let a of addresses">
+        <div class="address-content" >
+          <div class="address-text">
+            <h5 *ngIf="!data?.id">
+              {{userInformation?.firstName}} {{userInformation?.lastName}}
+            </h5>
+            <h5 *ngIf="data?.id">
+              {{data?.firstName}} {{data?.lastName}}
+            </h5>
+            <h6 class="m-0">
+              <div>{{a?.houseNo ? a?.houseNo +',':''}} {{a?.address1 ? a?.address1 + ",":''}}</div>
+              <div>{{a?.address2 ? a?.address2+',' : ''}}</div>
+              <div>{{a?.city ? a?.city+',':''}} {{a?.state?.name ? a?.state?.name+',' : ''}}</div>
+              <div>{{a?.country?.name ? a?.country?.name : ''}}</div>
+            </h6>
+            <div class="default" *ngIf="a?.isActive">
+              <a>Default Address</a>
+            </div>
+          </div>
+          <div class="address-footer d-flex justify-content-between">
+            <div *ngIf="!a?.isActive">
+              <a><span>Set as Default Address</span></a>
+            </div>
+            <div *ngIf="!data?.id">
+              <span class="px-2 "><a class="pointer text-light" (click)="editAddress(a)"><i class="ri-pencil-line"></i></a></span>
+              <span><i class="ri-delete-bin-line"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div *ngIf="addresses.length<= 0" class="nodata text-center">No Address Added yet</div>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="container['addressLoading']">
+  <app-loader></app-loader>
+</div>

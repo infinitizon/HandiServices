@@ -1,0 +1,49 @@
+.login-modal-icon {
+  text-align: center;
+  margin-top: 34.64px;
+  i {
+    font-size: 68.957px;
+    color: #5b5b5b;
+  }
+}
+
+.login-modal-text {
+  // margin-top: 7px;
+  p {
+    color: #242e42;
+    text-align: center;
+    font-family: DM Sans;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 160%;
+  }
+}
+
+.login-modal-btn {
+  margin-top: 27px;
+  border-top: 1px solid #efeff4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .vl {
+    border-left: 1px solid #efeff4;
+    height: 70px;
+  }
+
+  .login-modal-button {
+    color: #4CE5AE;
+    font-family: DM Sans;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 160%;
+    border: none;
+    background-color: transparent;
+
+    &.no {
+      color: #c8c7cc;
+    }
+  }
+}

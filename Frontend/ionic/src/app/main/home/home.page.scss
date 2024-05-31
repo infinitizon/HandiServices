@@ -1,0 +1,35 @@
+ion-searchbar {
+  .searchbar-input-container {
+    input{
+      padding: 20px;
+    }
+    ion-icon {
+      right: 16px !important;
+      left: auto !important;
+    }
+  }
+}
+
+.categories-content {
+  margin-top: 20px;
+  .scrolling-wrapper-flexbox {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    ion-card {
+      width: 150px;
+      text-align: center;
+      flex: 0 0 auto;
+      ion-img {
+        margin: auto;
+        width: 50px;
+      }
+    }
+  }
+}

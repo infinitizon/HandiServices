@@ -1,0 +1,16 @@
+<div mat-dialog-content class="gateway-wrapper mt-3">
+  <div class="title gateway-header">
+    <!-- <h2 class="mb-0 d-flex justify-content-between">Order Detail <mat-icon class="pull-right" iconPositionEnd> forum</mat-icon></h2> -->
+    Order No: {{data.id}} <br />
+    Placed on: {{data.createdAt | date}} <br />
+    Total: {{data.amount | currency: 'NGN' : 'symbol-narrow' }}
+    <div *ngFor="let item of container.orders" class="border rounded-3 p-4 mt-2 mb-2">
+      {{item?.ProductVendorCharacter?.ProductCharacter?.name}} <br />
+      {{item?.value}} <br />
+      {{(item.value * item?.ProductVendorCharacter?.price) | currency: 'NGN' : 'symbol-narrow' }}
+    </div>
+  </div>
+  <div class="gateway-content mt-4">
+    <mat-paginator [length]="container.total" [pageSize]="pageSize" showFirstLastButtons aria-label="Select page"></mat-paginator>
+  </div>
+</div>

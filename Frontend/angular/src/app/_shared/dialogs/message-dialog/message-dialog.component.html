@@ -1,0 +1,12 @@
+<div class="otp-modal">
+  <i *ngIf="data?.faIcon" class="fa {{data.faIcon?.size}} {{data.faIcon?.icon}} {{data.faIcon?.colorClass}} mb-2" aria-hidden="true"></i>
+  <h2 class="mt-3" *ngIf="data?.title" mat-dialog-title>{{data.title}}</h2>
+  <mat-dialog-content>
+    <img *ngIf="data?.image" src="{{data.image}}" alt="">
+    <p *ngIf="data?.message" [innerHTML]="data.message"></p>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-dialog-close mat-stroked-button class="log-out" (click)="accept()">{{data.acceptButtonText || 'Ok' | titlecase}}</button>
+    <button *ngIf="data?.cancelButtonText" mat-button mat-dialog-close class="log-out-no">{{data.cancelButtonText | titlecase}}</button>
+  </mat-dialog-actions>
+</div>

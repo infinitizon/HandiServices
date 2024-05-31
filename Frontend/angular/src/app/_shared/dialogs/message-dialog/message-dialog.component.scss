@@ -1,0 +1,24 @@
+.otp-modal {
+  text-align: center;
+
+  .log-out {
+    min-width: 120px;
+    border-color: #EFB42E;
+    color: #EFB42E;
+  }
+
+  .log-out-no {
+    min-width: 120px;
+    color: #fff;
+    background-color: #00868D;
+  }
+
+  .mat-dialog-actions {
+    justify-content: center;
+    padding: 20px !important;
+  }
+}
+
+::ng-deep .mat-mdc-dialog-actions {
+  justify-content: center !important;
+}

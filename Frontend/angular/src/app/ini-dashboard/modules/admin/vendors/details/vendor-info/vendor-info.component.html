@@ -1,0 +1,169 @@
+<div class="container-fluid">
+  <div class="outer">
+    <div class="middle">
+      <div class="row align-items-center">
+        <!-- <div class="col-md-6 p-0 m-0 auth-first-column">
+          <app-auth-left-bar></app-auth-left-bar>
+        </div> -->
+        <div class="col mx-2 mx-sm-2 mx-md-0 px-2 px-sm-2 px-md-0  d-flex justify-content-md-center">
+          <div class="user-category-wrapper col-md-8 col-12 col-sm-12">
+            <div class="user-category">
+              <!-- <div class="title col-md-11">
+                <h4 class="mb-0 signup">Create your account</h4>
+                <p class="mb-0">
+                  Enter your personal details to start selling on Home Service
+                </p>
+              </div> -->
+
+              <div class="user-category-body col-md-12">
+                <form [formGroup]="signupForm" [autocomplete]="'off'">
+                  <div class="row ">
+                    <div class="form-group mt-4 col-md-6">
+                      <label>First Name</label>
+                      <div class="input mt-1 ">
+                        <mat-form-field appearance="outline" class="col-md-12 w-100">
+                          <input autocomplete="off" matInput name="firstName" type="text" class="" placeholder="Enter your first name"
+                            formControlName="firstName" (keyup)="controlChanged('firstName')">
+                        </mat-form-field>
+                        <div class="error-wrapper">
+                          <span *ngIf="uiErrors.firstName" class="error ">{{uiErrors.firstName}}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group mt-4 col-md-6">
+                      <label>Last Name</label>
+                      <div class="input mt-1 ">
+                        <mat-form-field appearance="outline" class="col-md-12 w-100">
+                          <input autocomplete="off" matInput name="lastName" type="text" class="" placeholder="Enter your last name"
+                            formControlName="lastName" (keyup)="controlChanged('lastName')">
+                        </mat-form-field>
+                        <div class="error-wrapper">
+                          <span *ngIf="uiErrors.lastName" class="error ">{{uiErrors.lastName}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                  <div class="form-group mt-4">
+                    <label>Email Address</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input autocomplete="off" matInput name="email" type="email" class="" placeholder="Enter your email address"
+                          formControlName="email" (keyup)="controlChanged('email')">
+                          <button
+                          type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 16px;" class="ri-mail-line"></i>
+                        </button>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.email" class="error ">{{uiErrors.email}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="form-group mt-4">
+                    <label>Phone number</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <ngx-mat-intl-tel-input [inputPlaceholder]="''"
+                          [preferredCountries]="['ng', 'us', 'gb', 'ca']" formControlName="phone" [enablePlaceholder]="true"
+                          [enableSearch]="true" name="phone" #phone>
+                        </ngx-mat-intl-tel-input>
+                        <button
+                        type="button" mat-icon-button matSuffix>
+                        <i style="font-size: 14px; color: var(--primary);" class="ri-information-fill"></i>
+                      </button>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.phone" class="error ">{{uiErrors.phone}}</span>
+                      </div>
+                    </div>
+                  </div>
+<!--
+                  <div class="form-group mt-4">
+                    <label>Password</label>
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input matInput id="password" name="password" type="password" class="" placeholder=""
+                          autocomplete="new-password" formControlName="password" (keyup)="controlChanged('password')"
+                          [type]="container['fieldTextType'] ? 'text' : 'password'">
+                          <button
+                          type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 18px;" class="ri-lock-line"></i>
+                        </button>
+                        <button type="button" mat-icon-button matSuffix (click)="showEyes()" [attr.aria-label]="'Hide password'"
+                          [attr.aria-pressed]="container['fieldTextType']">
+                          <i style="font-size: 18px;" class="{{container['fieldTextType'] ? 'ri-eye-line' : 'ri-eye-off-line'}}"></i>
+                        </button>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.password" class="error">{{uiErrors.password}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label>Confirm Password</label>
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input matInput id="confirmPassword" name="confirmPassword" type="password" class="" placeholder=""
+                          autocomplete="new-password" formControlName="confirmPassword"
+                          (keyup)="controlChanged('confirmPassword')" [type]="container['fieldTextType'] ? 'text' : 'password'">
+                          <button
+                          type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 18px;" class="ri-lock-line"></i>
+                        </button>
+                        <button type="button" mat-icon-button matSuffix (click)="showEyes()" [attr.aria-label]="'Hide password'"
+                          [attr.aria-pressed]="container['fieldTextType']">
+                          <i style="font-size: 18px;" class="{{container['fieldTextType'] ? 'ri-eye-line' : 'ri-eye-off-line'}}"></i>
+                        </button>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.confirmPassword" class="error ">{{uiErrors.confirmPassword}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label>Referral code (optional)</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input autocomplete="off" matInput name="referralCode" type="text" class="" placeholder="Enter referral code"
+                          formControlName="referralCode" >
+                      </mat-form-field>
+                    </div>
+                  </div> -->
+
+                  <!-- <div class="auth-footer-wrapper">
+                    <div class="auth-footer ">
+                      <span>By proceeding to create an account, it means that you agree to our <a routerLink="/auth/terms">Terms of Service</a> and <a>Privacy Policy.</a></span>
+                    </div>
+                  </div> -->
+
+                  <div class="button-wrapper mt-4">
+                    <button (click)="onSubmit()"  type="submit" class="action-btn col-md-12 w-100" [disabled]="submitting">
+                      <div class="d-flex justify-content-center align-items-center">
+                      <span>Continue</span> &nbsp;<i *ngIf="submitting" style="font-size: 14px;" class="ri-arrow-right-line"></i>
+                    </div>
+                    </button>
+                  </div>
+<!--
+                  <div class="auth-footer-wrapper mt-2">
+                    <div class="auth-footer text-center">
+                      <span>Already have an account? <a routerLink="/auth/login">Log in</a></span>
+                    </div>
+                  </div> -->
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

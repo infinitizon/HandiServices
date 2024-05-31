@@ -1,0 +1,49 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="get-started-wrapper">
+  <div class="get-started-header">
+    <h2 class="mb-0 text-center">Account Inactive</h2>
+    <!-- <h2 class="mb-0 text-center">Let's get you started.</h2> -->
+  </div>
+
+  <div class="get-started-content">
+    <div
+      class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+    >
+      <div class="col">
+          <div class="d-flex px-3">
+            <div
+              class="get-started d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="value mb-0 text-center">
+                <span
+                  >{{data?.response}} </span
+                >
+                <!-- <div class="key text-center mt-4"><span>{{data?.email}}</span></div> -->
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+
+    <div class="d-flex justify-content-center">
+    <div
+    class="btn-wrapper mx-2"
+  >
+    <button class="action-btn" [mat-dialog-close]="false">
+     Cancel
+    </button>
+  </div>
+    <div
+    class="btn-wrapper mx-2"
+  >
+    <button class="submit-btn" [mat-dialog-close]="true" >Activate</button>
+  </div>
+</div>
+
+  </div>
+</div>

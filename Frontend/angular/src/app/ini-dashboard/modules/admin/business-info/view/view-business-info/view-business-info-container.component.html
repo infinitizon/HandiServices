@@ -1,0 +1,8 @@
+<div *ngIf="!container['loading']">
+<app-view-business-info [data]="businessInfo"></app-view-business-info>
+</div>
+
+
+<div *ngIf="container['loading']">
+  <app-loader></app-loader>
+</div>

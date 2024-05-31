@@ -1,0 +1,141 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div class="auth-image-wrapper">
+      <img src="/assets/logo/primary-offer-logo.svg" alt="Primary Logo" height="40">
+    </div>
+    <div class="btn-wrapper">
+      <button routerLink="/auth/login" class="action-btn text-nowrap">Log in</button>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <div class="auth-body mt-5">
+      <div class="auth-form-wrapper px-2">
+        <form [formGroup]="signupForm" [autocomplete]="'off'">
+          <div class="form-group">
+            <label>Mother's Maiden Name</label>
+            <div class="input mt-1 ">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <input autocomplete="off" matInput name="motherMaidenName" type="text" class="" placeholder=""
+                  formControlName="motherMaidenName" (keyup)="controlChanged('motherMaidenName')">
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.motherMaidenName" class="error ">{{uiErrors.motherMaidenName}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-4">
+            <label>Place of Birth</label>
+            <div class="input mt-1 ">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <input autocomplete="off" matInput name="placeOfBirth" type="text" class="" placeholder=""
+                  formControlName="placeOfBirth" (keyup)="controlChanged('placeOfBirth')">
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.placeOfBirth" class="error ">{{uiErrors.placeOfBirth}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-4">
+            <label>Email</label>
+            <div class="input mt-1 ">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <input autocomplete="off" matInput name="email" type="email" class="" placeholder=""
+                  formControlName="email" (keyup)="controlChanged('email')">
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.email" class="error ">{{uiErrors.email}}</span>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group mt-4">
+            <label>Phone number</label>
+            <div class="input mt-1 ">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <ngx-mat-intl-tel-input [inputPlaceholder]="''"
+                  [preferredCountries]="['ng', 'us', 'gb', 'ca']" formControlName="phone" [enablePlaceholder]="true"
+                  [enableSearch]="true" name="phone" #phone>
+                </ngx-mat-intl-tel-input>
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.phone" class="error ">{{uiErrors.phone}}</span>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group mt-4">
+            <label>Password</label>
+            <div class="input mt-1">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <input matInput id="password" name="password" type="password" class="" placeholder=""
+                  autocomplete="new-password" formControlName="password" (keyup)="controlChanged('password')"
+                  [type]="container['fieldTextType'] ? 'text' : 'password'">
+                <button (click)=" clearPassword('password')"
+                  *ngIf="uiErrors.password || (signupForm.get('password')?.invalid && signupForm.get('confirmPassword')?.touched)"
+                  type="button" mat-icon-button matSuffix>
+                  <i class="ri-close-circle-fill"></i>
+                </button>
+                <button type="button" mat-icon-button matSuffix (click)="showEyes()" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="container['fieldTextType']">
+                  <i class="{{container['fieldTextType'] ? 'ri-eye-fill' : 'ri-eye-close-fill'}}"></i>
+                </button>
+                <button
+                  *ngIf="!uiErrors.password && signupForm.get('password')?.touched && signupForm.get('password')?.valid"
+                  type="button" mat-icon-button matSuffix class="text-success">
+                  <i class="ri-checkbox-circle-fill"></i>
+                </button>
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.password" class="error">{{uiErrors.password}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-4">
+            <label>Confirm Password</label>
+            <div class="input mt-1">
+              <mat-form-field appearance="outline" class="col-md-12 w-100">
+                <input matInput id="confirmPassword" name="confirmPassword" type="password" class="" placeholder=""
+                  autocomplete="new-password" formControlName="confirmPassword"
+                  (keyup)="controlChanged('confirmPassword')" [type]="container['fieldTextType'] ? 'text' : 'password'">
+                <button (click)=" clearPassword('confirmPassword')"
+                  *ngIf="uiErrors.confirmPassword ||  (signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched)"
+                  type="button" mat-icon-button matSuffix>
+                  <i class="ri-close-circle-fill"></i>
+                </button>
+                <button type="button" mat-icon-button matSuffix (click)="showEyes()" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="container['fieldTextType']">
+                  <i class="{{container['fieldTextType'] ? 'ri-eye-fill' : 'ri-eye-close-fill'}}"></i>
+                </button>
+                <button
+                  *ngIf="!uiErrors.confirmPassword && signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.valid"
+                  type="button" mat-icon-button matSuffix class="text-success">
+                  <i class="ri-checkbox-circle-fill"></i>
+                </button>
+              </mat-form-field>
+              <div class="error-wrapper">
+                <span *ngIf="uiErrors.confirmPassword" class="error ">{{uiErrors.confirmPassword}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="button-wrapper mt-4">
+            <button [routerLink]="['/auth/verify-otp']"  type="submit" class="submit-btn col-md-12 w-100" [disabled]="signupForm.invalid">Sign up</button>
+          </div>
+          <div class="get-in-touch-wrapper">
+            <div class="get-in-touch w-100">
+              <span>Need help? <a routerLink="/auth/get-in-touch">Get in touch</a></span>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</div>

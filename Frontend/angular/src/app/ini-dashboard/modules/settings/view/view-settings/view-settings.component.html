@@ -1,0 +1,20 @@
+<div class="container p-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="title settings">
+        <h2>
+          Settings
+        </h2>
+        <nav mat-tab-nav-bar class="link-tab">
+          <a class="px-4" mat-tab-link [routerLink]="['profile']" (click)="activeLink = 'profile'"
+            [active]="activeLink == 'profile'"> Profile </a>
+          <a class="px-4" mat-tab-link [routerLink]="['cards']" (click)="activeLink = 'cards'"
+            [active]="activeLink == 'cards'"> Cards </a>
+          <a class="px-4" mat-tab-link [routerLink]="['notifications-security']" (click)="activeLink = 'notifications-security'"
+            [active]="activeLink == 'notifications-security'"> Notification & Security</a>
+        </nav>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

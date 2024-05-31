@@ -1,0 +1,98 @@
+.security-wrapper {
+  margin-top: 12px;
+  padding-left: 20px;
+
+  .security-header {
+    background-color: #fff !important;
+    padding: 20px;
+    h3 {
+      color: var(--Font-Primary, rgba(0, 0, 0, 0.85));
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 24px;
+    }
+  }
+
+  .security-content-wrapper {
+    margin: 24px;
+
+    .security-content {
+      &-s {
+        margin-top: 32px;
+      }
+    }
+
+    .notify-info {
+      .key {
+        color: var(--Gray-1, #333);
+
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+
+      .value {
+        color: var(--Gray-1, #333);
+        text-align: right;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-decoration: none;
+
+        &.p {
+          color: #6200ee;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 24px; /* 150% */
+          letter-spacing: 0.5px;
+        }
+
+        &-time {
+          color: var(--Gray-1, #333);
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 150%;
+          text-decoration: none;
+        }
+      }
+
+      .generate-button {
+        border: none;
+        border-radius: 4px;
+        background: #6200ee;
+        padding: 8px 16px;
+        color: var(--font-white, #fff);
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px; /* 150% */
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+.line-s {
+  border-bottom: 0.5px solid #cfd8dc !important;
+  height: 1px !important;
+  margin: 24px 0px 24px 0px !important;
+}
+
+::ng-deep .mat-mdc-slide-toggle.mat-accent {
+  --mdc-switch-selected-focus-state-layer-color: #6200ee;
+  --mdc-switch-selected-handle-color: #6200ee;
+  --mdc-switch-selected-hover-state-layer-color: #6200ee;
+  --mdc-switch-selected-pressed-state-layer-color: #6200ee;
+  --mdc-switch-selected-focus-handle-color: #fff;
+  --mdc-switch-selected-hover-handle-color: #fff;
+  --mdc-switch-selected-pressed-handle-color: #fff;
+  --mdc-switch-selected-focus-track-color: #6200ee;
+  --mdc-switch-selected-hover-track-color: #6200ee;
+  --mdc-switch-selected-pressed-track-color: #6200ee;
+  --mdc-switch-selected-track-color: #6200ee;
+}

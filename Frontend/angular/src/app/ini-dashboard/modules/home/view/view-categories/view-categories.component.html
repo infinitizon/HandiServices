@@ -1,0 +1,339 @@
+<div class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4 pb-5">
+  <div class="search-wrapper">
+    <div class="input-box w-50">
+      <i class="ri-search-line"></i>
+      <input type="text" class="form-control-sm" placeholder="Search" />
+    </div>
+  </div>
+
+  <div class="col-md-12 back-wrapper">
+    <in-backbutton></in-backbutton>
+  </div>
+
+  <div class="services-wrapper">
+    <div
+      class="services-header d-flex justify-content-between align-items-center"
+    >
+      <div class="services-header-title v1">
+        <h4>Pick a Service</h4>
+        <p>
+          You can pick one out of our wide selection of service options and take our best price.
+        </p>
+      </div>
+    </div>
+
+
+
+    <div class="categories-content">
+      <div class="row g-3">
+        <div class="col-6 col-sm-6 col-md-2" *ngFor="let c of categoriesData ; index as i;" [routerLink]="['/app/home/view-sub-categories', c?.id]">
+          <div class="ca pointer" [ngStyle]="{backgroundColor: i | color }">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="{{i | image}}" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span>
+                {{c?.title}} </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 107 cleaners </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-6 col-sm-6 col-md-2">
+          <div class="ca pointer" routerLink="/app/home/view-sub-categories">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/ca.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Cleaning </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 107 cleaners </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cb">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cb.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Map Install </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 40 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cc">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cc.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Brake lights </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 15 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cd">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cd.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Tyre Pump </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 5 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="ce">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/ce.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Electrical </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 150 mechanics</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cf">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cf.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Car Security</span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 107 mechanics </span>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+  </div>
+
+  <div class="service-provider-wrapper">
+    <div
+      class="service-provider-header d-flex justify-content-between align-items-center"
+    >
+      <div class="service-provider-header-title">
+        <h6>Recommended Service Providers</h6>
+      </div>
+      <div class="service-provider-header-route">
+        <a>See all</a>
+      </div>
+    </div>
+
+    <div class="service-provider-content">
+      <div class="row g-3">
+        <div class="col-12 col-sm-12 col-md-4">
+          <div class="services-provider-details">
+            <div class="d-flex bd-highlight mb-3 align-items-start">
+              <div class="bd-highlight">
+                <div class="services-provider-details-img-wrapper">
+                  <img src="/assets/img/image-1.svg" alt="Discount image" />
+                </div>
+              </div>
+              <div class="px-2 px-sm-2 px-md-2 bd-highlight">
+                <div class="d-flex flex-column">
+                  <div class="services-provider-details-text">
+                    <p class="p-0 m-0">Olumide Silvester</p>
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-1 d-flex align-items-center"
+                  >
+                    <span
+                      ><span class="icon"> <i class="ri-star-fill"></i></span>
+                      <span class="px-1 rating">5.0</span>
+                      <span class="no">(642)</span></span
+                    >
+                    <span class="px-3"
+                      ><span class="icon1 px-1"
+                        ><i class="ri-exchange-fill"></i
+                      ></span>
+                      <span class="rating">#3,200</span>
+                      <span class="no">/hr</span></span
+                    >
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-2 d-flex align-items-center"
+                  >
+                    <div class="text">Laundry</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Cleaning</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Repair</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ms-auto bd-highlight">
+                <div class="services-provider-details-icon-wrapper">
+                  <i class="ri-heart-fill"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="description">
+              <span
+                >Asides from my key USPs, I’m always on prepared and on time to
+                get your car back on the road where it shoul...</span
+              >
+            </div>
+
+            <div class="btn-wrapper d-flex justify-content-between">
+              <div class="btn-more"><button>More Details</button></div>
+              <div class="btn-book"><button>Book</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-12 col-md-4">
+          <div class="services-provider-details">
+            <div class="d-flex bd-highlight mb-3 align-items-start">
+              <div class="bd-highlight">
+                <div class="services-provider-details-img-wrapper">
+                  <img src="/assets/img/image-2.svg" alt="Discount image" />
+                </div>
+              </div>
+              <div class="px-2 px-sm-2 px-md-2 bd-highlight">
+                <div class="d-flex flex-column">
+                  <div class="services-provider-details-text">
+                    <p class="p-0 m-0">Mary Opto</p>
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-1 d-flex align-items-center"
+                  >
+                    <span
+                      ><span class="icon"> <i class="ri-star-fill"></i></span>
+                      <span class="px-1 rating">5.0</span>
+                      <span class="no">(642)</span></span
+                    >
+                    <span class="px-3"
+                      ><span class="icon1 px-1"
+                        ><i class="ri-exchange-fill"></i
+                      ></span>
+                      <span class="rating">#3,200</span>
+                      <span class="no">/hr</span></span
+                    >
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-2 d-flex align-items-center"
+                  >
+                    <div class="text">Laundry</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Cleaning</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Repair</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ms-auto bd-highlight">
+                <div class="services-provider-details-icon-wrapper">
+                  <i class="ri-heart-fill"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="description">
+              <span
+                >I’m your go-to guy for any issues as regarding car scan,
+                overheating as well as tyre pump; and I can 100% guar...</span
+              >
+            </div>
+
+            <div class="btn-wrapper d-flex justify-content-between">
+              <div class="btn-more"><button>More Details</button></div>
+              <div class="btn-book"><button>Book</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-12 col-md-4">
+          <div class="services-provider-details">
+            <div class="d-flex bd-highlight mb-3 align-items-start">
+              <div class="bd-highlight">
+                <div class="services-provider-details-img-wrapper">
+                  <img src="/assets/img/image-3.svg" alt="Discount image" />
+                </div>
+              </div>
+              <div class="px-2 px-sm-2 px-md-2 bd-highlight">
+                <div class="d-flex flex-column">
+                  <div class="services-provider-details-text">
+                    <p class="p-0 m-0">Michal Oliver</p>
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-1 d-flex align-items-center"
+                  >
+                    <span
+                      ><span class="icon"> <i class="ri-star-fill"></i></span>
+                      <span class="px-1 rating">5.0</span>
+                      <span class="no">(642)</span></span
+                    >
+                    <span class="px-3"
+                      ><span class="icon1 px-1"
+                        ><i class="ri-exchange-fill"></i
+                      ></span>
+                      <span class="rating">#3,200</span>
+                      <span class="no">/hr</span></span
+                    >
+                  </div>
+                  <div
+                    class="services-provider-details-text mt-2 d-flex align-items-center"
+                  >
+                    <div class="text">Laundry</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Cleaning</div>
+                    <div class="px-1 icon2">
+                      <i class="ri-checkbox-blank-circle-fill"></i>
+                    </div>
+                    <div class="text">Repair</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ms-auto bd-highlight">
+                <div class="services-provider-details-icon-wrapper">
+                  <i class="ri-heart-fill"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="description">
+              <span
+                >I have worked hard to keep up with the latest technology in
+                order for me to give you a better overall...</span
+              >
+            </div>
+
+            <div class="btn-wrapper d-flex justify-content-between">
+              <div class="btn-more"><button class="">More Details</button></div>
+              <div class="btn-book"><button class="">Book</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

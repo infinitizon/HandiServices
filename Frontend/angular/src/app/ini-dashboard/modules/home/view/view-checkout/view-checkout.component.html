@@ -1,0 +1,132 @@
+<div class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4 pb-5" *ngIf="!container['providersLoading']">
+  <div class="col-md-12 back-wrapper">
+    <in-backbutton></in-backbutton>
+  </div>
+
+  <div class="checkout-wrapper">
+    <div
+      class="checkout-header d-flex justify-content-center align-items-center"
+    >
+      <div class="checkout-header-title v1">
+        <h4>Checkout</h4>
+        <p>
+          <!-- You can pick one out of our wide selection of providers. -->
+        </p>
+      </div>
+    </div>
+
+    <div class="checkout-body">
+      <div class="d-flex flex-sm-column flex-column flex-md-row  justify-content-between align-items-center">
+        <div class="address-wrapper col-md-3 col-sm-12 col-12" *ngIf="activeAddress">
+          <div class="address-header">
+            <h3>Delivery Address</h3>
+          </div>
+          <div class="address-body">
+            <div class="address-text">
+              <!-- <h5>Riley Sanchez</h5> -->
+              <h6 class="m-0">
+                <div>{{activeAddress?.houseNo ? activeAddress?.houseNo +',':''}} {{activeAddress?.address1 ? activeAddress?.address1 + ",":''}}</div>
+                <div>{{activeAddress?.address2 ? activeAddress?.address2+',' : ''}}</div>
+                <div>{{activeAddress?.city ? activeAddress?.city+',':''}} {{activeAddress?.state?.name ? activeAddress?.state?.name+',' : ''}}</div>
+                <div>{{activeAddress?.country?.name ? activeAddress?.country?.name : ''}}</div>
+              </h6>
+              <div class="default">
+                <!-- <a>Default Address</a> -->
+                <a class="">Change Address</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="address-wrapper col-md-3 col-sm-12 col-12" *ngIf="!activeAddress">
+          <div class="address-header">
+            <h3>Delivery Address <small>(current location)</small></h3>
+          </div>
+          <div class="address-body">
+            <div class="address-text">
+              <h6 class="m-0">
+                <div>{{container.address?.number?container.address?.number+',':''}} {{container.address?.address1?container.address?.address1 + ",":''}}</div>
+                <div>{{container.address?.address2?container.address?.address2+',':''}}</div>
+                <div>{{container.address?.city?container.address?.city+',':''}} {{container.address?.state?.name ? container.address?.state?.name+',' : ''}}</div>
+                <div>{{container.address?.country?.name?container.address?.country?.name:''}}</div>
+              </h6>
+              <div class="default">
+                <!-- <a>Default Address</a> -->
+                <a class="">Change Address</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="items-wrapper col-md-4 col-sm-12 col-12 mt-sm-3 mt-3 mt-md-0">
+          <div class="items-header">
+            <h3>Items</h3>
+          </div>
+
+          <form [formGroup]="priceForm" [autocomplete]="'off'" *ngIf="providerXterData" >
+            <div class="items-body" *ngFor="let p of providerXterData let i = index;">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                  <div class="name">
+                    <p>{{p?.ProductCharacter?.name}}</p>
+                    <span>{{p?.price |currency:"NGN":"symbol-narrow"}}</span>
+                  </div>
+                </div>
+                <div *ngIf="p?.ProductCharacter?.type == 'inc_dcr'" class="">
+
+                    <div class="value-button" id="decrease" (click)="decrement(p)" value="Decrease Value">-</div>
+                    <input type="number" id="number" type="text" [formControlName]="p?.id" />
+                    <div class="value-button" id="increase" (click)="increment(p)" value="Increase Value">+</div>
+                   <!--     <mat-form-field fxFlexFill style="" >
+                   <button mat-button matPrefix mat-stroked-button aria-label="search" type="button" >
+                        <mat-icon>remove</mat-icon>
+                      </button>
+                      <input autocomplete="off" class="col-md-12 text-center" matInput name="lastName"  fxFlex="50">
+                      <button mat-button matSuffix mat-stroked-button aria-label="search" type="button" >
+                        <mat-icon>add</mat-icon>
+                      </button>
+                    </mat-form-field> -->
+                    <!-- <div class="error-wrapper">
+                      <span *ngIf="uiErrors[p?.id]" class="error">{{ uiErrors[p?.id] }}</span>
+                    </div>
+                  </div> -->
+                </div>
+                <div *ngIf="['string','number'].includes(p?.ProductCharacter?.type)">
+                  <div class="input mt-1 ">
+                    <mat-form-field  style="width:10vw">
+                      <input autocomplete="off" [ngClass]="{'text-right':p?.ProductCharacter?.type=='number'}" matInput name="lastName" [type]="p?.ProductCharacter?.type" [formControlName]="p?.id">
+                    </mat-form-field>
+                    <div class="error-wrapper">
+                      <span *ngIf="uiErrors[p?.id]" class="error">{{ uiErrors[p?.id] }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="price-wrapper col-md-3 col-sm-12 col-12 mt-sm-3 mt-3 mt-md-0">
+          <div class="d-flex justify-content-between">
+            <div class="total">
+              <span>Total ({{providerXterData?.length}}):</span>
+            </div>
+            <div class="total">
+              <span>{{container['total'] |currency:"NGN":"symbol-narrow"}}</span>
+            </div>
+          </div>
+          <div class="price-btn mt-3">
+            <button (click)="onSubmit()" type="submit" class="action-btn col-md-12 w-100" [disabled]="container['submitting']">
+              <div class="d-flex justify-content-center align-items-center">
+              <span class="">Proceed </span> <app-loader2 *ngIf="container['submitting']"></app-loader2>
+            </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="container['providersLoading']">
+  <app-loader></app-loader>
+</div>

@@ -1,0 +1,74 @@
+.request-btn {
+  border-radius: 32px;
+  background: var(--complementary-complementary-600, #266ef1);
+  color: #fff;
+  padding: 10px 12px 10px 16px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+  letter-spacing: 0.048px;
+  border: none;
+
+  &.v2 {
+    color: #1b1b1b;
+    background: var(--white-white-300, #f1f1f1);
+  }
+
+  i {
+    font-size: 16px;
+  }
+}
+
+.tab {
+  .tab-icon {
+    font-size: 24px;
+    color: #aeaeae;
+    &.iconActive {
+      color: #266ef1;
+    }
+  }
+
+  .tab-icon-spacer {
+    font-size: 16px;
+    color: #aeaeae;
+  }
+
+  .tab-text {
+    color: var(--gray-gray-400, #aeaeae);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.014px;
+
+    &.active {
+      color: var(--gray-gray-900, #1b1b1b);
+      font-weight: 600;
+    }
+  }
+}
+
+.progress-space {
+  margin-top: 28px;
+}
+
+::ng-deep .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
+  /* background-color: rgba(63, 81, 181, 0.25); */
+  background-color: #E7E7E7 !important;
+}
+
+::ng-deep  .mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-height: 2px !important;
+  --mdc-linear-progress-track-height: 1px !important;
+  --mdc-linear-progress-track-shape: 0 !important;
+}
+::ng-deep .mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: #266EF1 !important;
+  --mdc-linear-progress-track-color: rgba(63, 81, 181, 0.25) !important;
+}
+
+
+.request-content {
+  margin-top: 100px;
+}

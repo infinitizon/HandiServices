@@ -1,0 +1,63 @@
+<div class="container mb-5">
+  <div class="col-md-12 mt-5">
+    <in-backbutton></in-backbutton>
+  </div>
+  <div class="help-wrapper">
+    <div class="help">
+      <div class="d-flex justify-content-between align-items-center" >
+        <h2>Contact us</h2>
+        <div><a [routerLink]="['/app/feedback/view']" routerLinkActive="current">View list</a></div>
+      </div>
+      <div class="help-body">
+        <div class="help-body mt-5">
+          <div class="help-form-wrapper">
+            <form [formGroup]="contactForm" [autocomplete]="'off'">
+              <div class="form-group">
+                <label>Select an issue</label>
+                <div class="input mt-1 ">
+                  <mat-form-field appearance="outline" class="col-md-12 w-100">
+                    <mat-select formControlName="issue" (selectionChange)="controlChanged('issue')">
+                      <mat-option value="{{issue.value}}" *ngFor="let issue of issueData"> {{issue.name}} </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="error-wrapper">
+                    <span *ngIf="uiErrors.issue" class="error ">{{uiErrors.issue}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group ">
+                <label>Send us a message</label>
+                <div class="input mt-1 ">
+                  <mat-form-field appearance="outline" class="col-md-12 w-100 textarea">
+                    <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="4"
+                      cdkAutosizeMaxRows="4" (input)="controlChanged('description')" formControlName="description" placeholder="Write here" cols="35"
+                      rows="8"></textarea>
+                  </mat-form-field>
+                  <div class="error-wrapper">
+                    <span *ngIf="uiErrors.description" class="error ">{{uiErrors.description}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="button-wrapper mt-3">
+                <button (click)="onSubmit()" type="submit" class="submit-btn col-md-12 w-100 text-nowrap" [disabled]="submitting">
+                  <span class="d-flex justify-content-center align-items-center w-100">Send message
+                    <app-loader2 *ngIf="submitting"></app-loader2>
+                  </span>
+               </button>
+              </div>
+              <div class="get-in-touch-wrapper">
+                <div class="get-in-touch w-100">
+                  <span>Call us: <a >0700 (HOME-SERVICE) 4663 737 8423</a></span>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+
+
+.create-back-wrapper {
+  margin-top: 35px;
+  margin-left: 33px;
+}
+
+.create-bank-subtitle {
+  margin-top: 20px;
+  p {
+    color: #2e2e2e;
+    font-family: DM Sans;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%;
+  }
+}
+
+.create-bank-form {
+  margin-top: 43px;
+}
+
+.create-bank-btn-wrapper {
+  margin-top: 30px;
+  button {
+    border-radius: 11.992px;
+    background: var(--foundation-purple-purple-500, #6200ee);
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+    font-family: DM Sans;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    border: none;
+  }
+}

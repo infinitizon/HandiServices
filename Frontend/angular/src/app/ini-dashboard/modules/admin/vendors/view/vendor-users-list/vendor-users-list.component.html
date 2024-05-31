@@ -1,0 +1,47 @@
+<div class="offers-wrapper">
+  <div class="row d-flex flex-row column-gap-sm">
+    <div class="mat-elevation-z8 px-0">
+      <table mat-table [dataSource]="tenantsCustDataSource">
+        <ng-container matColumnDef="{{column['name']}}" *ngFor="let column of tenantsCustDisplayedColumns">
+          <th mat-header-cell *matHeaderCellDef>
+            <div [ngSwitch]="column['type']">
+              <div *ngSwitchDefault>{{column['title']}}</div>
+              <div *ngSwitchCase="'money'" class="text-right tableAmount">{{column['title']}}</div>
+            </div>
+          </th>
+          <mat-progress-bar mode="indeterminate" *ngIf="container['tenantsCustLoading']"></mat-progress-bar>
+          <td mat-cell *matCellDef="let element">
+            <div [ngSwitch]="column['type']"
+              [ngClass]="{'tableAmount': column['type'] == ('number' || 'money')}">
+              <div *ngSwitchDefault>{{ element[column['name']] }}</div>
+              <div *ngSwitchCase="'subscribers'" class="">
+                {{ element.firstName  }}  {{ element.lastName  }}
+              </div>
+              <div *ngSwitchCase="'tenant'" class="">
+                {{ element.TenantUserRoles?.Tenant?.name }}
+              </div>
+              <div *ngSwitchCase="'role'" class="">
+                {{ element.TenantUserRoles?.Role?.name }}
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="tenantsCustColumnsToDisp"></tr>
+        <tr mat-row *matRowDef="let row; columns: tenantsCustColumnsToDisp"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center py-3" [attr.colspan]="tenantsCustDisplayedColumns.length">No data found.</td>
+        </tr>
+      </table>
+      <div *ngIf="container['tenantsCustLoading']" class="mat-spinner-container">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</div>

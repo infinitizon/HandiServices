@@ -1,0 +1,113 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="gateway-wrapper">
+  <div class="title gateway-header">
+    <h2 class="mb-0 text-center">Category Details</h2>
+  </div>
+
+  <div class="gateway-content mt-4">
+    <form [formGroup]="categoryForm" [autocomplete]="'off'">
+      <div class="form-group">
+        <label
+          ><div class="gateway-label d-flex justify-content-between">
+            <div>Title</div>
+            <div class="units"></div>
+          </div></label
+        >
+        <div class="input mt-1">
+          <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+            <input
+              autocomplete="off"
+              matInput
+              name="title"
+              type="text"
+              class=""
+              placeholder=""
+              formControlName="title"
+              (keyup)="controlChanged('title')"
+            />
+          </mat-form-field>
+          <div class="error-wrapper">
+            <span *ngIf="uiErrors.title" class="error">{{
+              uiErrors.title
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mt-3">
+        <label
+          ><div class="gateway-label d-flex justify-content-between">
+            <div>Sku</div>
+            <div class="units"></div>
+          </div></label
+        >
+        <div class="input mt-1">
+          <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+            <input
+              autocomplete="off"
+              matInput
+              name="sku"
+              type="text"
+              class=""
+              placeholder=""
+              formControlName="sku"
+              (keyup)="controlChanged('sku')"
+            />
+          </mat-form-field>
+          <div class="error-wrapper">
+            <span *ngIf="uiErrors.sku" class="error">{{
+              uiErrors.sku
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group mt-3">
+        <label
+          ><div class="gateway-label d-flex justify-content-between">
+            <div>Summary</div>
+            <div class="units"></div>
+          </div></label
+        >
+        <div class="input mt-1">
+          <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+            <input
+              autocomplete="off"
+              matInput
+              name="summary"
+              type="text"
+              class=""
+              placeholder=""
+              formControlName="summary"
+              (keyup)="controlChanged('summary')"
+            />
+          </mat-form-field>
+          <div class="error-wrapper">
+            <span *ngIf="uiErrors.summary" class="error">{{
+              uiErrors.summary
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="button-wrapper mt-5 mb-4">
+        <button
+          type="submit"
+          class="action-btn col-md-12 w-100"
+          [disabled]="container['submitting']"
+          (click)=" submit()"
+        >
+          Save
+          <i *ngIf="container['submitting']" class="ri-loader-4-fill"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

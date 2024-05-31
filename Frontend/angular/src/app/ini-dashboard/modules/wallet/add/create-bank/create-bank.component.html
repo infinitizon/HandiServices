@@ -1,0 +1,92 @@
+<div class="container-fluid">
+  <div class="create-back-wrapper" *ngIf="!container['banksLoading']">
+    <div class="back-button-v2">
+      <a
+        (click)="goBack()"
+        class="d-flex justify-content-between align-items-center m-0 p-0"
+        ><i class="ri-arrow-left-line"></i><span>Enter Bank Details</span></a
+      >
+    </div>
+
+    <div class="create-bank-subtitle">
+      <p>Please enter your bank account details</p>
+    </div>
+
+    <div class="create-bank-form">
+      <form [formGroup]="createBankForm">
+        <div class="form-group mt-3">
+          <label>Banks</label>
+          <div class="input mt-1">
+            <mat-form-field appearance="outline" class="col-md-6">
+              <mat-select formControlName="bankCode">
+                <mat-option value="" disabled>Select Bank</mat-option>
+                <mat-option [value]="bank" *ngFor="let bank of banks">
+                  {{ bank?.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="error-wrapper">
+              <span *ngIf="uiErrors.bankCode" class="error">{{
+                uiErrors.bankCode
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <label>Enter Account Number</label>
+          <div class="input mt-1">
+            <mat-form-field appearance="outline" class="col-md-6">
+              <input
+                autocomplete="off"
+                matInput
+                name="nuban"
+                type="text"
+                class=""
+                placeholder="Account Number"
+                formControlName="nuban"
+                maxlength="10"
+                autocomplete="off"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                (input)="onNubanChanged()"
+              />
+            </mat-form-field>
+            <div class="error-wrapper">
+              <span *ngIf="uiErrors.nuban" class="error">{{
+                uiErrors.nuban
+              }}</span>
+            </div>
+            <mat-spinner
+              *ngIf="container['loadingBankName']"
+              [diameter]="20"
+            ></mat-spinner>
+            <p
+              class="pt-2 font-weight-bolder"
+              *ngIf="!uiErrors.nuban && !container['loadingBankName']"
+              [ngClass]="
+                container['bankAccountName']?.success
+                  ? 'text-dark'
+                  : 'text-danger'
+              "
+            >
+              {{ container["bankAccountName"]?.name }}
+            </p>
+          </div>
+        </div>
+
+        <div class="create-bank-btn-wrapper">
+          <button (click)="onSubmitBank()" class="wallet-btn pointer" [disabled]="container['submittingBank']  || container['loadingBankName']">
+            Submit
+            <i *ngIf="container['submittingBank']" class="ri-loader-4-fill"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="container['banksLoading']">
+  <app-loader></app-loader>
+</div>
+

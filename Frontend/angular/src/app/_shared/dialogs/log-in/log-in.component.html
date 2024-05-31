@@ -1,0 +1,28 @@
+<!-- <div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div> -->
+<div class="login-modal-wrapper">
+  <div class="login-modal-icon">
+    <i class="ri-error-warning-fill"></i>
+  </div>
+
+  <div class="login-modal-text">
+    <p class="mb-0">Please sign in to continue</p>
+  </div>
+
+  <div class="login-modal-btn">
+    <div class="d-flex justify-content-center col-md-6">
+      <button [mat-dialog-close]="false" class="login-modal-button no">No thanks</button>
+    </div>
+    <div class="vl"></div>
+    <div class="d-flex justify-content-center col-md-6">
+      <button [mat-dialog-close]="false" routerLink="/auth/login" class="login-modal-button">Continue</button>
+    </div>
+  </div>
+
+
+
+
+</div>

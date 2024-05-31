@@ -1,0 +1,179 @@
+<div class="container-fluid mb-5">
+  <div class="airtime-wrapper">
+    <div class="back-button-v2">
+      <a
+        (click)="goBack()"
+        class="d-flex justify-content-between align-items-center m-0 p-0"
+        ><i class="ri-arrow-left-line"></i><span>Airtime</span></a
+      >
+    </div>
+
+    <div class="airtime-subtitle">
+      <h6>Choose Airtime amount</h6>
+    </div>
+
+    <div class="airtime-content">
+      <div class="row g-3">
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(100)">
+            <div
+              class="vertical-center"
+            >
+                <div class="airtime-card-title">
+                  <a class="m-0">₦ 100</a>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(200)">
+            <div
+              class="vertical-center"
+            >
+            <div class="airtime-card-title">
+              <a class="m-0">₦ 200</a>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(500)">
+            <div
+              class="vertical-center"
+            >
+            <div class="airtime-card-title">
+              <a class="m-0">₦ 500</a>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(1000)">
+            <div
+              class="vertical-center"
+            >
+                <div class="airtime-card-title ">
+                  <a class="m-0">₦ 1000</a>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(2000)">
+            <div
+              class="vertical-center"
+            >
+            <div class="airtime-card-title">
+              <a class="m-0">₦ 2000</a>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4">
+          <div class="airtime-card pointer" (click)="clickAmount(5000)">
+            <div
+              class="vertical-center"
+            >
+            <div class="airtime-card-title">
+              <a class="m-0">₦ 5000</a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <div class="airtime-form">
+      <form [formGroup]="airtimeForm">
+        <div class="form-group mt-4 col-md-6">
+          <label class="w-100">
+            <div class="d-flex justify-content-between w-100">
+              <div>Amount</div>
+              <div>Available balance - ₦{{walletBalance?.total | number}}</div>
+            </div>
+          </label>
+          <div class="input mt-1 ">
+            <mat-form-field appearance="outline" class="w-100">
+              <input
+                matInput
+                name="amount"
+                type="number"
+                class=""
+                placeholder="Enter amount"
+                formControlName="amount"
+                (input)="amountChanged()"
+              />
+            </mat-form-field>
+            <div class="error-wrapper">
+              <span *ngIf="uiErrors.amount" class="error">{{
+                uiErrors.amount
+              }}</span>
+            </div>
+            <p
+              class="pt-2 font-weight-bolder text-danger"
+              *ngIf="container['insufficient']"
+            >
+              {{ container["insufficient"] }}
+            </p>
+          </div>
+        </div>
+        <div class="form-group mt-4">
+          <label>Networks</label>
+          <div class="input mt-1">
+            <mat-form-field appearance="outline" class="col-md-6">
+              <mat-select formControlName="network">
+                <mat-option value="" disabled>Select Network</mat-option>
+                <mat-option [value]="network?.value" *ngFor="let network of networks">
+                  {{ network?.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="error-wrapper">
+              <span *ngIf="uiErrors.network" class="error">{{
+                uiErrors.network
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <label>Phone Number</label>
+          <div class="input mt-1">
+            <mat-form-field appearance="outline" class="col-md-6">
+              <input
+                matInput
+                name="phone"
+                type="number"
+                class=""
+                placeholder="Enter phone"
+                formControlName="phone"
+                (input)="controlChanged('phone')"
+              />
+            </mat-form-field>
+            <div class="error-wrapper">
+              <span *ngIf="uiErrors.phone" class="error">{{
+                uiErrors.phone
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="withdraw-btn-wrapper">
+          <button (click)="onSubmit()" class="wallet-btn pointer" [disabled]="container['submittingAirtime']">
+           Purchase
+            <i *ngIf="container['submittingAirtime']" class="ri-loader-4-fill"></i>
+          </button>
+        </div>
+
+        </form>
+    </div>
+  </div>
+</div>

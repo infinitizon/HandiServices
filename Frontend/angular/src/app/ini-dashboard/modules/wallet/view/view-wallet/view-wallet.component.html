@@ -1,0 +1,59 @@
+
+  <div class="wallet-wrapper">
+    <div class="wallet-header-wrapper">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="amount-wrapper col-md-7">
+          <div class="amount-content">
+            <div class="amount-text">
+              <h6>Home Service Wallet <i class="ri-eye-off-line ps-2"></i></h6>
+            </div>
+
+            <div class="amount-value">
+              <h6>{{ walletBalance?.total | currency:walletBalance?.currency:"symbol-narrow"}}</h6>
+            </div>
+
+            <!-- <div class="amount-history">
+              <a
+                >View Transaction History
+                <i class="ri-arrow-right-up-line ps-1"></i
+              ></a>
+            </div> -->
+
+            <div class="line-w"></div>
+            <div class="amount-btn-wrapper d-flex justify-content-center">
+              <button (click)="fundWallet()" class="wallet-btn pointer">Fund Wallet</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="fund-wrapper col-md-4">
+          <div class="fund-content">
+            <div class="d-flex justify-content-between">
+              <a class="pointer" routerLink="/app/wallet/withdraw">
+               <div class="withdraw-content">
+                <div class="image d-flex justify-content-center">
+                  <img src="/assets/img/withdraw.svg" alt="Withdraw image" />
+                </div>
+                <div class="text text-center mt-2">
+                  <h6>Withdraw<br>
+                    /Transfer</h6>
+                </div>
+               </div>
+              </a>
+              <a class="pointer" routerLink="/app/wallet/transactions">
+               <div class="trans-content">
+                <div class="image d-flex justify-content-center">
+                  <img src="/assets/img/transa.svg" alt="Transaction image" />
+                </div>
+                <div class="text text-center mt-2">
+                  <h6>Transaction <br>
+                     history</h6>
+                </div>
+               </div>
+              </a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+

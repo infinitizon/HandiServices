@@ -1,0 +1,74 @@
+
+<h2 mat-dialog-title>
+  <!-- <i mat-dialog-close class="fa fa-times-circle-o fa-2x pull-right text-danger" (click)="closeDialog()"></i>Bank Details -->
+</h2>
+<div mat-dialog-content>
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="title d-flex justify-content-between align-items-center">
+          <div>&nbsp;</div>
+          <div>
+            <button class="submit-btn v2" (click)="addXterPrice()" [disabled]="prices.invalid">
+              Add Price
+            </button>
+          </div>
+        </div>
+        <mat-spinner [diameter]="60" *ngIf="container['loading']"></mat-spinner>
+        <form [formGroup]="priceForm" autocomplete="off" *ngIf="!container['loading']">
+          <div formArrayName="prices">
+            <div *ngFor="let g of prices?.controls; let i = index;">
+              <hr *ngIf="i>0">
+              <div class="row" [formGroupName]="i">
+                <div class="form-group col-md-5"
+                  [ngClass]="{ 'is-invalid': g.get('price').touched && g.get('price').invalid }">
+                  <label for="{{'bank'+i}}">Type <span class="text-danger">*</span></label>
+                  <!-- <ng-select [items]="container['prices']" [appendTo]="'body'" labelForId="{{'bank'+i}}" bindLabel="name"
+                    notFoundText="{{container['bankNameLoading'] || 'No items found'}}" placeholder="Select Bank"
+                    formControlName="price" (change)="onSelectBank(g, i)">
+                  </ng-select> -->
+                  <mat-form-field appearance="outline" class="col-md-12 w-100">
+                    <mat-select formControlName="characteristic">
+                      <mat-option value="" disabled>Select Type </mat-option>
+                      <mat-option *ngFor="let c of container['categories']" value="{{c.id}}">{{c?.name}} </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="error-wrapper" *ngIf="g.get('characteristic').touched && g.get('characteristic').invalid">
+                    <span class="error" *ngIf="g.get('characteristic')?.errors?.['required']">Type is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{'price'+i}}">
+                      <div class="price-label d-flex justify-content-between">
+                        <div>Price</div>
+                      </div>
+                    </label>
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="w-100 mat-input-invalid">
+                        <input autocomplete="off" matInput name="{{'price'+i}}" type="text" [id]="'price'+i" placeholder="" formControlName="price"
+                        [ngClass]="{ 'is-invalid': g.get('price').touched && g.get('price').invalid }" />
+                      </mat-form-field>
+                      <div class="error-wrapper" *ngIf="g.get('price').touched && g.get('price').invalid">
+                        <span class="error" *ngIf="g.get('price')?.errors?.['required']">Price is required</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-1">
+                  <i (click)="deletePrice(i)" class="ri-delete-bin-5-line"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onSubmit()" [disabled]="container['submitting']">
+    <span>Submit</span>
+    <i *ngIf="container['submitting']" class="ri-loader-4-fill"></i>
+  </button>
+</div>

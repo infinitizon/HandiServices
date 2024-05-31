@@ -1,0 +1,20 @@
+
+<ion-header class="ion-no-shadow ion-no-border ion-padding">
+  <ion-toolbar color="translucent">
+    <ion-buttons slot="start" (click)="onOpenModal('menu')">
+      <ion-avatar>
+        <ion-img role="button" [src]="'/assets/images/no-user.svg'" (click)="onOpenModal('menu')" style="border:1px solid #FFF"></ion-img>
+      </ion-avatar>
+      <!-- <ion-icon name="person-circle-outline" style="zoom:2.0;" color="primary" slot="icon-only"></ion-icon> -->
+    </ion-buttons>
+    <!-- <ion-avatar>
+      <ion-img role="button" [src]="'/assets/images/no-user.svg'" (click)="onOpenModal('menu')" style="border:1px solid #FFF"></ion-img>
+    </ion-avatar> -->
+    <ion-buttons slot="primary">
+      <ion-button color="tertiary">
+        <ion-icon name="notifications"  color="primary" slot="icon-only"></ion-icon>
+      </ion-button>
+        <ion-img role="button" [src]="'/assets/images/notification.svg'" (click)="onOpenModal('menu')"></ion-img>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

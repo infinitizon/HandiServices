@@ -1,0 +1,15 @@
+.orignal-email {
+  border-radius: 8px;
+  background: #f6effd;
+  padding: 15px 16px;
+
+  span {
+    color: var(--foundation-text-text-300, #767676);
+    /* Body/Base: Regular */
+    font-family: DM Sans;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+  }
+}

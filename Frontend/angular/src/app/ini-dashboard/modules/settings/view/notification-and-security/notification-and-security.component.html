@@ -1,0 +1,181 @@
+<div class="notify-wrapper w-100 w-sm-100 w-md-50 w-lg-50">
+  <div class="notify-content">
+    <div
+      class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+    >
+      <div class="col col-md-10">
+        <div class="d-flex align-items-center">
+          <div class="">
+            <div class="notify-icon">
+              <i class="ri-notification-4-line"></i>
+            </div>
+          </div>
+          <div class="d-flex px-5"> 
+            <div
+              class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="key"><span>Notifications</span></div>
+              <div class="value mb-0">
+                <span>Allow PrimaryOffer to send notifications to you</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col p-0 button-wrapper pointer">
+        <button
+          [ngClass]="{ enable: enableN === true }"
+          (click)="enableNotify()"
+          class="enableButton"
+        >
+          {{ !enableN ? "Enable" : "Disable" }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notify-content mt-5">
+    <div
+      class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row"
+    >
+      <div class="col col-md-10">
+        <div class="d-flex">
+          <div class="">
+            <div class="notify-icon">
+              <i class="ri-lock-2-line"></i>
+            </div>
+          </div>
+          <div class="d-flex px-5">
+            <div
+              class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="key"><span>Password</span></div>
+              <div class="value mb-0">
+                <span
+                  >Change your login password</span
+                >
+              </div>
+              <div class="change-password-wrapper" *ngIf="showPassword">
+                <div class="auth-body">
+                  <div class="auth-form-wrapper px-2">
+                    <form [formGroup]="resetPasswordForm" [autocomplete]="'off'">
+                      <div class="form-group mt-4">
+                        <label>Password</label>
+                        <div class="input mt-1">
+                          <mat-form-field appearance="outline" class="col-md-12 w-100">
+                            <input matInput id="password" name="password" type="password" class="" placeholder=""
+                              autocomplete="new-password" formControlName="password" (keyup)="controlChanged('password')"
+                              [type]="container['fieldTextType'] ? 'text' : 'password'">
+                            <button (click)=" clearPassword('password')"
+                              *ngIf="uiErrors.password || (resetPasswordForm.get('password')?.invalid && resetPasswordForm.get('confirmPassword')?.touched)"
+                              type="button" mat-icon-button matSuffix>
+                              <i class="ri-close-circle-fill"></i>
+                            </button>
+                            <button type="button" mat-icon-button matSuffix (click)="showEyes()"
+                              [attr.aria-label]="'Hide password'" [attr.aria-pressed]="container['fieldTextType']">
+                              <i class="{{container['fieldTextType'] ? 'ri-eye-fill' : 'ri-eye-close-fill'}}"></i>
+                            </button>
+                            <button
+                              *ngIf="!uiErrors.password && resetPasswordForm.get('password')?.touched && resetPasswordForm.get('password')?.valid"
+                              type="button" mat-icon-button matSuffix class="text-success">
+                              <i class="ri-checkbox-circle-fill"></i>
+                            </button>
+                          </mat-form-field>
+                          <div class="error-wrapper">
+                            <span *ngIf="uiErrors.password" class="error">{{uiErrors.password}}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group mt-4">
+                        <label>Confirm Password</label>
+                        <div class="input mt-1">
+                          <mat-form-field appearance="outline" class="col-md-12 w-100">
+                            <input matInput id="confirmPassword" name="confirmPassword" type="password" class="" placeholder=""
+                              autocomplete="new-password" formControlName="confirmPassword"
+                              (keyup)="controlChanged('confirmPassword')"
+                              [type]="container['fieldTextType'] ? 'text' : 'password'">
+                            <button (click)=" clearPassword('confirmPassword')"
+                              *ngIf="uiErrors.confirmPassword ||  (resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched)"
+                              type="button" mat-icon-button matSuffix>
+                              <i class="ri-close-circle-fill"></i>
+                            </button>
+                            <button type="button" mat-icon-button matSuffix (click)="showEyes()"
+                              [attr.aria-label]="'Hide password'" [attr.aria-pressed]="container['fieldTextType']">
+                              <i class="{{container['fieldTextType'] ? 'ri-eye-fill' : 'ri-eye-close-fill'}}"></i>
+                            </button>
+                            <button
+                              *ngIf="!uiErrors.confirmPassword && resetPasswordForm.get('confirmPassword')?.touched && resetPasswordForm.get('confirmPassword')?.valid"
+                              type="button" mat-icon-button matSuffix class="text-success">
+                              <i class="ri-checkbox-circle-fill"></i>
+                            </button>
+                          </mat-form-field>
+                          <div class="error-wrapper">
+                            <span *ngIf="uiErrors.confirmPassword" class="error ">{{uiErrors.confirmPassword}}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="button-wrapper mt-3">
+                        <button type="submit"  class="submit-btn col-md-12 w-100"
+                          [disabled]="resetPasswordForm.invalid">Save</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col p-0 button-wrapper pointer" (click)="expandPassword()">
+        <i *ngIf="!showPassword" class="ri-arrow-down-s-line"></i>
+        <i *ngIf="showPassword" class="ri-arrow-up-s-line"></i>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="notify-content mt-5">
+    <div
+      class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+    >
+      <div class="col col-md-10">
+        <div class="d-flex align-items-center">
+          <div class="">
+            <div class="notify-icon">
+              <i class="ri-smartphone-line"></i>
+            </div>
+          </div>
+          <div class="d-flex px-5">
+            <div
+              class="notify-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="key"><span>2-step verification</span></div>
+              <div class="value mb-0">
+                <span
+                  >Add an extra layer of security to your account by generating
+                  a one time security code upon login using the Google
+                  Authenticator app.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col p-0 button-wrapper pointer">
+        <button
+          [ngClass]="{ enable: enableT === true }"
+          (click)="enable2Factor()"
+          class="enableButton"
+        >
+          {{ !enableT ? "Enable" : "Disable" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

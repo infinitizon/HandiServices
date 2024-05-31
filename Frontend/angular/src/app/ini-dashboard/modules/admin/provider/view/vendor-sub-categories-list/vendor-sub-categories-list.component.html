@@ -1,0 +1,93 @@
+<div class="container-fluid">
+  <div class="transaction-wrapper" >
+    <div class="d-flex justify-content-between align-items-center" >
+    <div class="back-button-v2">
+      <a class="m-0 p-0"><span>Services</span></a>
+    </div>
+    <div class=""><button class="action-btn" (click)="viewCategory({})">Add Service</button></div>
+  </div>
+
+
+    <!-- <div class="transaction-filter">
+      <mat-form-field class="col-md-4" appearance="outline">
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" />
+          <input matEndDate placeholder="End date" />
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </div> -->
+
+    <div class="mt-4">
+      <div class="row d-flex flex-row column-gap-sm">
+        <div class="mat-elevation-z8 px-0">
+          <table  class="table mb-0 no-wrap v-middle">
+            <thead>
+                <tr>
+                  <th *ngFor="let column of categoriesDisplayedColumns">
+                    <div [ngSwitch]="column['name']">
+                      <div *ngSwitchDefault>{{ column["title"] }}</div>
+                      <div *ngSwitchCase="'amount'" class="text-right tableAmount">
+                        {{ column["title"] }}
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="container['category']?.length <= 0">
+                <td  [attr.colspan]="categoriesDisplayedColumns.length" class="text-center">{{'Loading new data!!!'}}</td>
+              </tr>
+              <ng-container *ngFor="let element of container['category']">
+                <tr  class="cursor-pointer pointer">
+                  <td *ngFor="let column of categoriesDisplayedColumns">
+                    <div [ngSwitch]="column['name']">
+                      <div *ngSwitchDefault>{{element[column['name']]}}</div>
+                      <div *ngSwitchCase="'expand'" (click)="$event.stopPropagation();">
+                        <ng-container>
+                          <i  *ngIf="!element.expanded" (click)="element.expanded=true;"  class="ri-arrow-down-s-line pointer"></i>
+                          <i *ngIf="element.expanded" (click)="element.expanded=false" class="ri-arrow-up-s-line pointer"></i>
+                        </ng-container>
+                      </div>
+                      <div *ngSwitchCase="'createdAt'">
+                        {{ element?.createdAt | date }}
+                      </div>
+                      <div *ngSwitchCase="'action'" (click)="$event.stopPropagation()">
+                        <!-- <a (click)="selectSubCategory(element)" class="header-menu txns-action pointer">Select my products</a> -->
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <ng-container *ngIf="element.expanded">
+                  <tr>
+                    <td [attr.colspan]="categoriesDisplayedColumns.length">
+                      <vendor-xter-price-list [category]="category" [subCategory]="element"></vendor-xter-price-list>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+          </table>
+          <div *ngIf="container['categoriesLoading']" class="mat-spinner-container">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" [length]="total_count"
+          [pageSize]="pageSize"></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- <div *ngIf="container['categoriesLoading']">
+  <app-loader></app-loader>
+</div> -->

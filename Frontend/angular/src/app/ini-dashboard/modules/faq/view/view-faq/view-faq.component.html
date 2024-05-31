@@ -1,0 +1,47 @@
+<div class="container mb-5">
+  <div class="help-wrapper faq-wrapper">
+    <div class="faq col-md-6">
+      <div class="title faq text-center">
+        <h2>Frequently asked questions</h2>
+      </div>
+
+      <div class="faq-accordion">
+        <mat-accordion>
+          <mat-expansion-panel class="mt-3 faq-body" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header class="faq">
+              <mat-panel-title>
+                <span class="mat-title"> Can I buy multiple times? </span>
+              </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <span class="faq-text">Yes, you can buy multiple times on a single vendor. Different vendors will require different orders
+            </span>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="mt-3 faq-body" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header class="faq">
+              <mat-panel-title>
+                <span class="mat-title"> What do i do when a transaction fails? </span>
+              </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <span class="faq-text">If a transaction fails and you have not been debited, you can simply retry the transaction.
+              If you have been debited however, please send an email to us at info@homeservices.ng.
+            </span>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="mt-3 faq-body" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header class="faq">
+              <mat-panel-title>
+                <span class="mat-title"> How long would it take for my settlement to arrive? </span>
+              </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <span class="faq-text">Settlements for transactions happen on T+1. This means if you pay today, we get the money tomorrow.
+              However, we notify the vendor of your transaction and give you value for the transaction immediately.
+            </span>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+
+    </div>
+  </div>
+</div>

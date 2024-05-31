@@ -1,0 +1,163 @@
+<div class="container-fluid">
+  <div class="outer">
+    <div class="middle">
+      <div class="row align-items-center">
+        <!-- <div class="col-md-6 p-0 m-0 auth-first-column">
+          <app-auth-left-bar></app-auth-left-bar>
+        </div> -->
+        <div class="col mx-2 mx-sm-2 mx-md-0 px-2 px-sm-2 px-md-0  d-flex justify-content-md-center">
+          <div class="user-category-wrapper col-md-8 col-12 col-sm-12">
+            <div class="user-category">
+              <!-- <div class="title col-md-11">
+                <h4 class="mb-0 signup">Create your Business account</h4>
+                <p class="mb-0">
+                  Enter your business details to start providing service
+                </p>
+              </div> -->
+
+              <div class="user-category-body col-md-12">
+                <form [formGroup]="signupForm" [autocomplete]="'off'">
+                  <div class="form-group mt-4">
+                    <label>Business Name</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input autocomplete="off" matInput name="name" type="text" class="" placeholder="Enter your business name"
+                          formControlName="name" (keyup)="controlChanged('name')">
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.name" class="error ">{{uiErrors.name}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="form-group mt-4">
+                    <label>Email Address</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input autocomplete="off" matInput name="email" type="email" class="" placeholder="Enter your email address"
+                          formControlName="email" (keyup)="controlChanged('email')">
+                          <button
+                          type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 16px;" class="ri-mail-line"></i>
+                        </button>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.email" class="error ">{{uiErrors.email}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="form-group mt-4">
+                    <label>Business Category</label>
+                    <div class="input mt-1 ">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <mat-select formControlName="category">
+                          <mat-option value="" disabled>Select your business category </mat-option>
+                          <mat-option *ngFor="let c of categories" value="{{c.id}}">{{c?.title}} </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span *ngIf="uiErrors.category" class="error ">{{uiErrors.category}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label>
+                      <div class="gateway-label d-flex justify-content-between">
+                        <div>Country</div>
+                      </div>
+                    </label>
+                    <div class="input mt-1">
+                      <mat-form-field
+                      appearance="outline"
+                      class="col-md-12 w-100 input"
+
+                    >
+                      <mat-select formControlName="country" >
+                        <mat-option value="" disabled>Select your country </mat-option>
+                        <mat-option *ngFor="let c of appContext?.countries" [value]="c?.code"> {{c.country}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                      <div class="error-wrapper">
+                        <span class="error" *ngIf="uiErrors.country != ''">{{uiErrors.country }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label
+                      ><div class="gateway-label d-flex justify-content-between">
+                        <div>City</div>
+                      </div></label
+                    >
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input
+                          autocomplete="off"
+                          matInput
+                          name="city"
+                          type="text"
+                          class=""
+                          placeholder="Enter your city"
+                          formControlName="city"
+                        />
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span class="error" *ngIf="uiErrors.city != ''">{{uiErrors.city }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <label
+                      ><div class="gateway-label d-flex justify-content-between">
+                        <div>Address</div>
+                      </div></label
+                    >
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100">
+                        <input
+                          autocomplete="off"
+                          matInput
+                          name="address1"
+                          type="text"
+                          class=""
+                          placeholder="Enter your address"
+                          formControlName="address1"
+                        />
+                      </mat-form-field>
+                      <div class="error-wrapper">
+                        <span class="error" *ngIf="uiErrors.address1 != ''">{{uiErrors.address1 }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
+                  <div class="button-wrapper mt-4">
+                    <button (click)="onSubmit()"  type="submit" class="action-btn col-md-12 w-100" [disabled]="submitting">
+                      <div class="d-flex justify-content-center align-items-center">
+                      <span>Continue</span> &nbsp;<i *ngIf="submitting" style="font-size: 14px;" class="ri-arrow-right-line"></i>
+                    </div>
+                    </button>
+                  </div>
+
+                  <!-- <div class="auth-footer-wrapper mt-2">
+                    <div class="auth-footer text-center">
+                      <span>Already have an account? <a routerLink="/auth/login">Log in</a></span>
+                    </div>
+                  </div> -->
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

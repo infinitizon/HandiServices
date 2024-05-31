@@ -1,0 +1,422 @@
+<div class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4 mb-5">
+  <div class="col-md-12 mt-5">
+    <in-backbutton></in-backbutton>
+  </div>
+
+  <div class="outer mt-5">
+    <div class="middle">
+      <div class="row column-gap-lg align-items-center">
+        <div class="col">
+          <div class="gateway-content-wrapper">
+            <div class="gateway-content">
+              <p class="name">You are set Jonathan,</p>
+              <p class="desc" *ngIf="gatewayDetails.payment_method === 'bank'">
+                Make payment to provided account
+              </p>
+              <p class="desc" *ngIf="gatewayDetails.payment_method === 'card'">
+                Make payment with card
+              </p>
+              <p
+                class="desc"
+                *ngIf="gatewayDetails.payment_method === 'online'"
+              >
+                Make payment to purchase this offer
+              </p>
+            </div>
+            <div class="gateway-info-wrapper">
+              <div class="d-flex">
+                <div class="icon">
+                  <i class="ri-error-warning-fill"></i>
+                </div>
+                <div class="text px-2">
+                  <span *ngIf="gatewayDetails.payment_method === 'bank'">
+                    Transfers can take up to
+                    <span class="business">1 - 4 business days</span> for to be
+                    received and verified. Questions about your transfer? Please
+                    contact your bank.
+                  </span>
+                  <span *ngIf="gatewayDetails.payment_method === 'card'">
+                    Questions about your transfer? Please contact your bank.
+                  </span>
+                  <span *ngIf="gatewayDetails.payment_method === 'online'">
+                    Verification and settlement of purchase can take up to  <span class="business">1 - 4
+                    business days.</span> Questions about your transfer? Please contact
+                    your bank.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col m-0 p-0">
+          <div class="transfer-detail-wrapper">
+            <div class="transfer-detail-header title">
+              <h2
+                class="text-center"
+                *ngIf="gatewayDetails.payment_method === 'bank'"
+              >
+                Transfer details
+              </h2>
+              <h2
+              class="text-center"
+              *ngIf="gatewayDetails.payment_method === 'online'"
+            >
+             Payment summary
+            </h2>
+              <h2
+                class="text-left"
+                *ngIf="gatewayDetails.payment_method === 'card'"
+              >
+                Pay with card
+              </h2>
+            </div>
+            <div class="transfer-detail-content">
+              <div
+                class="form-group mt-3"
+                *ngIf="gatewayDetails.payment_method === 'bank'"
+              >
+                <label>Select bank</label>
+                <div class="input mt-1">
+                  <mat-form-field appearance="outline" class="col-md-12 w-100">
+                    <mat-select>
+                      <mat-option value="html">
+                        <img
+                          src="/assets/logo/paystack.svg"
+                          alt="Paystack Logo"
+                        />
+                        &nbsp; Guaranty Trust
+                      </mat-option>
+                      <!-- <mat-option *ngIf="data.currency === 'NGN'" value="css"><img src="/assets/logo/Flutterwave.svg" alt="Flutterwave Logo" /> &nbsp; Flutterwave</mat-option>
+                      <mat-option *ngIf="data.currency === 'NGN'" value="js"><img src="/assets/logo/Interswitch.svg" alt="Interswitch Logo" /> &nbsp; Interswitch</mat-option>
+
+                      <mat-option *ngIf="data.currency === 'USD'" value="css"><img src="/assets/img/paywithcard.svg" alt="Pay with card" /> &nbsp; Pay with card</mat-option>
+                      <mat-option *ngIf="data.currency === 'USD'" value="js"><img src="/assets/img/paywithbank.svg" alt="Pay with bank" /> &nbsp; Pay with bank</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                  <!-- <div class="error-wrapper">
+                    <span *ngIf="uiErrors.payment" class="error ">{{uiErrors.payment}}</span>
+                  </div> -->
+                </div>
+              </div>
+
+              <div
+                class="form-group mt-3"
+                *ngIf="gatewayDetails.payment_method === 'card'"
+              >
+                <label>Pay via</label>
+                <div class="input mt-1">
+                  <mat-form-field appearance="outline" class="col-md-12 w-100">
+                    <mat-select>
+                      <mat-option value="html">
+                        <img
+                          src="/assets/logo/paystack.svg"
+                          alt="Paystack Logo"
+                        />
+                        &nbsp; Paystack
+                      </mat-option>
+                      <!-- <mat-option *ngIf="data.currency === 'NGN'" value="css"><img src="/assets/logo/Flutterwave.svg" alt="Flutterwave Logo" /> &nbsp; Flutterwave</mat-option>
+                      <mat-option *ngIf="data.currency === 'NGN'" value="js"><img src="/assets/logo/Interswitch.svg" alt="Interswitch Logo" /> &nbsp; Interswitch</mat-option>
+
+                      <mat-option *ngIf="data.currency === 'USD'" value="css"><img src="/assets/img/paywithcard.svg" alt="Pay with card" /> &nbsp; Pay with card</mat-option>
+                      <mat-option *ngIf="data.currency === 'USD'" value="js"><img src="/assets/img/paywithbank.svg" alt="Pay with bank" /> &nbsp; Pay with bank</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                  <!-- <div class="error-wrapper">
+                    <span *ngIf="uiErrors.payment" class="error ">{{uiErrors.payment}}</span>
+                  </div> -->
+                </div>
+              </div>
+
+              <div
+                class="cards-wrapper"
+                *ngIf="gatewayDetails.payment_method === 'card'"
+              >
+                <div class="cards-header">
+                  <span>Select card</span>
+                </div>
+
+                <div class="d-flex align-items-start mt-2">
+                  <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                    <div>
+                      <div
+                        class="d-flex flex-column flex-md-row flex-lg-row align-items-center"
+                      >
+                        <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                          <div class="d-flex">
+                            <div
+                              class="d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                            >
+                              <div class="card img">
+                                <img
+                                  src="/assets/img/card-2.svg"
+                                  alt="Paystack Logo"
+                                  width="92px"
+                                  height="61px"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                          <div class="d-flex">
+                            <div
+                              class="d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                            >
+                              <div class="card img">
+                                <img
+                                  src="/assets/img/card-1.svg"
+                                  alt="Paystack Logo"
+                                  width="92px"
+                                  height="61px"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                          <div class="d-flex">
+                            <div
+                              class="d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                            >
+                              <div class="card img">
+                                <img
+                                  src="/assets/img/card-3.svg"
+                                  alt="Paystack Logo"
+                                  width="92px"
+                                  height="61px"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                          <div class="d-flex">
+                            <div
+                              class="d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                            >
+                              <div class="card add">
+                                <div class="d-flex justify-content-center">
+                                  <i class="ri-add-circle-line"></i>
+                                </div>
+                                <div class="text-center">
+                                  <span>Add card</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+              class="d-flex align-items-start mt-4"
+              *ngIf="gatewayDetails.payment_method === 'online'"
+            >
+              <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                <div>
+                  <div
+                    class="d-flex flex-column flex-md-row flex-lg-row align-items-center"
+                  >
+                    <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                      <div class="d-flex">
+                        <div
+                          class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                        >
+                          <div class="key"><span>Offer</span></div>
+                          <div class="value mb-0">
+                            <span
+                              >Mtn Nigeria (Series A)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                      <div class="d-flex">
+                        <div
+                          class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                        >
+                          <div class="key">
+                            <span>Transaction date</span>
+                          </div>
+                          <div class="value mb-0">
+                            <span
+                              >Monday May 10, 2023</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <div class="d-flex align-items-start mt-4">
+                <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                  <div>
+                    <div
+                      class="d-flex flex-column flex-md-row flex-lg-row align-items-center"
+                    >
+                      <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                        <div class="d-flex">
+                          <div
+                            class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                          >
+                            <div class="key"><span>Amount (USD)</span></div>
+                            <div class="value mb-0">
+                              <span>200,000</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                        <div class="d-flex">
+                          <div
+                            class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                          >
+                            <div class="key"><span>Units</span></div>
+                            <div class="value mb-0">
+                              <span>200</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+              class="d-flex align-items-start mt-4"
+              *ngIf="gatewayDetails.payment_method === 'online'"
+            >
+              <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                <div>
+                  <div
+                    class="d-flex flex-column flex-md-row flex-lg-row align-items-center"
+                  >
+                    <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                      <div class="d-flex">
+                        <div
+                          class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                        >
+                          <div class="key"><span>Payment method</span></div>
+                          <div class="value mb-0">
+                            <span
+                              >Paystack</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                      <div class="d-flex">
+                        <div
+                          class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                        >
+                          <div class="key">
+                            <span>Reference number</span>
+                          </div>
+                          <div class="value mb-0">
+                            <span
+                              >Txn-203847869877</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <div
+                class="d-flex align-items-start mt-4"
+                *ngIf="gatewayDetails.payment_method === 'bank'"
+              >
+                <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                  <div>
+                    <div
+                      class="d-flex flex-column flex-md-row flex-lg-row align-items-center"
+                    >
+                      <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                        <div class="d-flex">
+                          <div
+                            class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                          >
+                            <div class="key"><span>Account number</span></div>
+                            <div class="value mb-0">
+                              <span
+                                >132458900 &nbsp; &nbsp;
+                                <span><i class="ri-file-copy-line"></i></span
+                              ></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col mb-4 mb-sm-4 mb-md-0 mb-lg-0">
+                        <div class="d-flex">
+                          <div
+                            class="transfer-detail-info d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+                          >
+                            <div class="key">
+                              <span>Wire routing number</span>
+                            </div>
+                            <div class="value mb-0">
+                              <span
+                                >1000029378478474 &nbsp;&nbsp;
+                                <span><i class="ri-file-copy-line"></i></span
+                              ></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="upload-proof-wrapper"
+                *ngIf="gatewayDetails.payment_method === 'bank'"
+              >
+                <div class="text text-center">
+                  <span>Upload your proof of payment here</span>
+                </div>
+
+                <div class="button d-flex justify-content-center">
+                  <button>Browse files</button>
+                </div>
+              </div>
+              <div
+                class="button-wrapper"
+                [ngClass]="{ v3: gatewayDetails.payment_method === 'online' }"
+                *ngIf="gatewayDetails.payment_method === 'card' || gatewayDetails.payment_method === 'online'"
+              >
+                <button class="submit-btn">Make payment</button>
+              </div>
+
+              <div
+                class="button-wrapper"
+                *ngIf="gatewayDetails.payment_method === 'bank'"
+              >
+                <button class="submit-btn">I have made this transfer</button>
+              </div>
+              <div
+                class="button-wrapper v2"
+                *ngIf="gatewayDetails.payment_method === 'bank' || gatewayDetails.payment_method === 'online'"
+              >
+                <button class="action-btn">
+                  Save this transaction for later
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

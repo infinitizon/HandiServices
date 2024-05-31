@@ -1,0 +1,39 @@
+<div  class="gateway-wrapper mt-3">
+  <div class="title gateway-header">
+    <div class="chat card border">
+      <div class="card-header d-flex justify-content-between">
+        <div class="d-flex justify-content-start">
+          <div class="img_cont mr-5 ">
+            <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img" width="35">
+            <span class="online_icon"></span>
+          </div>
+          <div class="ml-4">
+            <div class="align-middle">
+              <h3>Chat with {{data?.Tenant?.name ?? 'Vendor'}}</h3>
+            </div>
+            <div class="video_cam">
+              <span><i class="fas fa-video"></i></span>
+              <span><i class="fas fa-phone"></i></span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span [matMenuTriggerFor]="chatOptions" id="action_menu_btn"><mat-icon>more_vert</mat-icon></span>
+          <mat-menu #chatOptions="matMenu" class="profile-menu-dropdown">
+            <div class="action_menu">
+              <ul>
+                <li><i class="fas fa-user-circle"></i> View profile</li>
+                <li><i class="fas fa-users"></i> Add to close friends</li>
+                <li><i class="fas fa-plus"></i> Add to group</li>
+                <li><i class="fas fa-ban"></i> Block</li>
+              </ul>
+            </div>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+    <div class="px-0">
+      <app-chat-pane [chats]="chats" [user]="container['user']" [sessionId]="container['session']?.sessionId" (chatted)="chatted($event)"></app-chat-pane>
+    </div>
+  </div>
+</div>

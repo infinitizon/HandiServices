@@ -1,0 +1,109 @@
+.back-button-v2 {
+  a {
+    text-decoration: none;
+    width: 150px;
+    cursor: pointer;
+
+    i {
+      color: #191a1b;
+      font-size: 24px;
+    }
+
+    span {
+      color: var(--foundation-primary-primary-500, #191a1b);
+      font-family: DM Sans;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 130%;
+    }
+  }
+}
+
+.airtime-wrapper {
+  margin-top: 35px;
+  margin-left: 33px;
+
+  .airtime-subtitle {
+    margin-top: 58px;
+
+    h6 {
+      color: #222;
+      font-size: 32px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 36px;
+    }
+
+    p {
+      color: #222;
+      font-family: DM Sans;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 24px;
+    }
+  }
+}
+.airtime-content {
+  margin-top: 55.83px;
+
+.airtime-card {
+  position: relative;
+  border-radius: 12.724px;
+  background: rgba(240, 239, 249, 0.70);
+  width: 262.965px;
+  // padding: 21.207px;
+  height: 96.41px;
+
+  .vertical-center {
+    // margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 100%;
+
+    .airtime-card-title {
+      text-align: center;
+      a {
+      color: var(--foundation-text-text-500, #333);
+      /* Body/Base: Medium */
+      font-family: DM Sans;
+      font-size: 26px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 160%;
+      text-decoration: none;
+
+      }
+    }
+  }
+}
+}
+
+label {
+  color: var(--foundation-text-text-300, #767676);
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 160%;
+
+}
+
+
+.withdraw-btn-wrapper {
+  margin-top: 30px;
+  button {
+    border-radius: 11.992px;
+    background: var(--foundation-purple-purple-500, #6200ee);
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+    font-family: DM Sans;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    border: none;
+  }
+}

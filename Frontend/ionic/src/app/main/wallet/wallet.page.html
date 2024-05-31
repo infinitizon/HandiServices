@@ -1,0 +1,76 @@
+<ion-content [fullscreen]="true">
+  <ion-grid class="ion-no-padding">
+    <ion-row class="top">
+      <ion-col class="ion-no-padding">
+        <app-header></app-header>
+        <ion-card>
+          <ion-card-content class="ion-no-padding">
+            <ion-label class="ion-margin-end">
+              <small class="ion-margin">Home Service Wallet <ion-icon name="eye-outline"></ion-icon></small>
+              <h1 class="ion-margin">{{ 5000 | currency:'NGN':'symbol-narrow' }}</h1>
+            </ion-label>
+            <ion-label class="ion-margin-vertical"><small class="ion-margin-vertical">View transaction history <ion-icon name="analytics-outline"></ion-icon></small></ion-label>
+          </ion-card-content>
+          <hr class="ion-margin-vertical">
+          <ion-button expand="block" color="none">
+            <ion-label>Fund Wallet</ion-label>
+          </ion-button>
+        </ion-card>
+        <ion-grid id="actions" class="ion-padding">
+          <ion-row>
+            <ion-col>
+                <div class="button">
+                  <ion-avatar color="light">
+                    <ion-img [src]="'/assets/wallet/empty-wallet-change.svg'"></ion-img>
+                  </ion-avatar>
+                  <ion-label color="light"><small>Redeem</small></ion-label>
+                </div>
+            </ion-col>
+            <ion-col>
+              <div class="button">
+                <ion-avatar color="light">
+                  <ion-img [src]="'/assets/wallet/request.svg'"></ion-img>
+                </ion-avatar>
+                <ion-label color="light"><small>Transfer</small></ion-label>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="button">
+                <ion-avatar color="light">
+                  <ion-img [src]="'/assets/wallet/request.svg'"></ion-img>
+                </ion-avatar>
+                <ion-label color="light"><small>Withdraw</small></ion-label>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="button">
+                <ion-avatar color="light">
+                  <ion-img [src]="'/assets/wallet/scan.svg'"></ion-img>
+                </ion-avatar>
+                <ion-label color="light"><small>Scan code</small></ion-label>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item class="ion-no-padding" detail>
+            <ion-label class="ion-padding">Payment Methods</ion-label>
+          </ion-item>
+          <ion-item class="ion-no-padding" detail>
+            <ion-label class="ion-padding">Bills & Utilities</ion-label>
+          </ion-item>
+          <ion-item class="ion-no-padding" detail>
+            <ion-label class="ion-padding">Bank Accounts</ion-label>
+          </ion-item>
+          <ion-item class="ion-no-padding" detail>
+            <ion-label class="ion-padding">More Settings</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

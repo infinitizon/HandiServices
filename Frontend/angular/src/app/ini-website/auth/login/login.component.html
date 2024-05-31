@@ -1,0 +1,186 @@
+<div class="container-fluid">
+  <div class="outer">
+    <div class="middle">
+      <div class="row align-items-center">
+        <div class="col-md-6 p-0 m-0 auth-first-column">
+              <app-auth-left-bar></app-auth-left-bar>
+            </div>
+        <div class="col mx-2 mx-sm-2 mx-md-0 px-2 px-sm-2 px-md-0 d-flex justify-content-md-center">
+          <div class="user-category-wrapper col-md-8 col-12 col-sm-12">
+            <div class="back-button-v2 back-top">
+              <in-backbutton></in-backbutton>
+            </div>
+            <div class="user-category">
+              <div class="title col-md-11">
+                <h4 class="mb-0 signup">Welcome back!</h4>
+                <p class="mb-0">
+                  Sign in to access your Home Service account
+                </p>
+              </div>
+
+              <div class="user-category-body col-md-12">
+                <form [formGroup]="loginForm" [autocomplete]="'off'">
+                  <div class="form-group mt-4">
+                    <label>Email</label>
+                    <div class="input mt-1">
+                      <mat-form-field appearance="outline" class="col-md-12 w-100 input">
+                        <input autocomplete="off"
+                          matInput
+                          name="email"
+                          type="email"
+                          class=""
+                          placeholder="Enter your email address" formControlName="email" />
+                        <button type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 16px" class="ri-mail-line"></i>
+                        </button>
+                      </mat-form-field>
+                      <div
+                        class="error-wrapper"
+                        *ngIf="
+                          loginForm.get('email')?.invalid &&
+                          (loginForm.get('email')?.dirty ||
+                            loginForm.get('email')?.touched)
+                        "
+                      >
+                        <label
+                          *ngIf="loginForm.get('email')?.errors?.['required']"
+                          class="error"
+                          >Email is required.</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('email')?.errors?.['pattern']"
+                          class="error"
+                          >Enter valid email.</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-2">
+                    <label>Password</label>
+                    <div class="mt-1">
+                      <mat-form-field
+                        appearance="outline"
+                        class="col-md-12 w-100 input"
+                      >
+                        <input
+                          matInput
+                          id="password"
+                          name="password"
+                          type="password"
+                          class=""
+                          placeholder="Enter a secure password"
+                          autocomplete="new-password"
+                          formControlName="password"
+                          [type]="
+                            container['fieldTextType'] ? 'text' : 'password'
+                          "
+                        />
+                        <button type="button" mat-icon-button matPrefix>
+                          <i style="font-size: 18px" class="ri-lock-line"></i>
+                        </button>
+                        <button
+                          type="button"
+                          mat-icon-button
+                          matSuffix
+                          (click)="showEyes()"
+                          [attr.aria-label]="'Hide password'"
+                          [attr.aria-pressed]="container['fieldTextType']"
+                        >
+                          <i
+                            style="font-size: 18px"
+                            class="{{
+                              container['fieldTextType']
+                                ? 'ri-eye-line'
+                                : 'ri-eye-off-line'
+                            }}"
+                          ></i>
+                        </button>
+                      </mat-form-field>
+                      <div
+                        class="error-wrapper"
+                        *ngIf="
+                          loginForm.get('password')?.invalid &&
+                          (loginForm.get('password')?.dirty ||
+                            loginForm.get('password')?.touched)
+                        "
+                      >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['required']"
+                          class="error"
+                          >Password is required.</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['minlength']"
+                          class="error"
+                          >Password must be at least 6 characters long</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['oneDigit']"
+                          class="error"
+                          >Password must contain at least one digit</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['oneLowerCase']"
+                          class="error"
+                          >Password must contain at least one lowercase
+                          character</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['oneUpperCase']"
+                          class="error"
+                          >Password must contain at least one uppercase
+                          character</label
+                        >
+                        <label
+                          *ngIf="loginForm.get('password')?.errors?.['specialChar']"
+                          class="error"
+                          >Password must contain at least one special
+                          character</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="auth-footer-wrapper fg-password">
+                    <div class="auth-footer d-flex justify-content-between">
+                      <span>
+                        <mat-checkbox formControlName="rememberMe" class="m-0 p-0">
+                          Remember Me!
+                        </mat-checkbox>
+                      </span>
+                      <span>
+                        <a class="pointer" routerLink="/auth/forgot-password">Forgot password?</a>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="button-wrapper mt-4">
+                    <button
+                      type="submit"
+                      class="action-btn col-md-12 w-100"
+                      [disabled]="loginForm.invalid || submitting"
+                      (click)="onSubmit()"
+                    >
+                    <div class="d-flex justify-content-center align-items-center">
+                      <span class="">Log in </span> <app-loader2 *ngIf="submitting"></app-loader2>
+                    </div>
+                    </button>
+                  </div>
+                  <div class="auth-footer-wrapper mt-3">
+                    <div class="auth-footer text-center">
+                      <span
+                        >Don't have an account yet?
+                        <a routerLink="/auth/signup">Sign up</a></span
+                      >
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

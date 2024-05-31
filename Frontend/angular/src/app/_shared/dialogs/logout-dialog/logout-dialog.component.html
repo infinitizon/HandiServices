@@ -1,0 +1,10 @@
+<div class="otp-modal">
+  <h1 mat-dialog-title>Log out</h1>
+  <mat-dialog-content>
+    Are you sure you want to log out?
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-stroked-button (click)="logout()" class="log-out" [disabled]="container['submitting']">Yes, Log out</button>
+    <button mat-button mat-dialog-close class="log-out-no">No</button>
+  </mat-dialog-actions>
+</div>

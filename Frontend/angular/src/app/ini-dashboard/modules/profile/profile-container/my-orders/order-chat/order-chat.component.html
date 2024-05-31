@@ -1,0 +1,22 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="gateway-wrapper mt-3">
+  <div class="profile-nav-wrapper">
+    <nav class="link-tab d-flex justify-content-between">
+      <a class="mx-4" (click)="tab='order'">
+        <h3 class="px-2 p"><i class="ri-user-3-line"></i> Order Detail</h3>
+      </a>
+      <a class="mx-4" (click)="tab='chat'">
+        <h3 class="px-2 m"><mat-icon> forum</mat-icon>  Chat with {{data?.Tenant?.name ?? 'Vendor'}}</h3>
+      </a>
+    </nav>
+  </div>
+
+  <div class="profile-content-wrapper">
+    <app-order-detail *ngIf="tab === 'order'"></app-order-detail>
+    <app-chat *ngIf="tab === 'chat'"></app-chat>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="container-fluid">
+  <div class="profile-nav-wrapper">
+    <nav class="link-tab">
+      <a class="mx-4"
+      (click)="tab='info'"
+        ><span class="px-2 p"><i class="ri-user-3-line"></i></span> Personal
+        Info
+      </a>
+      <a class="mx-4"
+      (click)="tab='orders'"
+        ><span class="px-2 m"><i class="ri-file-text-line"></i></span> My Orders
+      </a>
+      <a class="mx-4"
+      (click)="tab='security'"
+        ><span class="px-2 s"><i class="ri-shield-keyhole-line"></i></span>
+        Security</a
+      >
+      <a class="mx-4"
+      (click)="tab='refer'"
+        ><span class="px-2 r"><i class="ri-gift-line"></i></span> Refer &
+        Earn</a
+      >
+      <a class="mx-4"
+      (click)="tab='address'"
+        ><span class="px-2 a"><i class="ri-book-open-line"></i></span>
+        Address Book</a
+      >
+    </nav>
+  </div>
+
+  <div class="profile-content-wrapper">
+    <app-personal-info *ngIf="tab === 'info'"></app-personal-info>
+    <app-my-orders *ngIf="tab === 'orders'"></app-my-orders>
+    <app-security *ngIf="tab === 'security'"></app-security>
+    <app-referrals *ngIf="tab === 'refer'"></app-referrals>
+    <app-addresses *ngIf="tab === 'address'"></app-addresses>
+  </div>
+</div>

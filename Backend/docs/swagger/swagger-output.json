@@ -1,0 +1,804 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Primay Offer APIs",
+    "description": "Collection of API endpoints for Primary Offer E-IPO application",
+    "version": "1.0.0"
+  },
+  "host": "localhost:2110",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Primay Offer APIs",
+      "description": "Collection of API endpoints for Primay Offer E-IPO application"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {},
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/tests/db-backup": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/tests/create-role": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/tests/authenticate-authorize": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/tests/many-many": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/assets/": {
+      "post": {
+        "description": "Create a new asset.",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Asset",
+            "in": "body",
+            "description": "Create a new asset with provided details.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/createAsset"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The created asset.",
+            "schema": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "get": {
+        "description": "Get all assets with optional filters.",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "openingDate",
+            "in": "query",
+            "description": "Filter by openingDate (format: YYYY-MM-DD).",
+            "required": false,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "name": "closingDate",
+            "in": "query",
+            "description": "Filter by closingDate (format: YYYY-MM-DD).",
+            "required": false,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by asset name (partial match).",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "tenant_id",
+            "in": "query",
+            "description": "Filter by tenant ID.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "Filter by currency code.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Filter by asset description (partial match).",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "schema",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of assets.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/api/v1/assets/{asset_id}": {
+      "get": {
+        "description": "Get a specific asset by ID.",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the asset to retrieve."
+          },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested asset.",
+            "schema": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "404": {
+            "description": "Asset not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "put": {
+        "description": "Update a specific asset by ID.",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the asset to update."
+          },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Asset",
+            "in": "body",
+            "description": "Update the details of a specific asset.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/createAsset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated asset.",
+            "schema": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "404": {
+            "description": "Asset not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a specific asset by ID.",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the asset to delete."
+          },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Asset deleted successfully."
+          },
+          "404": {
+            "description": "Asset not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/api/v1/assets/user": {
+      "get": {
+        "description": "Get assets for a user.",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with assets.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data."
+          },
+          "401": {
+            "description": "Unauthorized, user not authenticated."
+          },
+          "404": {
+            "description": "User not found or no assets found for the user."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/api/v1/auth/user/login": {
+      "post": {
+        "description": "For user login. Any user can login\r  *",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Login a user to app",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "aa@bb.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "ebwK6AkFhktABmCwrDFRGg=="
+                }
+              },
+              "required": [
+                "email",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/user/login-choose-tenant": {
+      "post": {
+        "description": "To complete login for users with multiple tenants. Only one tenant is allowed",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Login a user to app",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "3ccc8113-67be-47e8-a083-21b61800787b"
+                },
+                "tenantId": {
+                  "type": "string",
+                  "example": "248d7d93-c400-407a-ae6d-0eeae0727bd4"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "ebwK6AkFhktABmCwrDFRGg=="
+                }
+              },
+              "required": [
+                "userId",
+                "tenantId",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/auth/user/signup": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                },
+                "gender": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/addUser": {
+      "post": {
+        "description": "For user creation. Only admin can create a user",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Create a user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "aa@bb.com"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "dob": {
+                  "type": "string",
+                  "example": "1990-01-01"
+                },
+                "bvn": {
+                  "type": "string",
+                  "example": "12345678901"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "No 1, Lagos Street, Lagos"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "male"
+                },
+                "mothersMaidenName": {
+                  "type": "string",
+                  "example": "Jane Doe"
+                },
+                "placeOfBirth": {
+                  "type": "string",
+                  "example": "Lagos"
+                },
+                "phone": {
+                  "type": "string",
+                  "example": "08012345678"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "1"
+                }
+              },
+              "required": [
+                "email",
+                "firstName",
+                "lastName",
+                "dob",
+                "bvn",
+                "address",
+                "gender",
+                "mothersMaidenName",
+                "placeOfBirth",
+                "phone",
+                "role"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/updateUser/{id}": {
+      "patch": {
+        "description": "For user update. Only admin can update a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Update a user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "aa@bb2.com"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "John2"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe2"
+                },
+                "dob": {
+                  "type": "string",
+                  "example": "1990-01-01"
+                },
+                "bvn": {
+                  "type": "string",
+                  "example": "12345678902"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "No 1, Lagos Street, Lagos"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "male"
+                },
+                "mothersMaidenName": {
+                  "type": "string",
+                  "example": "Jane Doe2"
+                },
+                "placeOfBirth": {
+                  "type": "string",
+                  "example": "Lagos2"
+                },
+                "phone": {
+                  "type": "string",
+                  "example": "08012345679"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "1"
+                }
+              },
+              "required": [
+                "email",
+                "firstName",
+                "lastName",
+                "dob",
+                "bvn",
+                "address",
+                "gender",
+                "mothersMaidenName",
+                "placeOfBirth",
+                "phone",
+                "role"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/deleteUser/{id}": {
+      "delete": {
+        "description": "For user deletion. Only admin can delete a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Delete a user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "1"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/verifications/bvn": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "sharePrice": {
+            "type": "number"
+          },
+          "minPurchaseUnits": {
+            "type": "integer"
+          },
+          "subsequentMultipleUnits": {
+            "type": "integer"
+          },
+          "openingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "closingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "minPurchaseUnits",
+          "subsequentMultipleUnits",
+          "currency",
+          "sharePrice",
+          "openingDate",
+          "closingDate"
+        ]
+      },
+      "createAsset": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "sharePrice": {
+            "type": "number"
+          },
+          "minPurchaseUnits": {
+            "type": "integer"
+          },
+          "subsequentMultipleUnits": {
+            "type": "integer"
+          },
+          "openingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "closingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid",
+            "require": false
+          }
+        }
+      }
+    }
+  }
+}

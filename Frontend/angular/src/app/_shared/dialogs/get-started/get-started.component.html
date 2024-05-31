@@ -1,0 +1,82 @@
+<div mat-dialog-title class="d-flex justify-content-end">
+  <button class="close-button" [mat-dialog-close]="false">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div mat-dialog-content class="get-started-wrapper">
+  <div class="get-started-header">
+    <h2 class="mb-0 text-center">Welcome {{ data?.name }},</h2>
+    <h2 class="mb-0 text-center">Let's get you started.</h2>
+  </div>
+
+  <div class="get-started-content">
+    <div
+      class="d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+    >
+      <div class="col">
+        <div class="d-flex align-items-center">
+          <div class="">
+            <div class="get-started-icon">
+              <img src="/assets/img/naira.svg" alt="Naira Logo" />
+            </div>
+          </div>
+          <div class="d-flex px-3">
+            <div
+              class="get-started d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="key"><span>Transactions on PrimaryOffer</span></div>
+              <div class="value mb-0">
+                <span
+                  >PrimaryOffer facilitates the buying of financial instruments
+                  only, we do not handle selling on this platform. Contact our
+                  support team for assistance.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="space d-flex flex-column flex-sm-column flex-md-row flex-lg-row align-items-center"
+    >
+      <div class="col">
+        <div class="d-flex align-items-center">
+          <div class="">
+            <div class="get-started-icon">
+              <img src="/assets/img/cscs.svg" alt="CSCS Logo" />
+            </div>
+          </div>
+          <div class="d-flex px-3">
+            <div
+              class="get-started d-flex align-items-center align-items-sm-center align-items-md-start align-items-lg-start flex-column ml-4"
+            >
+              <div class="key"><span>CSCS and CHN numbers</span></div>
+              <div class="value mb-0">
+                <span
+                  >CSCS Number and CHN are unique identifiers issued to
+                  investors to trade securities.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+    class="btn-wrapper"
+  >
+    <button class="action-btn" [mat-dialog-close]="true" routerLink="/app/settings/add-cscs">
+    Add CSCS number
+    </button>
+  </div>
+    <div
+    class="btn-wrapper b2"
+  >
+    <button class="submit-btn" [mat-dialog-close]="true" routerLink="/app/settings/terms">Request CSCS</button>
+  </div>
+
+  </div>
+</div>

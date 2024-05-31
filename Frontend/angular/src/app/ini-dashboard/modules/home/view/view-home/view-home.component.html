@@ -1,0 +1,153 @@
+<div class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4 pb-5">
+  <div class="discount-wrapper">
+    <div class="d-flex flex-sm-column flex-column flex-md-row bd-highlight mb-3 align-items-center">
+      <div class="d-flex align-items-center ">
+      <div class="px-0 px-sm-0 px-md-3 bd-highlight">
+        <div class="discount-img-wrapper">
+          <img src="/assets/img/discount-Icon.svg" alt="Discount image" />
+        </div>
+      </div>
+      <div class="px-2 px-sm-2 px-md-4 bd-highlight">
+        <div class="d-flex flex-column">
+          <div class="discount-text">
+            <p class="p-0 m-0">Voucher for first transaction</p>
+          </div>
+          <div class="discount-text mt-2">
+            <h4 class="p-0 m-0">Discount 20%</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="ms-md-auto ms-sm-0 ms-0 bd-highlight pr-0 pr-sm-0 pr-md-5">
+        <div class="discount-btn-wrapper">
+          <button class="discount-btn">Claim discount now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="services-wrapper">
+    <div class="services-header d-flex justify-content-between align-items-center">
+      <div class="services-header-title v1">
+        <h4>Pick a Service</h4>
+        <p>
+          You can pick one out of our wide selection of service options and take our best price.
+        </p>
+      </div>
+    </div>
+    <div class="categories-content">
+      <div class="row g-3">
+        <div class="col-6 col-sm-6 col-md-2" *ngFor="let c of categoriesData ; index as i;" [routerLink]="['/app/home/view-sub-categories', c?.id]">
+          <div class="ca pointer" [ngStyle]="{backgroundColor: i | color }">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="{{i | image}}" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span>
+                {{c?.title}} </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> {{c.totalVendors}} vendors </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-6 col-sm-6 col-md-2">
+          <div class="ca pointer" routerLink="/app/home/view-sub-categories">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/ca.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Cleaning </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 107 cleaners </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cb">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cb.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Map Install </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 40 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cc">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cc.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Brake lights </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 15 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cd">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cd.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Tyre Pump </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 5 mechanics </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="ce">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/ce.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Electrical </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 150 mechanics</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-2">
+          <div class="cf">
+            <div class="categories-content-img d-flex justify-content-center">
+              <img src="/assets/img/cf.svg" alt="Discount image" />
+            </div>
+            <div class="categories-content-title">
+              <span> Car Security</span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> 107 mechanics </span>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+  </div>
+
+  <div class="service-provider-wrapper">
+    <div class="service-provider-header d-flex justify-content-between align-items-center">
+      <div class="service-provider-header-title">
+        <h6>Recommended Providers</h6>
+      </div>
+      <div class="service-provider-header-route">
+        <a routerLink="/app/home/recommended">See all</a>
+      </div>
+    </div>
+
+    <div class="h-100">
+      <app-recommended></app-recommended>
+    </div>
+  </div>
+</div>

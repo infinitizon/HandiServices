@@ -1,0 +1,238 @@
+<div *ngIf="container['ordersLoading']">
+  <app-loader></app-loader>
+</div>
+
+<div
+  *ngIf="neworders?.filteredData?.length <= 0 && !container['ordersLoading']"
+>
+  <app-empty-data [emptyData]="emptyState"></app-empty-data>
+</div>
+
+<div
+  class="container-fluid px-2 px-sm-2 px-md-4 px-lg-4"
+  *ngIf="!container['ordersLoading']"
+  [ngClass]="{ blur: isDialogOpen }"
+>
+  <div
+    class="orders-header-wrapper"
+    *ngIf="neworders?.filteredData?.length > 0 && !container['ordersLoading']"
+  >
+    <div class="title mt-5">
+      <h2>Orders</h2>
+    </div>
+  </div>
+
+  <div class="orders-body-wrapper">
+    <div class="row py-3" *ngFor="let type of objectKey(orders)">
+      <div class="orders-time">
+        <span>{{
+          type === today ? "Today" : yesterday === type ? "Yesterday" : type
+        }}</span>
+      </div>
+      <div
+        *ngFor="let trans of orders[type]"
+        class="orders-content mt-3 col-md-9 pointer"
+        (click)="show(trans?.id, trans?.createdAt, trans?.amount, trans?.status, trans)"
+      >
+        <div class="d-flex align-items-center">
+          <div (click)="$event.stopPropagation();">
+            <ng-container>
+              <i class="ri-more-2-fill" [matMenuTriggerFor]="availableStatus"></i>
+              <mat-menu #availableStatus="matMenu" class="profile-menu-dropdown">
+                <a class="profile" (click)="onOrderStatusChange(trans.id, orderStatus)" mat-menu-item *ngFor="let orderStatus of trans?.availableOrderStatus">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center">
+                        <div class="profile-icon">
+                          <i [ngClass]="{
+                            'ri-shake-hands-line': orderStatus?.key === 'completed',
+                            'ri-delete-bin-6-line': orderStatus?.key === 'cancelled',
+                          }"class=""></i>
+                        </div>
+                        <div class="d-flex align-items-start flex-column ml-4">
+                          <div class="profile-title px-4 mb-0">
+                            <h3 class="mb-0">{{orderStatus?.name}}</h3>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </mat-menu>
+            </ng-container>
+          </div>
+          <div class="p-2 flex-grow-1">
+            <div class="d-flex align-items-center">
+              <!-- <div class="p-2">
+              <div class="image-wrapper">
+                <img
+                  src="{{ trans?.TxnHeader?.Asset?.Media[0]?.link }}"
+                  alt="Offer Logo"
+                  height="40"
+                  width="40"
+                  class="rounded-circle"
+                />
+              </div>
+            </div> -->
+              <div class="d-flex align-items-start flex-column ml-4">
+                <div class="orders-desc mb-auto px-4 text-uppercase">
+                  <h3>{{ trans?.id }}</h3>
+                </div>
+                <div
+                  class="orders-status mx-4"
+                  [ngClass]="{
+                    success: trans?.status === 'done',
+                    pending: trans?.status === 'pending' ,
+                    failed: trans?.status === 'failed'
+                  }"
+                >
+                  <span>{{ trans?.status }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 orders-amount">
+            <h6>
+              {{ trans?.currency }} {{ trans?.amount | number : "1.2-2" }}
+            </h6>
+          </div>
+          <div class="p-2 orders-amount">
+            <h6>Items: {{ trans?.totalItems }}</h6>
+          </div>
+
+          <div class="p-0 orders-icon">
+            <i class="ri-arrow-right-s-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+  <mat-paginator
+    [length]="total_count"
+    [pageSize]="pageSize"
+    showFirstLastButtons
+    aria-label="Select page"
+  >
+  </mat-paginator>
+</div>
+
+<div id="overlay">
+  <div class="d-flex">
+    <div class="col-md-6 pointer" (click)="showChat = false">
+      <div
+        class="d-flex justify-content-center"
+        [ngClass]="{ 'total-cover-wrapper': !showChat }"
+      >
+        <div class="overlay-detail" [ngClass]="{ 'total-cover': !showChat }">
+          <span> {{ container?.orders?.length }} items</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 pointer" (click)="showChat = true">
+      <div
+        class="d-flex justify-content-center"
+        [ngClass]="{ 'total-cover-wrapper': showChat }"
+      >
+        <div class="overlay-detail" [ngClass]="{ 'total-cover': showChat }">
+          <span><i class="ri-chat-1-line"></i> Chat</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!showChat">
+    <div class="overlay-body-wrapper">
+      <div class="text-d">
+        Order No: {{ container.id }} <br />
+        Placed on: {{ container.createdAt | date }} <br />
+        Total: {{ container.amount | currency : "NGN" : "symbol-narrow" }}
+        <br />
+        Status:
+        <span
+          class="orders-status"
+          [ngClass]="{
+            success: container?.status === 'success',
+            pending:
+              container?.status === 'pending' ||
+              container?.status === 'pending_approval',
+            failed: container?.status === 'failed'
+          }"
+        >
+          <span>{{ container?.status }}</span>
+        </span>
+      </div>
+      <div class="overlay-body mt-3" *ngFor="let item of container.orders">
+        <div class="d-flex justify-content-between">
+          <span
+            >{{ item?.value }}
+            {{ item?.ProductVendorCharacter?.ProductCharacter?.name }}</span
+          >
+          <span>{{
+            item?.value * item?.ProductVendorCharacter?.price
+              | currency : "NGN" : "symbol-narrow"
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="line-v2"></div>
+    <div class="overlay-body-wrapper v2">
+      <div class="d-flex">
+        <div class="col-md-6" *ngFor="let address of orderData?.Addresses; index as i">
+          <div class="overlay-address-header v2 text-start">
+            <span class="text-start">{{i==0? 'Shipping Address': ''}}</span>
+          </div>
+          <div class="">
+            <div class="overlay-address-body"><span>{{address?.houseNo ? address?.houseNo +',':''}} {{address?.address1 ? address?.address1 + ",":''}}</span></div>
+          </div>
+          <div class="mt-2">
+            <div class="overlay-address-body"><span>{{address?.address2 ? address?.address2+',' : ''}}</span></div>
+          </div>
+          <div class="mt-2">
+            <div class="overlay-address-body"><span>{{address?.city ? address?.city+',':''}} {{address?.state ? address?.state+',' : ''}}</span></div>
+          </div>
+          <div class="mt-2">
+            <div class="overlay-address-body"><span>{{address?.country ? address?.country : ''}}</span></div>
+          </div>
+          <!-- <div class="mt-2">
+            <div class="overlay-address-body">
+              <span>john@mortue@.com</span>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay-footer">
+      <div class="d-flex">
+        <div class="col-md-6 pointer hide-invest-form" (click)="hide()">
+          <div class="d-flex justify-content-center total-cover-wrapper">
+            <div class="total-cover v2">
+              <span><i class="ri-prohibited-line"></i> Cancel</span>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-md-4 pointer">
+        <div class="d-flex justify-content-center print-wrapper v3">
+          <div class="print">
+            <span><i class="ri-chat-1-line"></i> Chat</span>
+          </div>
+        </div>
+      </div> -->
+        <div class="col-md-6 pointer">
+          <div class="d-flex justify-content-center print-wrapper">
+            <div class="print">
+              <span><i class="ri-printer-line"></i> Print</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showChat">
+    <app-chat [data]="orderData"></app-chat>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="container-fluid">
+  <div class="transaction-wrapper" >
+    <div class="d-flex justify-content-between align-items-center" >
+    <div class="back-button-v2">
+      <a
+        class="m-0 p-0"
+        ><span>Sub Category</span></a
+      >
+    </div>
+    <!-- <div class=""><button class="action-btn" routerLink="/app/vendors/details">Add new</button></div> -->
+  </div>
+
+
+    <!-- <div class="transaction-filter">
+      <mat-form-field class="col-md-4" appearance="outline">
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" />
+          <input matEndDate placeholder="End date" />
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </div> -->
+
+    <div class="mt-4">
+      <div class="row d-flex flex-row column-gap-sm">
+        <div class="mat-elevation-z8 px-0">
+          <table mat-table [dataSource]="categoriesDataSource">
+            <ng-container
+              matColumnDef="{{ column['name'] }}"
+              *ngFor="let column of categoriesDisplayedColumns"
+            >
+              <th mat-header-cell *matHeaderCellDef>
+                <div [ngSwitch]="column['name']">
+                  <div *ngSwitchDefault>{{ column["title"] }}</div>
+                  <div *ngSwitchCase="'amount'" class="text-right tableAmount">
+                    {{ column["title"] }}
+                  </div>
+                </div>
+              </th>
+              <mat-progress-bar
+                mode="indeterminate"
+                *ngIf="container['categoriesLoading']"
+              ></mat-progress-bar>
+              <td mat-cell *matCellDef="let element">
+                <div
+                  [ngSwitch]="column['name']"
+                  [ngClass]="{
+                    tableAmount: column['name'] == ('number' || 'money')
+                  }"
+                >
+                  <div *ngSwitchDefault>{{ element[column["name"]] }}</div>
+                  <div *ngSwitchCase="'status'" class="status">
+                    <div
+                      [ngClass]="{
+                        success: element?.header?.status === 'successful',
+                        failed: element?.header?.status === 'failed',
+                        pending: element?.header?.status === 'pending'
+                      }"
+                    >
+                      {{ element?.header?.status | titlecase }}
+                    </div>
+                  </div>
+                  <div *ngSwitchCase="'createdAt'">
+                    {{ element?.createdAt | date }}
+                  </div>
+
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="categoriesColumnsToDisp"></tr>
+            <tr class="pointer" mat-row *matRowDef="let row; columns: categoriesColumnsToDisp"  (click)="viewCategory(row)"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td
+                class="mat-cell text-center py-3"
+                [attr.colspan]="categoriesDisplayedColumns.length"
+              >
+                No data found.
+              </td>
+            </tr>
+          </table>
+          <div
+            *ngIf="container['categoriesLoading']"
+            class="mat-spinner-container"
+          >
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+          <mat-paginator
+            [pageSizeOptions]="[5, 10, 20]"
+            showFirstLastButtons
+            aria-label="Select page of periodic elements"
+            [length]="total_count"
+            [pageSize]="pageSize"
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- <div *ngIf="container['categoriesLoading']">
+  <app-loader></app-loader>
+</div> -->
