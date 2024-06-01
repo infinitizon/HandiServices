@@ -1,0 +1,38 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid class="ion-padding">
+    <ion-row>
+      <ion-col>
+        <ion-label>
+          <h1>Select {{container['category'].title}}  type</h1>
+          <p>You can pick one of our wide selection of {{container['category'].title}} options</p>
+        </ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let row of subCategoriesData" class="ion-padding-vertical">
+      <ion-col *ngFor="let data of row; index as i;" size="4" class="ion-padding-horizontal">
+        <ion-card class="category ion-no-padding ion-no-margin" [ngStyle]="{backgroundColor: data.index | color }">
+          <ion-card-content style="font-size: x-small;" class="ion-no-margin">
+            <div class="d-flex justify-content-center">
+              <ion-img [src]="data.index | image" alt="Discount image"></ion-img>
+            </div>
+            <div class="categories-content-title">
+              <span>{{data?.title}} </span>
+            </div>
+            <div class="categories-content-sub-title">
+              <span> {{data?.totalVendors}} vendors </span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
