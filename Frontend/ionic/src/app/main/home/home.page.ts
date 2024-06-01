@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
+
 import { environment } from '@environments/environment';
-import { ModalController, } from '@ionic/angular';
+import { ModalController, NavController, ToastController, } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -18,11 +21,27 @@ export class HomePage implements OnInit {
 
   constructor(
     private http: HttpClient,
+    private navCtrl: NavController,
+    private toastCtrl: ToastController
   ) {}
 
   ngOnInit() {
     this.getCategories();
     this.getRecommended();
+
+    if(!Capacitor.isPluginAvailable('Geolocation')) {
+      return;
+    }
+    Geolocation.getCurrentPosition().then(coordinates=>{
+      console.log('Current position:', coordinates);
+    }).catch(error=>{
+      this.toastCtrl.create({
+        duration: 2000,
+        message: `Could not locate your position`,
+        color: 'danger'
+      }).then(toastEl=>toastEl.present())
+
+    });
   }
   getCategories() {
     this.container['categoriesLoading'] = true;
@@ -50,5 +69,7 @@ export class HomePage implements OnInit {
         }
       );
   }
-
+  onCategoryClick(c: any) {
+    this.navCtrl.navigateForward(`/main/home/category/${c?.id}`);
+  }
 }

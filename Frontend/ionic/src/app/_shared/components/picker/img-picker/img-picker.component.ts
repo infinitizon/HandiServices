@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { Plugin, Capacitor } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Platform } from '@ionic/angular';
 
@@ -12,7 +12,7 @@ export class ImgPickerComponent  implements OnInit {
   @ViewChild('filePicker')
   filePicker!: ElementRef<HTMLInputElement>;
   @Output() imagePick = new EventEmitter<File>;
-  selectedImg = 'hello';
+  selectedImg = '/assets/images/no-user.png';
   useFilePicker = false;
 
   constructor(private platform: Platform) { }

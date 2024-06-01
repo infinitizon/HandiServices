@@ -4,10 +4,7 @@ import {  BehaviorSubject, of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
-import * as $ from "jquery";
 import { HttpClient } from '@angular/common/http';
-import { SnackBarComponent } from '../components/snack-bar/snack-bar.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -30,30 +27,10 @@ export class CommonService {
   container: any = {};
 
   constructor(
-    // public dialog: MatDialog,
-    private _snackBar: MatSnackBar,
     private http: HttpClient
   ) { }
 
-  showLoading(button: any) {
-    var $this = $(button);
 
-    var loadingText = 'loading...';
-    if ($this.html() !== loadingText) {
-      $this.prop('disabled', true);
-      $this.data('original-text', $this.html());
-      $this.html(loadingText);
-    }
-  }
-
-
-
-  removeLoading(button: any) {
-    var $this = $(button);
-    $this.prop('disabled', false);
-    $this.html($this.data('original-text'));
-    $this.data('original-text', null);
-  }
   getLOVs(endpoint: string, selectScope: string, container: any, options: any) {
 
     if (container[selectScope] == null) {
@@ -178,14 +155,9 @@ export class CommonService {
     return new Blob([ia], { type: mimeString });
   }
 
-  snackBar(message: string, successOrError='success') {
-    this._snackBar.openFromComponent(SnackBarComponent, {
-      duration: 2000,
-      data: {
-        message: message,
-        icon: 'ri-close-circle-fill',
-      },
-      panelClass: [successOrError],
-    });
+  chunkArray (arr: any, size: number) {
+    return arr.map((e:any, i: number) => {
+                return i % size === 0 ? arr.slice(i, i + size) : null;
+              }).filter((e: any)=> e);
   }
 }

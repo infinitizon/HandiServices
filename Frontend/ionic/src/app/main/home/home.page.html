@@ -35,7 +35,7 @@
           </div>
           <div class="categories-content">
             <div class="scrolling-wrapper-flexbox">
-              <ion-card *ngFor="let c of categoriesData ; index as i;" [ngStyle]="{backgroundColor: i | color }">
+              <ion-card *ngFor="let c of categoriesData ; index as i;" [ngStyle]="{backgroundColor: i | color }" role="button" (click)="onCategoryClick(c)">
                 <ion-card-content>
                   <div class="categories-content-img d-flex justify-content-center">
                     <ion-img [src]="i | image" alt="Discount image"></ion-img>

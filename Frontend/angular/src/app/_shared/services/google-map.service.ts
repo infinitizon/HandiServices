@@ -42,6 +42,7 @@ export class GMapService {
     };
     const params = Object.keys(query).map(key => `${key}=${query[key]}`).join('&');
     return `//maps.googleapis.com/maps/api/js?${params}`;
+    // https://maps.googleapis.com/maps/api/geocode.json?latlng
   }
 
   getAddresses(address_components: any) {
