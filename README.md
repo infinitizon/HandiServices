@@ -1,0 +1,1 @@
+ionic cap run android --livereload --external --public-host={{ip}}

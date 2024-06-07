@@ -1,8 +1,10 @@
-const { UserService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
-const AppError = require('../../config/apiError');
-const { successResponse } = require('../utils/responder');
 const { postgres, Sequelize } = require('../../database/models');
+
+const CryptoJS = require('../utils/crypto')
+const AppError = require('../../config/apiError');
+const { UserService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
 const AddressService = require('../services/address.service');
+const { successResponse } = require('../utils/responder');
 const genericRepo = require('../../repository');
 class UserController {
   
@@ -71,6 +73,9 @@ class UserController {
       try {
          let auth = res.locals.user;
          let body = req.body;
+         if(body.password)
+            body.password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(body.password);
+
          if(req.files) {
             let { avatar } = req.files;
             uploaderService = new CloudObjUploadService({service: 'cloudinary'});

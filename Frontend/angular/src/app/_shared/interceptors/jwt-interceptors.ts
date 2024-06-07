@@ -23,7 +23,6 @@ export class JwtInterceptor implements HttpInterceptor {
 
 
     if (isLoggedIn) {
-      const getUrl = new URL(request.url);
       let role = JSON.parse(this.auth.getRole());
       request = request.clone({
         setHeaders: {

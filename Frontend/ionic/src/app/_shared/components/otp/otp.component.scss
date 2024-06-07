@@ -1,0 +1,129 @@
+.close-button{
+  float: right;
+  position: absolute;
+  top:-25px;
+  right:25px;
+}
+.close-icon {
+  transition: 1s ease-in-out;
+}
+.close-icon:hover {
+  transform: rotate(180deg);
+}
+::ng-deep .icon-outside .close-button{
+  // float: right;
+  top:-52px;
+  right:-40px;
+}
+::ng-deep .icon-outside .mat-dialog-container {
+ overflow: unset
+}
+
+// .otp-modal {
+//   .close-modal {
+//     background: #cccccc;
+//     margin-left: auto;
+//     display: block;
+
+//     &:hover {
+//       background: #00868d;
+//       color: #ffff;
+//     }
+//   }
+
+//   .header {
+//     h3 {
+//       font-style: normal;
+//       font-weight: bold;
+//       font-size: 24px;
+//       line-height: 27px;
+//       color: #002B43;
+//       text-align: center;
+//       margin-bottom: 25px;
+//     }
+
+//     p {
+//       font-style: normal;
+//       font-weight: 500;
+//       font-size: 18px;
+//       line-height: 21px;
+//       color: #F3C661;
+//       text-align: center;
+//       margin-bottom: 30px;
+//     }
+//   }
+
+//   .footer {
+//     p {
+//       font-style: normal;
+//       font-weight: 500;
+//       font-size: 12px;
+//       line-height: 21px;
+//       color: red;
+//       opacity: 0.5;
+//       cursor: pointer;
+//       text-align: center;
+
+//       &:hover {
+//         opacity: 1;
+//       }
+//     }
+//   }
+
+//   .creation-form {
+//     margin: 10px auto;
+
+//     .forgot-password {
+//       display: block;
+//       text-align: right;
+//       font-style: normal;
+//       font-weight: 500;
+//       font-size: 16px;
+//       line-height: 18px;
+//       color: #00868D;
+//       opacity: 0.8;
+//       margin-top: 15px;
+//     }
+
+//     .form-group {
+//       margin-bottom: 35px;
+
+//       input,
+//       select {
+//         height: 60px;
+//         background: #FCFEFD;
+//         border: 1.5px solid #002B43;
+//         box-sizing: border-box;
+//         border-radius: 8px;
+//       }
+
+//       .custom-checkbox {
+//         label {
+//           font-style: normal;
+//           font-weight: normal;
+//           font-size: 16px;
+//           line-height: 18px;
+//           color: #002B43;
+
+//           a {
+//             color: #EB5959;
+//           }
+//         }
+//       }
+//     }
+
+//     .form-submit {
+//       button {
+//         background: #00868D;
+//         border-radius: 8px;
+//         width: 100%;
+
+//         font-style: normal;
+//         font-weight: 500;
+//         font-size: 18px;
+//         line-height: 60px;
+//         color: #FFFFFF;
+//       }
+//     }
+//   }
+// }

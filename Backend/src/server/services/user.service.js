@@ -9,9 +9,10 @@ class UserService {
    async createUser({user, tenant, role, transaction}) {
       const t = transaction ?? await postgres.transaction()
       try {
-         
-         let salt = await Bcrypt.genSalt(12);
-         user.password = await Bcrypt.hash(user.password, salt);
+         if(user.password) {
+            let salt = await Bcrypt.genSalt(12);
+            user.password = await Bcrypt.hash(user.password, salt);
+         }
          const emailExists = await postgres.models.User.findOne({
              attributes: ['id', 'email', 'bvn'],
              where: { [Sequelize.Op.or]: {
@@ -75,6 +76,11 @@ class UserService {
    async updateProfile({userId, changes, transaction}) {
       const t = transaction ?? await postgres.transaction();
       try {
+         if(changes.password) {
+            let salt = await Bcrypt.genSalt(12);
+            changes.password = await Bcrypt.hash(changes.password, salt);
+         }
+
          const {Media, ...userChanges} = changes;
          const user = await postgres.models.User.findByPk( userId, {
             attributes: {excludes: ['password', 'uuidToken']},

@@ -31,7 +31,13 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.css",
+              "remixicon/fonts/remixicon.css",
+              "src/global.scss",
+              "src/theme/variables.scss",
+              "node_modules/flag-icons/sass/flag-icons.scss"
+            ],
             "scripts": []
           },
           "configurations": {

@@ -1,0 +1,29 @@
+<div class="body">
+    <h2>Enter OTP Code</h2>
+    <div class="page-layput">
+      <div class="row">
+        <div class="col-md-12">
+          <form #resetForm="ngForm" class="creation-form">
+            <h3 class="reset-header">We've sent the 6-digit code to your email address:<br /><a href="mailto:{{data?.email}}">{{data?.email}}</a></h3>
+            <div class="form-group text-center" >
+                <ng-otp-input  (onInputChange)="onOtpChange($event)"  [config]="{length:6, allowNumbersOnly: true, disableAutoFocus: false}"></ng-otp-input>
+                <div *ngIf="container['verifyOTP']">{{container['verifyOTP']}}</div>
+            </div>
+            <div class="form-group">
+              <p class="support-text">
+                Didn't get a code?
+                <button mat-flat-button class="reset-password" (click)="onResendCode()">
+                  <span *ngIf="!container['resendOTP']">Resend code</span>
+                </button>
+              </p>
+            </div>
+            <div class="form-group">
+              <p class="support-text">
+                For further assistance please send an email to <a href="mailto:info@investnaija.com">info[at]investnaija.com</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>

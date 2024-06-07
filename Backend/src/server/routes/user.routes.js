@@ -7,7 +7,7 @@ const { AuthValidator, AddressValidator, FeedbackValidator, OrderValidator } = r
 
 router.get('/', AuthController.authenticate, UserController.getUserDetails);
 router.get('/vendor/user/:userId?', AuthController.authenticate, UserController.getUserDetails);
-router.patch('/profile/update', AuthController.authenticate, AuthController.authorize(['*']), UserController.updateProfile);
+router.patch('/profile/update', AuthController.authenticate, AuthController.authorize(['*']),  JoiMW.validateReq(AuthValidator.profileUpdate), UserController.updateProfile);
 router.get('/wallet/fetch', AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.getWallet)
 router.get('/wallet/fund', AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.fundWallet)
 // Payments resolve

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +40,11 @@ export class ApplicationContextService {
   private _notificationInformationObs = new ReplaySubject(1);
 
   userInformation$ = new BehaviorSubject<any>(null);
+  location$ = new BehaviorSubject<any>(null)
 
-  constructor() { }
+  constructor(
+    private toastCtrl: ToastController,
+  ) { }
 
 
 
@@ -57,10 +62,27 @@ export class ApplicationContextService {
   }
 
    //-------------------- user Information-----------------------------//
-
-   getUserInformation(): Observable<any> {
+  getUserInformation(): Observable<any> {
     return this.userInformation$.asObservable();
   }
-
   //-------------------------- user Information end --------------------------//
+
+  getUserLocation(): Observable<any> {
+    return this.location$.asObservable();
+  }
+  setCurrentCoord() {
+    if(!Capacitor.isPluginAvailable('Geolocation')) {
+      return;
+    }
+    Geolocation.getCurrentPosition().then(coordinates=>{
+      this.location$.next(coordinates);
+    }).catch(error=>{
+      this.toastCtrl.create({
+        duration: 2000,
+        message: `Could not locate your position`,
+        color: 'danger'
+      }).then(toastEl=>toastEl.present())
+
+    });
+  }
 }

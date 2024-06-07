@@ -1,0 +1,15 @@
+ion-footer {
+  background: var(--ion-color-primary);
+  height: 6rem;
+}
+.fingerprint {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+ion-col.create {
+  ion-button {
+      --box-shadow: none !important;
+  }
+}

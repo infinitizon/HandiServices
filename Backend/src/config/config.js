@@ -7,14 +7,14 @@ module.exports = {
         "host": process.env.DB_PG_HOST,
         "dialect": "postgres",
         "timezone": process.env.DB_PG_TIMEZONE,
-        // "ssl": true,
-        // "rejectUnauthorized": false,
-        // "dialectOptions": {
-        //     "ssl": {
-        //         "require": true,
-        //         "rejectUnauthorized": false
-        //     }
-        // }
+        "ssl": true,
+        "rejectUnauthorized": false,
+        "dialectOptions": {
+            "ssl": {
+                "require": true,
+                "rejectUnauthorized": false
+            }
+        }
     },
     "development": {
         "databases": {

@@ -1,5 +1,5 @@
 const { postgres, Sequelize } = require('../../database/models');
-const {admin, FCM} = require('../../config/firebase');
+// const {admin, FCM} = require('../../config/firebase');
 const genericRepo = require('../../repository');
 
 const notification_options = {
@@ -27,22 +27,22 @@ class NotificationService {
       } catch (error) {}
     };
 
-    static subscribeToTopic = async({deviceToken, topic}) => {
-      const test = FCM.subscribeToTopic([deviceToken], topic, (err, resp) => {
-        if(err){
-          console.log('Yayyyyyy!!',JSON.stringify(err.errors))
-          return
-        }else{
-          console.log('Sent successfully')
-        }
-      })
-      //  const test = await admin.messaging().subscribeToTopic(deviceToken, topic)
-       return test
-    }
+    // static subscribeToTopic = async({deviceToken, topic}) => {
+    //   const test = FCM.subscribeToTopic([deviceToken], topic, (err, resp) => {
+    //     if(err){
+    //       console.log('Yayyyyyy!!',JSON.stringify(err.errors))
+    //       return
+    //     }else{
+    //       console.log('Sent successfully')
+    //     }
+    //   })
+    //   //  const test = await admin.messaging().subscribeToTopic(deviceToken, topic)
+    //    return test
+    // }
 
-    static sendNotificationToTopic = async({payload, topic}) => {
-      return admin.messaging().sendToTopic(topic, payload, notification_options)
-    }
+    // static sendNotificationToTopic = async({payload, topic}) => {
+    //   return admin.messaging().sendToTopic(topic, payload, notification_options)
+    // }
 
     static sendMessage = async (title, body, activityType, activityId, userId) => {
         try {
@@ -83,18 +83,18 @@ class NotificationService {
             console.log('no push notification device available');
             return {success: true};
           } else {
-            const notify = await admin
-              .messaging()
-              .sendToDevice(user.deviceToken, message, notification_options)
-              .then(async (response) => {
-                return 'success';
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-              if(notify === 'success'){
-                return {success: true}
-              }
+            // const notify = await admin
+            //   .messaging()
+            //   .sendToDevice(user.deviceToken, message, notification_options)
+            //   .then(async (response) => {
+            //     return 'success';
+            //   })
+            //   .catch((error) => {
+            //     console.log(error);
+            //   });
+            //   if(notify === 'success'){
+            //     return {success: true}
+            //   }
           }
         } catch (error) {
           return new AppError(error.message, error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show});
@@ -102,21 +102,21 @@ class NotificationService {
     };
 
     static createNotification = async({title, body, activityType}) => {
-      const send = await this.sendNotificationToTopic({
-        payload:{
-          notification: {
-            title,
-            body,
-          },
-          data: {
-            activityType,
-          }
-        }, 
-        topic:process.env.NOTIFICATIONS_CHANNEL})
-      // const create = await notificationRepo.create({title, body, activityType})
-      const create = await genericRepo.setOptions('NotificationLog', {
-        data: {title, body, activityType}
-      }).create()
+      // const send = await this.sendNotificationToTopic({
+      //   payload:{
+      //     notification: {
+      //       title,
+      //       body,
+      //     },
+      //     data: {
+      //       activityType,
+      //     }
+      //   }, 
+      //   topic:process.env.NOTIFICATIONS_CHANNEL})
+      // // const create = await notificationRepo.create({title, body, activityType})
+      // const create = await genericRepo.setOptions('NotificationLog', {
+      //   data: {title, body, activityType}
+      // }).create()
       return create
     }
 

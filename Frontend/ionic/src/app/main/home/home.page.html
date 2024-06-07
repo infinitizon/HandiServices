@@ -62,12 +62,19 @@
               <ion-img [src]="recommended?.Media[0]?.response?.url || '/assets/gallery-add.svg'"></ion-img>
             </ion-thumbnail>
             <ion-label>
-              <h2>{{ recommended?.title }}</h2>
+              <h2>{{ recommended?.name }}</h2>
+              <div class="vendor-info d-flex align-items-center">
+                <span>
+                  <span class="icon"> <i class="ri-star-fill"></i></span>
+                  <span class="px-1 rating">5.0</span>
+                  <span class="no">(642)</span>
+                </span>
+              </div>
               <div class="services-provider-details-text mt-2 d-flex align-items-center">
-                <ng-container *ngFor="let product of recommended?.Products">
+                <ng-container *ngFor="let product of recommended?.Products; last as isLast">
                   <ng-container *ngIf="product?.pId">
                     <div class="text">{{product?.title}}</div>
-                    <div class="px-1 icon2"><i class="ri-checkbox-blank-circle-fill"></i></div>
+                    <ion-icon name="remove-outline" *ngIf="!isLast"></ion-icon>
                   </ng-container>
                 </ng-container>
               </div>

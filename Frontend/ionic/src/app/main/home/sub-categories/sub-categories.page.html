@@ -19,7 +19,7 @@
     </ion-row>
     <ion-row *ngFor="let row of subCategoriesData" class="ion-padding-vertical">
       <ion-col *ngFor="let data of row; index as i;" size="4" class="ion-padding-horizontal">
-        <ion-card class="category ion-no-padding ion-no-margin" [ngStyle]="{backgroundColor: data.index | color }">
+        <ion-card class="category ion-no-padding ion-no-margin" [ngStyle]="{backgroundColor: data.index | color }" role="button" (click)="onSelectProduct(data)">
           <ion-card-content style="font-size: x-small;" class="ion-no-margin">
             <div class="d-flex justify-content-center">
               <ion-img [src]="data.index | image" alt="Discount image"></ion-img>

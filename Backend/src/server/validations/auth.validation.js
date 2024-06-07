@@ -10,7 +10,10 @@ const signup = {
         'string.empty': `Last Name cannot be an empty field`,
         'any.required': `Last Name is a required field`,
       }),
-      email: Joi.string().required().messages({
+      email: Joi.string()
+      .pattern(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+      .required().messages({
+        'string.pattern.base': `{:[.]} does not match a valid email pattern`,
         'string.empty': `Email cannot be an empty field`,
         'any.required': `Email is a required field`,
       }),
@@ -18,7 +21,14 @@ const signup = {
         'string.empty': `Phone cannot be an empty field`,
         'any.required': `Phone is a required field`,
       }),
-      password: Joi.string().required().messages({
+      password: Joi.string().optional().min(8)
+      .pattern(/\d/, { name: 'numbers'}) //At least one digit
+      .pattern(/[a-z]/, { name: 'oneLowerCase'}) //At least one digit
+      .pattern(/[A-Z]/, { name: 'oneUpperCase'}) //At least one digit
+      .pattern(/[ !"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/, { name: 'specialChar'}) //At least one digit
+      .messages({
+        'string.pattern.name': `Password must contain at least one digit, one lowercase, one uppercase and one special character`,
+        'string.min': `Password must be at least 8 characters`,
         'string.empty': `Password cannot be an empty field`,
         'any.required': `Password is a required field`,
       }),
@@ -197,15 +207,44 @@ const createAddress = {
       // })).options({ allowUnknown: true }),
    }).options({ allowUnknown: true }),
 };
+const profileUpdate = {
+   body: Joi.object().keys({  
+      password: Joi.string().optional().min(8)
+      .pattern(/\d/, { name: 'numbers'}) //At least one digit
+      .pattern(/[a-z]/, { name: 'oneLowerCase'}) //At least one digit
+      .pattern(/[A-Z]/, { name: 'oneUpperCase'}) //At least one digit
+      .pattern(/[ !"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/, { name: 'specialChar'}) //At least one digit
+      .messages({
+        'string.pattern.name': `Password must contain at least one digit, one lowercase, one uppercase and one special character`,
+        'string.min': `Password must be at least 8 characters`,
+        'string.empty': `Password cannot be an empty field`,
+        'any.required': `Password is a required field`,
+      }),
+   }).options({ allowUnknown: true }),
+};
 const changePassword = {
    body: Joi.object().keys({  
-      oldPassword: Joi.string().required().messages({
-         'string.empty': `Old Password cannot be empty`,
-         'any.required': `Old Password is required`,
+      oldPassword: Joi.string().required().min(8)
+      .pattern(/\d/, { name: 'numbers'}) //At least one digit
+      .pattern(/[a-z]/, { name: 'oneLowerCase'}) //At least one digit
+      .pattern(/[A-Z]/, { name: 'oneUpperCase'}) //At least one digit
+      .pattern(/[ !"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/, { name: 'specialChar'}) //At least one digit
+      .messages({
+        'string.pattern.name': `Password must contain at least one digit, one lowercase, one uppercase and one special character`,
+        'string.min': `Password must be at least 8 characters`,
+        'string.empty': `Password cannot be an empty field`,
+        'any.required': `Password is a required field`,
       }),
-      newPassword: Joi.string().required().messages({
-         'string.empty': `New Password cannot be empty`,
-         'any.required': `New Password is required`,
+      newPassword: Joi.string().required().min(8)
+      .pattern(/\d/, { name: 'numbers'}) //At least one digit
+      .pattern(/[a-z]/, { name: 'oneLowerCase'}) //At least one digit
+      .pattern(/[A-Z]/, { name: 'oneUpperCase'}) //At least one digit
+      .pattern(/[ !"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/, { name: 'specialChar'}) //At least one digit
+      .messages({
+        'string.pattern.name': `Password must contain at least one digit, one lowercase, one uppercase and one special character`,
+        'string.min': `Password must be at least 8 characters`,
+        'string.empty': `Password cannot be an empty field`,
+        'any.required': `Password is a required field`,
       }),
       confirmNewPassword: Joi.string().valid(Joi.ref('newPassword')).messages({
          'any.only': `New password and Confirm password must match`,
@@ -217,6 +256,7 @@ module.exports = {
   signup,
   completeTntCreatn,
   createUser,
+  profileUpdate,
   createAddress,
   changePassword,
 };

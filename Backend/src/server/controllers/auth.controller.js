@@ -1,12 +1,13 @@
 const Bcrypt = require('bcryptjs');
-const CryptoJS = require('../utils/crypto')
 
+const { postgres, Sequelize } = require('../../database/models');
+
+const AppError = require('../../config/apiError')
+const CryptoJS = require('../utils/crypto')
+const Helper = require('../utils/helper');
 const {AuthService, UserService, NotificationService, CustomerWalletService } = require('../services');
 const RateLimiter = require('../services/rate-limit.service');
 const EmailService = require('../services/email-builder.service');
-const AppError = require('../../config/apiError')
-const { postgres, Sequelize } = require('../../database/models');
-const Helper = require('../utils/helper');
 const genericRepo = require('../../repository');
 
 class AuthController {
@@ -436,7 +437,8 @@ class AuthController {
         try {
             let post = req.body;
             // post.dob = moment(post.dob).format('YYYY-MM-DD');
-            post.password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(post.password);
+            if(post.password)
+                post.password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(post.password);
             // post.gender = post.gender.toLowerCase();
             // if (post.gender.charAt(0) === 'm') post.gender = 'male';
             // else if (post.gender.charAt(0) === 'f') post.gender = 'female';

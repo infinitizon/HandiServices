@@ -31,7 +31,7 @@ export class SubCategoriesPage implements OnInit {
     this.aRoute.paramMap.subscribe(paramMap=>{
       console.log(paramMap.get('categoryId'))
       if(!paramMap.has('categoryId')) {
-        this.navCtrl.navigateBack('/places/tabs/offers');
+        this.navCtrl.navigateBack('/main/home');
         return;
       };
       this.categoryId = paramMap.get('categoryId')||''
@@ -55,5 +55,12 @@ export class SubCategoriesPage implements OnInit {
           this.container['subCategoriesLoading'] = false;
         }
       });
+  }
+  onSelectProduct(data: any) {
+    if(!data.id) return;
+
+    console.log(data);
+
+    this.navCtrl.navigateForward(['/main/home/product-providers', data?.id])
   }
 }

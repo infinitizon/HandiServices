@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-
-import { Capacitor } from '@capacitor/core';
-import { Geolocation } from '@capacitor/geolocation';
-
-import { environment } from '@environments/environment';
 import { ModalController, NavController, ToastController, } from '@ionic/angular';
+
+
+// import { GMapService } from '@app/_shared/services/google-map.service';
+import { ApplicationContextService } from '@app/_shared/services/application-context.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -22,27 +22,37 @@ export class HomePage implements OnInit {
   constructor(
     private http: HttpClient,
     private navCtrl: NavController,
-    private toastCtrl: ToastController
-  ) {}
+    private appContext: ApplicationContextService,
+    // private gMapService: GMapService,
+  ) {
+    // this.gMapService.api.then((maps) => {
+    //   this.getLocation(maps);
+    //   this.container['loadedMaps'] = true;
+    // });
+  }
 
   ngOnInit() {
     this.getCategories();
     this.getRecommended();
+    this.appContext.setCurrentCoord();
 
-    if(!Capacitor.isPluginAvailable('Geolocation')) {
-      return;
-    }
-    Geolocation.getCurrentPosition().then(coordinates=>{
-      console.log('Current position:', coordinates);
-    }).catch(error=>{
-      this.toastCtrl.create({
-        duration: 2000,
-        message: `Could not locate your position`,
-        color: 'danger'
-      }).then(toastEl=>toastEl.present())
-
-    });
   }
+  getLocation(maps: any) {
+    this.appContext.location$
+    .subscribe(coord=>{
+      console.log(coord)
+      // `https://maps.googleapis.com/maps/api/geocode/json?latlng=44.4647452,7.3553838&key=YOUR_API_KEY`
+      // const geocoder = maps.Geocoder();
+      // geocoder.geocode({location: maps.LatLng(coord.latitude, coord.longitude) },  (results: any, status: any)=>{
+      //   console.log(coord, results, status);
+
+      //   // if (status == google.maps.GeocoderStatus.OK) {
+      //   //   this.container.address = this.gMapService.getAddresses(results?.find(a=>a.types.includes("street_address") && !a.plus_code)?.address_components);
+      //   // }
+      // })
+    })
+  }
+
   getCategories() {
     this.container['categoriesLoading'] = true;
     this.http
