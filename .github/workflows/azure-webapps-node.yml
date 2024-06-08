@@ -84,7 +84,7 @@ jobs:
 
     - name: npm install
       run: |
-        npm install
+        cd Backend && npm install
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp
