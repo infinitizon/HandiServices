@@ -75,3 +75,11 @@
     }
   }
 }
+
+.swiper-container-horizontal > .swiper-pagination-progressbar, .swiper-container-vertical > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite {
+
+
+  width: 40% !important;
+  left: 30% !important;
+  top: 20px !important;
+}

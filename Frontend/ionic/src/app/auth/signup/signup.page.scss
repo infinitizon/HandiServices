@@ -1,3 +1,30 @@
-swiper-container {
+:host ::ng-deep .mat-horizontal-stepper-header-container {
+  display: none !important;
+}
+mat-stepper {
   width: 100%; height: 100%;
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: row;
+  width: 60vw;
+  margin: auto;
+  padding: 10px 0;
+}
+
+.progress {
+  height: 5px;
+  flex-grow: 1;
+  border-radius: 4px;
+  margin: 0 5px;
+  display: flex;
+  background-color: var(--ion-color-tertiary);
+}
+ion-item {
+  --padding-end: 0px;
+  --inner-padding-end: 0px;
+}
+.progress.active {
+    background-color: var(--ion-color-primary)
 }

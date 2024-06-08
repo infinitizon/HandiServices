@@ -1,5 +1,19 @@
 const Joi = require('joi').extend(require('@joi/date'));
-
+const signin = {
+   body: Joi.object().keys({
+      email: Joi.string()
+      .pattern(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+      .required().messages({
+        'string.pattern.base': `{:[.]} does not match a valid email pattern`,
+        'string.empty': `Email cannot be an empty field`,
+        'any.required': `Email is a required field`,
+      }),
+      password: Joi.string().required().messages({
+        'string.empty': `Password cannot be an empty field`,
+        'any.required': `Password is a required field`,
+      }),
+   }).unknown(true),
+};
 const signup = {
    body: Joi.object().keys({
       firstName: Joi.string().required().messages({
@@ -253,10 +267,11 @@ const changePassword = {
 };
 
 module.exports = {
-  signup,
-  completeTntCreatn,
-  createUser,
-  profileUpdate,
-  createAddress,
-  changePassword,
+   signin,
+   signup,
+   completeTntCreatn,
+   createUser,
+   profileUpdate,
+   createAddress,
+   changePassword,
 };

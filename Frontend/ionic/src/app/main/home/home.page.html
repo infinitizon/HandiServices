@@ -15,17 +15,17 @@
   </ion-header> -->
 
   <ion-grid>
-    <ion-row>
+    <ion-row class="ion-no-padding">
       <ion-col>
         <ion-searchbar class="custom"></ion-searchbar>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="mx-2">
       <ion-col>
         <ion-img [src]="'/assets/images/home/banner.svg'"></ion-img>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="mx-2">
       <ion-col>
         <div class="services-wrapper">
           <div class="services-header d-flex justify-content-between align-items-center">
@@ -53,10 +53,10 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-text><h4>Recommended Providers</h4></ion-text>
-        <ion-list>
+    <ion-row class="mx-2">
+      <ion-col class="recommended" >
+        <ion-text><h4 class="ion-no-padding ion-no-margin">Recommended Providers</h4></ion-text>
+        <ion-list class="ion-no-padding">
           <ion-item *ngFor="let recommended of container['recommended']">
             <ion-thumbnail slot="start">
               <ion-img [src]="recommended?.Media[0]?.response?.url || '/assets/gallery-add.svg'"></ion-img>

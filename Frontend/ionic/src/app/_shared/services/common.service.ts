@@ -121,7 +121,7 @@ export class CommonService {
     return invalidControls;
   }
 
-  controlnvalid(controlToInvestigate: FormControl | any): string[] | any {
+  controlvalid(controlToInvestigate: FormControl | any): string[] | any {
     const invalidControls: any = {};
     if (controlToInvestigate?.invalid ) {
       const controlName: any = (Object.keys(controlToInvestigate.parent.controls).find(key => controlToInvestigate.parent.controls[key] === controlToInvestigate))

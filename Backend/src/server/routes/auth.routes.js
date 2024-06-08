@@ -7,7 +7,7 @@ const AuthValidator = require('../validations/auth.validation');
 const AuthMiddleware = require('../middleware/auth.middleware');
 const { verifyOTPMiddleware } = require('../middleware/verifyOtp');
 
-router.post('/user/login', AuthMiddleware.checkLoginDetails, AuthMiddleware.check2FA,  AuthController.login);
+router.post('/user/login', JoiMW.validateReq(AuthValidator.signin), AuthMiddleware.checkLoginDetails, AuthMiddleware.check2FA,  AuthController.login);
 router.post('/user/logout', AuthController.authenticate, AuthController.logout);
 router.post('/user/login-choose-tenant', AuthController.loginChooseTenant);
 router.post('/user/signup', JoiMW.validateReq(AuthValidator.signup), AuthController.signup);

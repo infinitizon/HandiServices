@@ -1,9 +1,10 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { environment } from '@environments/environment';
 import { NgOtpInputComponent } from 'ng-otp-input';
 import { take } from 'rxjs';
+import { IOTP } from './otp.model';
 
 @Component({
   selector: 'app-otp',
@@ -12,6 +13,7 @@ import { take } from 'rxjs';
 })
 export class OTPComponent implements OnInit {
   @ViewChild(NgOtpInputComponent, { static: false}) ngOtpInputRef!:NgOtpInputComponent;
+  @Input() options!: IOTP;
   data: any;
   container={
     resendOTP: false,
@@ -24,7 +26,9 @@ export class OTPComponent implements OnInit {
 
   ngOnInit(): void {
     console.log();
-   }
+    console.log(this.options);
+
+  }
 
 
   onResendCode() {

@@ -11,6 +11,7 @@ import { SharedModule } from './_shared/shared.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { JwtInterceptor } from './_shared/interceptors/jwt-interceptors';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,8 @@ import { JwtInterceptor } from './_shared/interceptors/jwt-interceptors';
     IonIntlTelInputModule,
 
     SharedModule,
-    AppRoutingModule],
+    AppRoutingModule,
+    BrowserAnimationsModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
