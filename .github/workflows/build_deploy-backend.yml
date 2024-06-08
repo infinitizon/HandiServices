@@ -48,13 +48,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
         cache-dependency-path: './Backend/package-lock.json'
-
-    # - name: npm install, build, and test
-    #   run: |
-    #     npm install
-    #     npm run build --if-present
-    #     npm run test --if-present
-
+        
     - name: npm build, and test
       run: |
         npm run build --if-present
