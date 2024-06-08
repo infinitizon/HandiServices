@@ -77,7 +77,7 @@ const os = require('os');
 const PORT = process.env.PORT || 2100;
 app.enable('trust proxy');
 const expressServer = app.listen(PORT, async () => {
-    console.log('Nothing')
+    console.log('Nothing new')
     const IP = (await lookup(os.hostname())).address;
     // const socket = new Socket(expressServer);
     // socket.createConnection();
