@@ -21,7 +21,7 @@ on:
   push:
     branches: [ "master" ]
   paths:
-    - 'Backend/INv2-Auth/**'
+    - 'Backend/**'
   workflow_dispatch:
 
 env:
