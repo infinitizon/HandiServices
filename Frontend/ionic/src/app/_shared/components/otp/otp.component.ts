@@ -27,7 +27,6 @@ export class OTPComponent implements OnInit {
   ngOnInit(): void {
     console.log();
     console.log(this.options);
-
   }
 
 
