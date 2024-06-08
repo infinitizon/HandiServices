@@ -36,6 +36,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./Backend/
     steps:
     - uses: actions/checkout@v4
 
@@ -44,6 +47,7 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
+        cache-dependency-path: './Backend/package-lock.json'
 
     - name: npm install, build, and test
       run: |
