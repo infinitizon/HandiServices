@@ -36,6 +36,7 @@ import { Loader2Component } from './components/loader_2/loader.component';
 import { environment } from '@environments/environment';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
+import { OtpComponent } from './components/otp/otp.component';
 const config: SocketIoConfig = { url: environment.SOCKET_BASE, options: {} };
 
 const MY_DATE_FORMAT = {
@@ -76,7 +77,8 @@ export function playerFactory() {
     AddAddressComponent,
     ActivateEmailComponent,
     Loader2Component,
-    PasswordChangeComponent
+    PasswordChangeComponent,
+    OtpComponent
   ],
   providers: [
     provideNgxMask()
@@ -131,7 +133,8 @@ export function playerFactory() {
     ActivateEmailComponent,
     Loader2Component,
     SocketIoModule,
-    AutocompleteLibModule
+    AutocompleteLibModule,
+    OtpComponent
   ]
 })
 export class SharedModule { }

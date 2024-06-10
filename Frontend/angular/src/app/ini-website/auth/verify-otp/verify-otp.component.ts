@@ -17,6 +17,7 @@ import * as moment from 'moment';
   styleUrls: ['./verify-otp.component.scss']
 })
 export class VerifyOtpComponent implements OnInit {
+
   otpInputConfig: NgxOtpInputConfig = {
     otpLength: 6,
     autofocus: true,
