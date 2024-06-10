@@ -4,6 +4,15 @@
 mat-stepper {
   width: 100%; height: 100%;
 }
+div.password {
+  background: var(--ion-color-tertiary-tint);
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 0.8rem;
+  ion-icon {
+    color: var(--ion-color-tertiary-shade);
+  }
+}
 
 .progress-container {
   display: flex;

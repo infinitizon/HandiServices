@@ -507,35 +507,14 @@ class AuthController {
         }
          */
         try {
-            let { email, subject, message } = req.body;
-            if (!email) throw new AppError('Email is required', __line, __path.basename(__filename), { status: 400, show: true });
-            email = email.toLowerCase();
-            const user = await genericRepo.setOptions('User', {
-                condition: { email: { [Sequelize.Op.iLike]: email } },
-            }).findOne();
-            if (!user) throw new AppError("Account not registered, please sign up", __line, __path.basename(__filename), { status: 404, show: true });
-            let otp = Helper.generateOTCode(6, false);
-            let tokenExists = await genericRepo.setOptions('Token', {
-                condition: { used: false, userId: user.id },
-            }).findOne();
-            if (tokenExists) {
-                await tokenExists.update({ createdAt: Date.now(), token: otp });
-            } else {
-                await genericRepo.setOptions('Token', {
-                    data: { token: otp, userId: user.id },
-                }).create();
-            }
-            new EmailService({ recipient: user.email, sender: 'info@HandiServices.com', subject: subject ? subject : 'One Time Password' })
+            let { user, otp, subject, message } = req.body;
+            new EmailService({ recipient: user.email, sender: 'info@handiservices.com', subject: subject ? subject : 'One Time Password' })
                 .setCustomerDetails(user)
                 .setEmailType({ type: 'resend_otp', meta: { user, otp, message } })
                 .execute();
-            let resp = {
-                code: 201,
-                status: 'success',
-                message: 'check your email for otp.',
-            };
-            res.status(resp.code).json(resp);
-            res.locals.resp = resp;
+
+         const response = { success: true, status: 200, data: {expiresIn: process.env.TOKEN_TIME }, message: 'OTP generated successfully'};
+          res.status(response.status).send(response)
         } catch (error) {
             console.error(error.message);
             return next(
@@ -582,9 +561,9 @@ class AuthController {
          */
         try {
             let resp = {
+                success: true,
                 code: 200,
-                status: 'success',
-                message: 'OTP verified.',
+                message: 'OTP verified successfully',
             };
             res.status(resp.code).json(resp);
             res.locals.resp = resp;

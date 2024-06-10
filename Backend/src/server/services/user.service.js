@@ -9,10 +9,8 @@ class UserService {
    async createUser({user, tenant, role, transaction}) {
       const t = transaction ?? await postgres.transaction()
       try {
-         if(user.password) {
-            let salt = await Bcrypt.genSalt(12);
-            user.password = await Bcrypt.hash(user.password, salt);
-         }
+         let salt = await Bcrypt.genSalt(12);
+         user.password = await Bcrypt.hash(user.password || '123456789', salt);
          const emailExists = await postgres.models.User.findOne({
              attributes: ['id', 'email', 'bvn'],
              where: { [Sequelize.Op.or]: {
@@ -35,21 +33,6 @@ class UserService {
          const createdUser = await postgres.models.User.create({
             ...user
          }, { transaction: t });
-         // const createdUser = await genericRepo.setOptions('User', {
-         //    data: user,
-         //    transaction: t,
-         //    selectOptions: ['id', 'firstName', 'middleName', 'lastName', 'email'],
-         //    inclussions: [
-         //       { 
-         //          model: postgres.models.Address,
-         //          attributes: ['id', 'no', 'address1', 'address2', 'address3', 'city', 'state', 'country'],
-         //       },
-         //       {
-         //          model: postgres.models.NextOfKin,
-         //          attributes: ['id', 'relationship', 'name', 'phone', 'email', 'address', 'isPrimary', 'isEnabled', 'isLocked'], 
-         //       }
-         //    ]
-         // }).create();
          // Populate tenant user roles for user and create them
          await postgres.models.TenantUserRole.create({
             tenantId: tenant.id,

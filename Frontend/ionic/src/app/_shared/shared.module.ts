@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,11 +27,12 @@ import { OTPComponent } from './components/otp/otp.component';
     CommonModule,
     RouterModule,
     IonicModule,
+    HttpClientModule,
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,
   ],
   exports: [
-    CommonModule,
+    CommonModule, HttpClientModule,
     RouterModule,
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,

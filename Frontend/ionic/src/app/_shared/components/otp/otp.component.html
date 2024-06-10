@@ -9,7 +9,7 @@
     </ion-row>
     <ion-row class="ion-no-margin ion-no-padding">
       <ion-col class="mt-5 ion-no-margin ion-no-padding ion-text-center">
-        <ng-otp-input (onInputChange)="onOtpChange($event)"  [config]="{length:6, allowNumbersOnly: true, disableAutoFocus: false}"></ng-otp-input>
+        <ng-otp-input #ngOtpInputRef (onInputChange)="onOtpChange($event)"  [config]="{length:6, allowNumbersOnly: true, disableAutoFocus: false}"></ng-otp-input>
         <div *ngIf="container['verifyOTP']">{{container['verifyOTP']}}</div>
       </ion-col>
     </ion-row>
@@ -20,7 +20,8 @@
         </ion-item>
         <ion-item lines="none" class="ion-text-center">
           <ion-label>
-            Didn't get a code? Resend</ion-label>
+            Didn't get a code? <ion-text color="primary" role="button" (click)="generateOTP()">Resend</ion-text>
+          </ion-label>
         </ion-item>
       </ion-col>
     </ion-row>

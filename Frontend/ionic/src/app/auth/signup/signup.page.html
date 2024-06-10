@@ -5,7 +5,7 @@
     </div>
   </div>
   <mat-stepper linear #stepper>
-    <mat-step [stepControl]="signupStartForm">
+    <mat-step>
       <form [formGroup]="signupStartForm">
         <ion-grid class="ion-no-margin ion-no-padding">
           <ion-row>
@@ -48,7 +48,7 @@
           <ion-row>
             <ion-col>
               <ion-item class="ion-no-margin ion-no-padding">
-                <ion-intl-tel-input formControlName="phone"
+                <ion-intl-tel-input formControlName="phone" fill="outline"
                   [preferredCountries]="['ng', 'us', 'gb', 'ca']" [onlyCountries]="['ng']"
                   [enablePlaceholder]="true"
                   [inputPlaceholder]="'Enter your phone'" #phone>
@@ -112,24 +112,84 @@
         <ion-grid class="ion-no-margin ion-no-padding">
           <ion-row class="ion-no-margin ion-no-padding">
             <ion-col class="ion-no-margin ion-no-padding">
-              <app-otp [option]="{email: 'aa@bb.com'}"></app-otp>
+              <app-otp [options]="container.OTPOptions" (verified)="verifiedOTP($event, stepper)" *ngIf="container.OTPOptions?.email"></app-otp>
             </ion-col>
           </ion-row>
           <ion-row class="ion-margin-top ion-text-center">
             <ion-col class="ion-margin-top">
-              <ion-button expand="block" (click)="onSubmitStart(stepper)">Continue</ion-button>
+              <ion-button expand="block" (click)="onSubmitOTP(stepper)">Continue</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
       </form>
     </mat-step>
     <mat-step>
-      <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
-      </div>
+      <form [formGroup]="signupPasswordForm">
+        <ion-grid class="ion-no-margin ion-no-padding">
+          <ion-row>
+            <ion-col>
+              <ion-label>
+                <h1>Complete your profile</h1>
+                <p>Choose a strong password for your account</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input labelPlacement="floating" label="Password" [type]="container['password']?'password':'text'" placeholder="Choose a secure password" formControlName="password">
+                  <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
+                  <ion-button fill="clear" slot="end" aria-label="Show/hide" (click)="container['password']=!container['password']">
+                    <ion-icon slot="icon-only" name="eye" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                </ion-input>
+              </ion-item>
+              <div class="password">
+                <ion-label>
+                  <p [ngClass]="{'text-danger': signupPasswordForm.controls['password'].errors?.['minlength'], 'text-success': (signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['minlength'])}">
+                    <ion-icon name="checkmark-circle-outline"
+                      [color]="(signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['minlength'])?'success':signupPasswordForm.controls['password'].errors?.['minlength']?'danger':''"></ion-icon> Must be at least 8 characters long
+                  </p>
+                  <p [ngClass]="{'text-danger': signupPasswordForm.controls['password'].errors?.['oneUpperCase'], 'text-success': (signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneUpperCase'])}">
+                    <ion-icon name="checkmark-circle-outline"
+                    [color]="(signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneUpperCase'])?'success':signupPasswordForm.controls['password'].errors?.['oneUpperCase']?'danger':''"></ion-icon> Must contain one uppercase letter
+                  </p>
+                  <p [ngClass]="{'text-danger': signupPasswordForm.controls['password'].errors?.['oneLowerCase'], 'text-success': (signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneLowerCase'])}">
+                    <ion-icon name="checkmark-circle-outline"
+                    [color]="(signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneLowerCase'])?'success':signupPasswordForm.controls['password'].errors?.['oneLowerCase']?'danger':''"></ion-icon> Must contain one lowercase letter
+                  </p>
+                  <p [ngClass]="{'text-danger': signupPasswordForm.controls['password'].errors?.['oneDigit'], 'text-success': (signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneDigit'])}">
+                    <ion-icon name="checkmark-circle-outline"
+                    [color]="(signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['oneDigit'])?'success':signupPasswordForm.controls['password'].errors?.['oneDigit']?'danger':''"></ion-icon> Must contain at least one digit
+                  </p>
+                  <p [ngClass]="{'text-danger': signupPasswordForm.controls['password'].errors?.['specialChar'], 'text-success': (signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['specialChar'])}">
+                    <ion-icon name="checkmark-circle-outline"
+                    [color]="(signupPasswordForm.controls['password'].touched && !signupPasswordForm.controls['password'].errors?.['specialChar'])?'success':signupPasswordForm.controls['password'].errors?.['specialChar']?'danger':''"></ion-icon> Must contain at least one special character. e.g. $, _, +, etc
+                  </p>
+                </ion-label>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-input labelPlacement="floating" label="Confirm Password" [type]="container['cPassword']?'password':'text'" placeholder="Confirm the password password"
+                  formControlName="cPassword" errorText="{{uiErrors.cPassword || 'Invalid password'}}">
+                  <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
+                  <ion-button fill="clear" slot="end" aria-label="Show/hide" (click)="container['cPassword']=!container['cPassword']">
+                    <ion-icon slot="icon-only" name="eye" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                </ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-margin-top ion-text-center">
+            <ion-col class="ion-margin-top">
+              <ion-button expand="block" (click)="onComplete()">Complete</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
     </mat-step>
   </mat-stepper>
 </ion-content>

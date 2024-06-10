@@ -19,6 +19,10 @@ export const ValidationMessages = {
     oneUpperCase: 'Must contain one uppercase letter',
     specialChar: 'Must contain one special character e.g _, !, @, etc',
   },
+  cPassword: {
+    required: 'Confirm Password is required',
+    mustMatch: 'Password and Confirm password fields do not match',
+  },
 };
 export let FormErrors = {
   firstName: '',
@@ -26,4 +30,5 @@ export let FormErrors = {
   email: '',
   phone: '',
   password: '',
+  cPassword: '',
 };

@@ -19,7 +19,7 @@ module.exports = {
                 { id: uuidv4(), p_id: '04ce6078-a792-4c68-ac3c-132675693f26', type: '101', title: 'Sheets and Duvet', summary: 'From bricklaying to finishing and homes to roads', created_at: new Date(), updated_at: new Date() },
                 { id: '9b142bf3-f0d9-43be-9bdb-e3fab4e4c4f6', type: '103', title: 'Simply for Wallet', summary: 'Will help us hold wallet conection', created_at: new Date(), updated_at: new Date() },
             ], {transaction}),
-            console.log('Tenants seeded')
+            console.log('Products seeded')
             await queryInterface.bulkInsert('tenants', [
                 { id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', name: 'Super Admin', email: 'infinitizon@gmail.com', phone: '+2347065731242'
                 , is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date()  },
@@ -50,13 +50,13 @@ module.exports = {
                 { id: uuidv4(),  name: 'PROVIDER', description: 'An officer in a tenant', },
                 { id: 'e5f8395a-a2b1-452b-9beb-0a8ba94a023c',  name: 'CUSTOMER', description: 'A simple customer in a tenant', },
             ], {transaction}),
-            console.log('Users seeded')
+            console.log('Roles seeded')
             await queryInterface.bulkInsert('wallets', [
                 { id: uuidv4(), user_id: '646d4127-1c58-4ba0-a4a1-6943f178d16a',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), user_id: '30e6b26b-4363-4c2a-ade2-ce97b1144d39',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), user_id: '062a83db-6764-41dd-aceb-fa454172e867',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
             ], {transaction}),
-            console.log('Roles seeded')
+            console.log('Wakket seeded')
             await queryInterface.bulkInsert('addresses', [
                 { id: uuidv4(), common_type: 'tenant', common_id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', house_no: '17', address1: 'Ramoni St', address2: 'Surulere', city: 'Ikate', lga: 'Surulere', country: 'NG', state: 'LA', lat: 6.50987330616208, lng: 3.34048703377835, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), common_type: 'tenant', common_id: '274b082e-5257-497b-ae13-56e315955eec', house_no: '10', address1: 'Asa-Afariogun St', address2: 'Ajao Estate', city: 'Ajao Estate', lga: 'Oshodi-Isolo', country: 'NG', state: 'LA', lat: 6.54761516453506, lng: 3.33109511428974, created_at: new Date(), updated_at: new Date() },
@@ -86,7 +86,7 @@ module.exports = {
                 { id: uuidv4(), product_id: '04ce6078-a792-4c68-ac3c-132675693f26', name: 'Shirt', type: 'inc_dcr', min_price: 10, max_price: 400, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), product_id: '04ce6078-a792-4c68-ac3c-132675693f26', name: 'Pantalons', type: 'inc_dcr', min_price: 100, max_price: 1500, created_at: new Date(), updated_at: new Date() },
             ], {transaction}),
-            console.log('product_bank_gateways seeded')
+            console.log('product_xters seeded')
 
             await transaction.commit();
         } catch (error) {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { environment } from '@environments/environment';
@@ -14,9 +14,10 @@ import { IOTP } from './otp.model';
 export class OTPComponent implements OnInit {
   @ViewChild(NgOtpInputComponent, { static: false}) ngOtpInputRef!:NgOtpInputComponent;
   @Input() options!: IOTP;
+  @Output() verified = new EventEmitter<boolean>(false);
   data: any;
   container={
-    resendOTP: false,
+    generating: false,
     verifyOTP: '',
   }
   constructor(
@@ -25,27 +26,41 @@ export class OTPComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log();
-    console.log(this.options);
+    this.generateOTP()
   }
 
-
-  onResendCode() {
-    this.container['resendOTP'] = true;
-    const payload = {};
-    this.ngOtpInputRef.setValue('');
-    this.http.post(`${environment.baseApiUrl}` + `${ '/auth/customers/resend-otp'}`, payload)
+  generateOTP() {
+    this.container['generating'] = true;
+    // this.ngOtpInputRef.setValue('');
+    this.http.post(`${environment.baseApiUrl}/auth/otp/generate`, {email: this.options?.email})
     .subscribe({
       next: (response: any) => {
-        this.container['resendOTP'] = false;
+        this.container['generating'] = false;
         // this.toastr.success(response.message, response.status);
       },
       error: err => {
-        this.container['resendOTP'] = false;
+        this.container['generating'] = false;
         // this.toastr.error(response.error.error.message);
       }
     });
   }
+
+  // onResendCode(otp: string) {
+  //   this.container['resendOTP'] = true;
+  //   const payload = {token: otp,};
+  //   this.ngOtpInputRef.setValue('');
+  //   this.http.post(`${environment.baseApiUrl}/auth/customers/resend-otp}`, payload)
+  //   .subscribe({
+  //     next: (response: any) => {
+  //       this.container['resendOTP'] = false;
+  //       // this.toastr.success(response.message, response.status);
+  //     },
+  //     error: err => {
+  //       this.container['resendOTP'] = false;
+  //       // this.toastr.error(response.error.error.message);
+  //     }
+  //   });
+  // }
 
 
   back() {
@@ -57,21 +72,17 @@ export class OTPComponent implements OnInit {
       this.container['verifyOTP'] = 'Verifying...';
       this.ngOtpInputRef.otpForm.disable();
       // if(this.data.status === 423) {
-        const payload = {token: otp,};
+        const payload = {email: this.options?.email, token: otp,};
         // console.log(payload);
         this.http
-        .post(`${environment.baseApiUrl}/auth/customers/login`, payload)
+        .post(`${environment.baseApiUrl}/auth/otp/verify`, payload)
         .pipe(take(1))
         .subscribe({
           next: (response: any) => {
-            // this.commonService.removeLoading(this.submitButton.nativeElement);
-            // this.dialogRef.close({twofaSuccess: true, response: response })
-            // this.appContext.userInformation = response.data;
-
+            if(response.success) this.verified.emit(true)
           },
           error: (err) => {
             this.container['verifyOTP'] = err.error.message || 'Error Validating';
-            // this.toastr.error(response.error.error.message);
             this.ngOtpInputRef.otpForm.enable();
 
           }

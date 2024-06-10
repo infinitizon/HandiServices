@@ -37,26 +37,28 @@ class OtpService {
     }
   }
 
-  async verifyOTP ({ token, email, }) {
+  async verifyOTP ({ token, email, transaction}) {
+    const t = transaction ?? await postgres.transaction();
      try {
+        if (!token) throw new AppError('Token is required', __line, __path.basename(__filename), { status: 400, show: true });
+
         let user = await postgres.models.User.findOne({ where: { email: { [ Sequelize.Op.iLike]: email }} });
         if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
-        if (!token) throw new AppError('Token is required', __line, __path.basename(__filename), { status: 400, show: true });
+
         const tokenExists = await postgres.models.Token.findOne({ where: { token, userId: user.id }, });
-        
         if (!tokenExists || tokenExists.used)
            throw new AppError('Invalid or expired token', __line, __path.basename(__filename), { status: 403, show: true });
 
         const checkToken = await Helper.checkToken({ time: process.env.TOKEN_TIME, tokenTime: tokenExists.createdAt })
-        if (!checkToken) {
-           await tokenExists.destroy({ force: true })
-           throw new AppError('Invalid or expired token', __line, __path.basename(__filename), { status: 403, show: true });
-        }
-        await user.update({ verified: true });
-        await tokenExists.update({ used: true })
-        return { success: true, message: 'OTP verified successfully', };
+        if (!checkToken) throw new AppError('Invalid or expired token', __line, __path.basename(__filename), { status: 403, show: true });
+
+        await user.update({ verified: true }, { transaction: t });
+        await tokenExists.destroy({ force: true, transaction: t });
+
+        transaction ? 0 : await t.commit();
+        return { success: true, status: 200, message: 'OTP verified successfully', };
      } catch (error) {
-        console.log(error.message);
+        transaction ? 0 : await t.rollback();
         return new AppError(
            error.message
            , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show}
