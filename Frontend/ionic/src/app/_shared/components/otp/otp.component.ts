@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { environment } from '@environments/environment';
 import { NgOtpInputComponent } from 'ng-otp-input';
 import { take } from 'rxjs';
-import { IOTP } from './otp.model';
+import { IOTP, IOTPVerified } from '../../models/otp.model';
 
 @Component({
   selector: 'app-otp',
@@ -14,7 +14,7 @@ import { IOTP } from './otp.model';
 export class OTPComponent implements OnInit {
   @ViewChild(NgOtpInputComponent, { static: false}) ngOtpInputRef!:NgOtpInputComponent;
   @Input() options!: IOTP;
-  @Output() verified = new EventEmitter<boolean>(false);
+  @Output() verified = new EventEmitter<IOTPVerified>();
   data: any;
   container={
     generating: false,
@@ -26,6 +26,9 @@ export class OTPComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if(!this.options?.email) {
+      this.verified.emit({verified: false, error: `No email is provided`})
+    }
     this.generateOTP()
   }
 
@@ -75,14 +78,15 @@ export class OTPComponent implements OnInit {
         const payload = {email: this.options?.email, token: otp,};
         // console.log(payload);
         this.http
-        .post(`${environment.baseApiUrl}/auth/otp/verify`, payload)
+        .post(this.options?.endpoint || `${environment.baseApiUrl}/auth/otp/verify`, payload)
         .pipe(take(1))
         .subscribe({
           next: (response: any) => {
-            if(response.success) this.verified.emit(true)
+            if(response.success) this.verified.emit({verified: true})
           },
           error: (err) => {
             this.container['verifyOTP'] = err.error.message || 'Error Validating';
+            this.verified.emit({verified: false, error: this.container['verifyOTP']})
             this.ngOtpInputRef.otpForm.enable();
 
           }

@@ -8,7 +8,8 @@ import { IonIntlTelInputValidators } from '@jongbonga/ion-intl-tel-input';
 import { FormErrors, ValidationMessages } from './signup-start.validators';
 import { CommonService } from '@app/_shared/services/common.service';
 import { environment } from '@environments/environment';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController, ToastController } from '@ionic/angular';
+import { IOTPVerified } from '@app/_shared/models/otp.model';
 
 @Component({
   selector: 'app-signup',
@@ -19,6 +20,8 @@ export class SignupPage implements OnInit {
   signupStartForm!: FormGroup;
   signupPasswordForm!: FormGroup;
 
+  OTPVerified!: IOTPVerified;
+
   errors: any = [];
   formErrors: any = FormErrors;
   uiErrors: any = FormErrors;
@@ -27,7 +30,7 @@ export class SignupPage implements OnInit {
     password: true,
     cPassword: true,
     submitStart: false,
-    OTPVerified: false,
+    submitComplete: false,
     OTPOptions: {
       email: ''
     },
@@ -37,7 +40,9 @@ export class SignupPage implements OnInit {
     private http: HttpClient,
     private commonService: CommonService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
+    private navCtrl: NavController,
   ) { }
 
   ngOnInit() {
@@ -113,23 +118,26 @@ export class SignupPage implements OnInit {
         },
         error: async err => {
           this.container['submitStart'] = false;
+          loadingEl.dismiss();
           const alert = await this.alertCtrl.create({
             header: `Error`,
-            message: err?.error?.error?.message
+            message: err?.error?.error?.message,
+            buttons: [ { text: 'Cancel', role: 'cancel' },],
           });
           await alert.present()
         }
      });
   }
-  verifiedOTP(data: boolean, stepper: MatStepper) {
-    this.container.OTPVerified = data;
+  verifiedOTP(data: IOTPVerified, stepper: MatStepper) {
+    this.OTPVerified = data;
     this.onSubmitOTP(stepper);
   }
   onSubmitOTP(stepper: MatStepper) {
-    if(!this.container.OTPVerified) return;
+    if(!this.OTPVerified.verified) return;
     this.moveStepper(stepper);
   }
-  onComplete() {
+  async onComplete() {
+    this.container['submitComplete'] = true;
     this.signupPasswordForm.markAllAsTouched();
     if (this.signupPasswordForm.invalid) {
       this.uiErrors = JSON.parse(JSON.stringify(this.formErrors));
@@ -138,8 +146,38 @@ export class SignupPage implements OnInit {
       );
       this.commonService.displayErrors(this.formErrors, ValidationMessages, this.errors, this.uiErrors);
       console.log(this.uiErrors, this.errors, this.signupPasswordForm);
-      this.container['submitStart'] = false;
+      this.container['submitComplete'] = false;
       return;
     }
+    const loadingEl = await this.loadingCtrl.create({
+      message: 'Completing signup...',
+    });
+    loadingEl.present();
+    this.http.patch(`${environment.baseApiUrl}/auth/signup/complete`, this.signupPasswordForm.value)
+      .subscribe({
+        next: async (response: any) => {
+          this.container['submitComplete'] = false;
+          loadingEl.dismiss();
+          this.navCtrl.navigateForward(`/auth/login`);
+          const toast = await this.toastCtrl.create({
+            header: 'Success',
+            duration: 3000,
+            color: 'success',
+            message: `Signup complete. Proceed to login`
+          });
+          await toast.present()
+        },
+        error: async err => {
+          this.container['submitComplete'] = false;
+          loadingEl.dismiss();
+          const toast = await this.toastCtrl.create({
+            header: 'Error',
+            duration: 3000,
+            color: 'error',
+            message: err?.error?.message || `Error updating your password. Try doing a password reset or contact admin`
+          });
+          await toast.present()
+        }
+     });
   }
 }

@@ -11,6 +11,7 @@ import { StorageService } from '@app/_shared/services/storage.service';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { ILogin } from '@app/_shared/models/Login';
 import { FormErrors, ValidationMessages } from './login.validators';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -35,6 +36,7 @@ export class LoginPage implements OnInit {
     private commonService: CommonService,
     private storageService: StorageService,
     public appContext: ApplicationContextService,
+    private toastCtrl: ToastController,
   ) { }
 
   ngOnInit() {
@@ -119,23 +121,33 @@ export class LoginPage implements OnInit {
 
     this.container['submitting'] = true;
     this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
-              .subscribe((response: Partial<ILogin>)=>{
-                if (response?.multiTenant) {
-                } else {
-                    const user = response.user;
-                    this.storageService.set('token', response.token);
-                    this.storageService.set('uuid', response.xUUIDToken);
-                    this.storageService.set('role', user?.Tenant[0]?.Roles[0]?.name ?? 'CUSTOMER');
-                    this.appContext.userInformation$.next(user);
+              .subscribe({
+                next: (response: Partial<ILogin>)=>{
+                  if (response?.multiTenant) {
+                  } else {
+                      const user = response.user;
+                      this.storageService.set('token', response.token);
+                      this.storageService.set('uuid', response.xUUIDToken);
+                      this.storageService.set('role', user?.Tenant[0]?.Roles[0]?.name ?? 'CUSTOMER');
+                      this.appContext.userInformation$.next(user);
 
-                  // if (this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')) {
-                  //   this.router.navigate([this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')]);
-                  //   this.authService.redirectUrl = '';
-                  // } else {
-                    this.router.navigateByUrl('/main/home');
-                  // }
+                    // if (this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')) {
+                    //   this.router.navigate([this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')]);
+                    //   this.authService.redirectUrl = '';
+                    // } else {
+                      this.router.navigateByUrl('/main/home');
+                    // }
+                  }
+                }, error: async err =>{
+                  const toast = await this.toastCtrl.create({
+                    header: 'Error',
+                    duration: 3000,
+                    color: 'error',
+                    message: err?.error?.message
+                  });
+                  await toast.present()
                 }
-              })
+            })
   }
 
   displayErrors() {

@@ -110,7 +110,7 @@
     <mat-step>
       <form>
         <ion-grid class="ion-no-margin ion-no-padding">
-          <ion-row class="ion-no-margin ion-no-padding">
+          <ion-row class="ion-no-margin ion-no-padding" style="height: 80vh;">
             <ion-col class="ion-no-margin ion-no-padding">
               <app-otp [options]="container.OTPOptions" (verified)="verifiedOTP($event, stepper)" *ngIf="container.OTPOptions?.email"></app-otp>
             </ion-col>
@@ -125,7 +125,7 @@
     </mat-step>
     <mat-step>
       <form [formGroup]="signupPasswordForm">
-        <ion-grid class="ion-no-margin ion-no-padding">
+        <ion-grid class="ion-no-margin ion-no-padding" style="height: 80vh;">
           <ion-row>
             <ion-col>
               <ion-label>
@@ -183,6 +183,8 @@
               </ion-item>
             </ion-col>
           </ion-row>
+        </ion-grid>
+        <ion-grid class="ion-no-margin ion-no-padding">
           <ion-row class="ion-margin-top ion-text-center">
             <ion-col class="ion-margin-top">
               <ion-button expand="block" (click)="onComplete()">Complete</ion-button>

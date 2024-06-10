@@ -17,6 +17,6 @@ router.post('/otp/verify', OTPMiddleware.verify, AuthController.verifyOTP);
 router.post('/forgot-password/otp', AuthController.forgotPassword);
 router.post('/reset-password', OTPMiddleware.verify, AuthController.resetPassword);
 router.post('/change-password', JoiMW.validateReq(AuthValidator.changePassword), AuthController.authenticate, AuthController.changePassword)
-router.patch('/completeSignup', OTPMiddleware.verify, AuthController.completeSignup);
+router.patch('/signup/complete', JoiMW.validateReq(AuthValidator.profileUpdate), AuthController.completeSignup);
 
 module.exports = router;
