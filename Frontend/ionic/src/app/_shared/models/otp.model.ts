@@ -3,4 +3,9 @@ export interface IOTP {
   subTitle?: string;
   timer?: string;
   email: string;
+  endpoint?: string;
+}
+export interface IOTPVerified {
+  verified: boolean;
+  error?: string;
 }

@@ -451,17 +451,12 @@ class AuthController {
 
             const tenant = {id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d'}; // Hardcoding to the SuperAdmin tenant
             
-            let { success, otp, data: user, message, ...error } = await userService.createUser({ user: post, tenant, role: roles[0], sendOTP: true, transaction: t })
+            let { success, data: user, message, ...error } = await userService.createUser({ user: post, tenant, role: roles[0], sendOTP: true, transaction: t })
             if (!success) throw new AppError(error.show?message:'Error creating user. Please try again later', __line, __path.basename(__filename), { status: 403, show: error.show });
 
             await t.commit();
             res.status(200).json({ multiTenant: false, user, });
             
-            // ***** notification with otp sent to customer
-            new EmailService({ recipient: user.email, sender: 'info@HandiServices.com', subject: 'Verify Your Account' })
-                .setCustomerDetails(user)
-                .setEmailType({ type: 'sign_up', meta: { user, token: otp } })
-                .execute();
         } catch (error) {
             await t.rollback();
             console.log(error.message);
@@ -513,7 +508,7 @@ class AuthController {
                 .setEmailType({ type: 'resend_otp', meta: { user, otp, message } })
                 .execute();
 
-         const response = { success: true, status: 200, data: {expiresIn: process.env.TOKEN_TIME }, message: 'OTP generated successfully'};
+         const response = { success: true, status: 200, data: {expiresIn: process.env.OTP_EXPIRY }, message: 'OTP generated successfully'};
           res.status(response.status).send(response)
         } catch (error) {
             console.error(error.message);
@@ -613,24 +608,29 @@ class AuthController {
         }
          */
         const t = await postgres.transaction()
+        let { email, password } = req.body;
         try {
             let user = await genericRepo.setOptions('User', {
-                condition: { email: { [Sequelize.Op.iLike]: req.body.email } },
+                condition: { email: { [Sequelize.Op.iLike]: email } },
             }).findOne();
-            let tokenExists = await genericRepo.setOptions('Token', {
-                condition: { token: req.body.token, userId: user.id },
-            }).findOne();
-            let resp = {
-                code: 200,
-                status: 'success',
-                message: 'User enabled.'
-            };
+            if(password) {
+                password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);
+                const userService = new UserService();
+                const updateUser = await userService.updateProfile({userId: user.id, changes: {password, isEnabled: true, isLocked: false}, transaction: t});
+                if (!updateUser || !updateUser.success)
+                    throw new AppError(
+                        updateUser.show?updateUser.message:'Error completing registration. Please perform a password reset or contact admin', 
+                        __line, __path.basename(__filename), { status: 400, show: updateUser.show });
+            }
             const walletService = new CustomerWalletService;
             await walletService.createWallet({userId: user.id, transaction: t})
-            await user.update({ isEnabled: true, isLocked: false }, { transaction: t});
-            await tokenExists.update({ used: true }, { transaction: t})
 
             await t.commit()
+            let resp = {
+                success: true,
+                code: 200,
+                message: 'User signup complete.'
+            };
             res.status(resp.code).json(resp);
             res.locals.resp = resp;
         } catch (error) {

@@ -1,5 +1,4 @@
 const Bcrypt = require('bcryptjs');
-const Helper = require('../utils/helper');
 const CryptoJS = require('../utils/crypto');
 const AppError = require('../../config/apiError')
 const OtpService = require('../services/otp.service');
@@ -51,14 +50,6 @@ class AuthMiddleware {
         const { token } = req.body;
     
         if (!token) {
-          let otp = Helper.generateOTCode(6, false);
-          await postgres.models.Token.create({ token: otp, userId: user.id, });
-
-          new EmailService({ recipient: user.email, sender: 'info@HandiServices.com', subject: '2FA Token'})
-            .setCustomerDetails(user)
-            .setEmailType({ type: 'resend_otp', meta: { user, otp } })
-            .execute();
-
           const resp = {
             status: 419,
             success: false,

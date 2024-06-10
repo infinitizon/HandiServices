@@ -41,11 +41,9 @@ class UserService {
          }, { transaction: t });
 
          delete createdUser.dataValues.password
-         const otp = Helper.generateOTCode(6, false);
-         await postgres.models.Token.create({ token: otp, userId: createdUser.id, }, { transaction: t });
 
          transaction ? 0 : await t.commit();
-         return { success: true, status: 200, message: `User created successfully`, otp, data: createdUser }
+         return { success: true, status: 200, message: `User created successfully`, data: createdUser }
       } catch (error) {
          transaction ? 0 : await t.rollback();
          return new AppError(
