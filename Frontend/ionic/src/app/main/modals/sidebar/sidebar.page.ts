@@ -8,18 +8,22 @@ import { NavController } from '@ionic/angular';
   templateUrl: './sidebar.page.html',
   styleUrls: ['./sidebar.page.scss'],
 })
-export class SidebarPage implements OnInit {
+export class SidebarPage {
 
+  container = {
+    token: false,
+  }
   constructor(
     private authService: AuthService,
     private navCtrl: NavController,
     private storageService: StorageService
   ) { }
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     const token = await this.storageService.get('token');
-    if(!token) {
-      this.navCtrl.navigateForward('/auth/login');
+    if(token) {
+      this.container.token = true
+      // this.navCtrl.navigateForward('/auth/login');
     }
   }
 
@@ -28,5 +32,12 @@ export class SidebarPage implements OnInit {
   }
   onLogout() {
     this.authService.logout();
+  }
+  onLogin() {
+    this.navCtrl.navigateForward('/auth/login')
+  }
+  async onSignup(vendor: boolean) {
+    if(vendor) await this.storageService.set('vendor', true);
+    this.navCtrl.navigateForward('/auth/signup')
   }
 }

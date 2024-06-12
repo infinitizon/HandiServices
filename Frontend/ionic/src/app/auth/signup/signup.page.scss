@@ -13,7 +13,11 @@ div.password {
     color: var(--ion-color-tertiary-shade);
   }
 }
-
+.paginator {
+  ion-icon {
+    font-size: larger;
+  }
+}
 .progress-container {
   display: flex;
   flex-direction: row;

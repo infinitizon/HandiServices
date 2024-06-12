@@ -7,6 +7,7 @@ export const ValidationMessages = {
   },
   email: {
     required: 'Email is required',
+    pattern: 'Enter valid email'
   },
   phone: {
     required: 'Phone is required',
@@ -23,6 +24,16 @@ export const ValidationMessages = {
     required: 'Confirm Password is required',
     mustMatch: 'Password and Confirm password fields do not match',
   },
+
+  name: {
+    required: 'Business Name is required',
+  },
+  category: {
+    required: 'Category is required',
+  },
+  address: {
+    required: 'Business Address is required'
+  }
 };
 export let FormErrors = {
   firstName: '',
@@ -31,4 +42,8 @@ export let FormErrors = {
   phone: '',
   password: '',
   cPassword: '',
+
+  name: '',
+  category: '',
+  address: ''
 };

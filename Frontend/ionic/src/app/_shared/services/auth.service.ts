@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 // import jwt_decode from 'jwt-decode';
 
 import { StorageService } from './storage.service';
+import { ApplicationContextService } from './application-context.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class AuthService {
 
   constructor(
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private appCtx: ApplicationContextService
   ) {
     this.loadToken();
   }
@@ -31,6 +33,7 @@ export class AuthService {
   }
 
   logout(url?: string) {
+    this.appCtx.userInformation$.next(null)
     this.storageService.remove('token');
     this.storageService.remove('role');
     this.storageService.remove('uuid');

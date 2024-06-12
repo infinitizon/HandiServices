@@ -11,7 +11,7 @@ import { StorageService } from '@app/_shared/services/storage.service';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { ILogin } from '@app/_shared/models/Login';
 import { FormErrors, ValidationMessages } from './login.validators';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +36,7 @@ export class LoginPage implements OnInit {
     private commonService: CommonService,
     private storageService: StorageService,
     public appContext: ApplicationContextService,
+    private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
   ) { }
 
@@ -117,12 +118,16 @@ export class LoginPage implements OnInit {
       ivKey: environment.IV_KEY,
     }).encryptWithKeyAndIV(fd.password);
     fd.password = encrypted;
-    console.log(fd);
 
     this.container['submitting'] = true;
+    const loadingEl = await this.loadingCtrl.create({
+      message: `Logging you in...`
+    });
+    await loadingEl.present();
     this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
               .subscribe({
-                next: (response: Partial<ILogin>)=>{
+                next: async (response: Partial<ILogin>)=>{
+                  await loadingEl.dismiss();
                   if (response?.multiTenant) {
                   } else {
                       const user = response.user;
@@ -139,6 +144,7 @@ export class LoginPage implements OnInit {
                     // }
                   }
                 }, error: async err =>{
+                  await loadingEl.dismiss();
                   const toast = await this.toastCtrl.create({
                     header: 'Error',
                     duration: 3000,
