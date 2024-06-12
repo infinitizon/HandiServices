@@ -273,8 +273,6 @@ export class SignupPage {
     });
   }
   async onSubmitVendor() {
-    console.log(this.signupVendorForm.value);
-
     this.signupVendorForm.markAllAsTouched();
     if (this.signupVendorForm.invalid) {
       this.uiErrors = JSON.parse(JSON.stringify(this.formErrors))
