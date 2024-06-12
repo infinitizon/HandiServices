@@ -78,8 +78,7 @@ class TenantController {
          if(!tenants || !tenants.success)
             throw new AppError(tenants.message||`Error completing your store`, tenants.line||__line, tenants.file||__path.basename(__filename), { status: tenants.status||409 });
       
-         const otpSent = await (new OtpService).generateOTP({email: userDetails.email, transaction: t });
-         console.log(otpSent);
+         await (new OtpService).generateOTP({email: userDetails.email, transaction: t });
          
          t.commit();
          res.status(tenants.status).json(tenants);
