@@ -144,12 +144,14 @@ export class LoginPage implements OnInit {
                     // }
                   }
                 }, error: async err =>{
+                  console.log(err);
+
                   await loadingEl.dismiss();
                   const toast = await this.toastCtrl.create({
                     header: 'Error',
                     duration: 3000,
-                    color: 'error',
-                    message: err?.error?.message
+                    color: 'danger',
+                    message: err?.error?.error?.message
                   });
                   await toast.present()
                 }
