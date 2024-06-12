@@ -71,7 +71,7 @@ class JwtService {
    async loginByEmail ({ email }) {
       try {
          let user = await postgres.models.User.findOne({
-            attributes: ["id","bvn","firstName","lastName","firstLogin", "email","password", "refCode", "isEnabled", "isLocked", "uuidToken"],
+            attributes: ["id","bvn","firstName","lastName","firstLogin", "email","password", "refCode", "isEnabled", "isLocked", "twoFactorAuth", "uuidToken"],
             where: { email: {[Sequelize.Op.iLike]: email}, },
             include: [
                 {

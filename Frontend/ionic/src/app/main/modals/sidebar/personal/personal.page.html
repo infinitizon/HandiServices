@@ -1,0 +1,39 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Personal Information</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid class="ion-no-padding ion-margin-vertical">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item detail routerLink="/main/sidebar/security/password">
+            <ion-label>
+              Residential Address
+            </ion-label>
+          </ion-item>
+          <ion-item detail routerLink="/main/sidebar/security/password">
+            <ion-label>
+              Next of Kin
+            </ion-label>
+          </ion-item>
+          <ion-item detail>
+            <ion-label>
+              Security Questions
+            </ion-label>
+          </ion-item>
+          <ion-item detail>
+            <ion-label>
+              Bank Account
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

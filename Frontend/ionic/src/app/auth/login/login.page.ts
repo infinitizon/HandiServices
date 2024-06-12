@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -12,6 +12,8 @@ import { ApplicationContextService } from '@app/_shared/services/application-con
 import { ILogin } from '@app/_shared/models/Login';
 import { FormErrors, ValidationMessages } from './login.validators';
 import { LoadingController, ToastController } from '@ionic/angular';
+import { IOTPVerified } from '@app/_shared/models/otp.model';
+import { IonModal } from '@ionic/angular/common';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +29,14 @@ export class LoginPage implements OnInit {
   validationMessages: any = ValidationMessages;
   container = {
     password: true,
-    submitting: false
+    submitting: false,
+    requireOTP: false,
+    OTPOptions: {
+      id: null,
+      email: '',
+      endpoint: '',
+      formData: {}
+    },
   }
   constructor(
     private fb: FormBuilder,
@@ -128,36 +137,53 @@ export class LoginPage implements OnInit {
               .subscribe({
                 next: async (response: Partial<ILogin>)=>{
                   await loadingEl.dismiss();
-                  if (response?.multiTenant) {
-                  } else {
-                      const user = response.user;
-                      this.storageService.set('token', response.token);
-                      this.storageService.set('uuid', response.xUUIDToken);
-                      this.storageService.set('role', user?.Tenant[0]?.Roles[0]?.name ?? 'CUSTOMER');
-                      this.appContext.userInformation$.next(user);
-
-                    // if (this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')) {
-                    //   this.router.navigate([this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')]);
-                    //   this.authService.redirectUrl = '';
-                    // } else {
-                      this.router.navigateByUrl('/main/home');
-                    // }
-                  }
+                  this.successLogin(response);
                 }, error: async err =>{
-                  console.log(err);
-
                   await loadingEl.dismiss();
-                  const toast = await this.toastCtrl.create({
-                    header: 'Error',
-                    duration: 3000,
-                    color: 'danger',
-                    message: err?.error?.error?.message
-                  });
-                  await toast.present()
+                  if(err?.status !== 423 && err?.status !== 419) {
+                    const toast = await this.toastCtrl.create({
+                      header: 'Error',
+                      duration: 3000,
+                      color: 'danger',
+                      message: err?.error?.error?.message
+                    });
+                    await toast.present()
+                  }
+
+                  if(err?.status === 419) {
+                    console.log("Status: ", err.status);
+                    this.container.requireOTP = true;
+                    this.container.OTPOptions = {
+                      ...this.container.OTPOptions,
+                      email: fd.email,
+                      formData: fd,
+                      endpoint: `${environment.baseApiUrl}/auth/user/login`
+                    }
+                  }
                 }
             })
   }
+  successLogin(response: any) {
+    if (response?.multiTenant) {
+    } else {
+        const user = response.user;
+        this.storageService.set('token', response.token);
+        this.storageService.set('uuid', response.xUUIDToken);
+        this.storageService.set('role', user?.Tenant[0]?.Roles[0]?.name ?? 'CUSTOMER');
+        this.appContext.userInformation$.next(user);
 
+      // if (this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')) {
+      //   this.router.navigate([this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')]);
+      //   this.authService.redirectUrl = '';
+      // } else {
+        this.router.navigateByUrl('/main/home');
+      // }
+    }
+  }
+  verifiedOTP(response: IOTPVerified, modal2FA: IonModal) {
+    this.successLogin(response.data);
+    modal2FA.dismiss()
+  }
   displayErrors() {
     Object.keys(this.formErrors).forEach((control) => {
       this.formErrors[control] = '';

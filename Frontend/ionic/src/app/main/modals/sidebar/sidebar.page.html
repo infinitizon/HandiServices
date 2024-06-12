@@ -18,7 +18,7 @@
         <ion-col>
           <ion-card>
             <ion-list>
-              <ion-item detail lines="none">
+              <ion-item detail lines="none" routerLink="/main/sidebar/personal">
                 <ion-icon name="person-circle-outline" slot="start"></ion-icon>
                 <ion-label>
                   <p>Personal Information</p>
@@ -50,7 +50,7 @@
           </ion-card>
           <ion-card>
             <ion-list>
-              <ion-item detail lines="none">
+              <ion-item detail lines="none" routerLink="/main/sidebar/security">
                 <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
                 <ion-label>
                   <p>Security</p>
@@ -80,35 +80,37 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-card *ngIf="!container.token">
-          <ion-list>
-            <ion-item lines="none" (click)="onLogin()">
-              <ion-icon name="log-in-outline" slot="start"></ion-icon>
-              <ion-label>
-                <p>Login</p>
-                <small>Login to do more on home service</small>
-              </ion-label>
-            </ion-item>
-            <ion-item lines="none" (click)="onSignup(false)">
-              <ion-icon name="people-outline" slot="start"></ion-icon>
-              <ion-label>
-                <p>Signup</p>
-                <small>Gain access to our array of vendors, products and more</small>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-card>
-        <ion-card>
-          <ion-list>
-            <ion-item lines="none" (click)="onSignup(true)">
-              <ion-icon name="cash-outline" slot="start"></ion-icon>
-              <ion-label>
-                <p>Become a seller</p>
-                <small>Reach out to the world with your products and services</small>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-card>
+        <ion-col>
+          <ion-card *ngIf="!container.token">
+            <ion-list>
+              <ion-item lines="none" (click)="onLogin()">
+                <ion-icon name="log-in-outline" slot="start"></ion-icon>
+                <ion-label>
+                  <p>Login</p>
+                  <small>Login to do more on home service</small>
+                </ion-label>
+              </ion-item>
+              <ion-item lines="none" (click)="onSignup(false)">
+                <ion-icon name="people-outline" slot="start"></ion-icon>
+                <ion-label>
+                  <p>Signup</p>
+                  <small>Gain access to our array of vendors, products and more</small>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card>
+          <ion-card>
+            <ion-list>
+              <ion-item lines="none" detail (click)="onSignup(true)">
+                <ion-icon name="cash-outline" slot="start"></ion-icon>
+                <ion-label>
+                  <p>Become a seller</p>
+                  <small>Reach out with your products and services</small>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card>
+        </ion-col>
       </ion-row>
     </ion-grid>
 </ion-content>
