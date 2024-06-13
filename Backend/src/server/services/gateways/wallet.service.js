@@ -1,5 +1,5 @@
 
-const { postgres } = require('../../../database/models');
+const db = require('../../../database/models');
 
 const AppError = require('../../../config/apiError');
 const helper = require('../../utils/helper');
@@ -41,7 +41,7 @@ class WalletService {
    //             debitAccountNumber: walletBank.data[0].account_number, 
    //          })
    //          if (!paymentResponse || !paymentResponse.success) {
-   //             await postgres.models.transaction.update(
+   //             await db[process.env.DEFAULT_DB].models.transaction.update(
    //                {
    //                   status: 'failed',
    //                   gateway_response: JSON.stringify(paymentResponse),
@@ -66,10 +66,10 @@ class WalletService {
    async verifyTransaction ({ query, }) {
       try {
          const { redirectUrl, reference, ...options } = query;
-         const txn = await postgres.models.transaction.findOne({
+         const txn = await db[process.env.DEFAULT_DB].models.transaction.findOne({
             attributes: ['id', 'amount', 'description', 'reference'],
             include: [
-               {model: postgres.models.customer, as: 'customer', attributes: ['id', 'bvn', 'phone', 'email']}
+               {model: db[process.env.DEFAULT_DB].models.customer, as: 'customer', attributes: ['id', 'bvn', 'phone', 'email']}
             ],
             where: {reference}
          });

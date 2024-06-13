@@ -2,7 +2,7 @@ const Bcrypt = require('bcryptjs');
 const CryptoJS = require('../utils/crypto');
 const AppError = require('../../config/apiError')
 const OtpService = require('../services/otp.service');
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const RateLimiter = require('../services/rate-limit.service');
 const EmailService = require('../services/email-builder.service');
 
@@ -11,8 +11,8 @@ class AuthMiddleware {
     try {
       let { email, password } = req.body;
       password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);
-      const user = await postgres.models.User.findOne({ 
-        where: { email: { [Sequelize.Op.iLike]: email.trim() }  }, 
+      const user = await db[process.env.DEFAULT_DB].models.User.findOne({ 
+        where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email.trim() }  }, 
         attributes: ["id", "email", "password", "twoFactorAuth"],
       });
   

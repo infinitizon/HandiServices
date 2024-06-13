@@ -1,14 +1,14 @@
 const Helper = require('../utils/helper');
 const AppError = require('../../config/apiError')
 const genericRepo = require('../../repository');
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const EmailService = require('../services/email-builder.service');
 
 class OtpService {
   async generateOTP ({email, subject, message, next}) {
     try {
       const user = await genericRepo.setOptions('User', {
-        condition: { email: { [Sequelize.Op.iLike]: email } },
+        condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } },
       }).findOne();
       if (!user) throw new AppError("Account not registered, please sign up", __line, __path.basename(__filename), { status: 404, show: true });
       let otp = Helper.generateOTCode(6, false);
@@ -38,14 +38,14 @@ class OtpService {
   }
 
   async verifyOTP ({ token, email, transaction}) {
-    const t = transaction ?? await postgres.transaction();
+    const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
      try {
         if (!token) throw new AppError('Token is required', __line, __path.basename(__filename), { status: 400, show: true });
 
-        let user = await postgres.models.User.findOne({ where: { email: { [ Sequelize.Op.iLike]: email }} });
+        let user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email }} });
         if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
 
-        const tokenExists = await postgres.models.Token.findOne({ where: { token, userId: user.id }, });
+        const tokenExists = await db[process.env.DEFAULT_DB].models.Token.findOne({ where: { token, userId: user.id }, });
         if (!tokenExists || tokenExists.used)
            throw new AppError('Invalid or expired token', __line, __path.basename(__filename), { status: 403, show: true });
 

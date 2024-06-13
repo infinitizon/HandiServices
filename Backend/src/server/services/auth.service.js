@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // const JWTR =  require('jwt-redis').default;
 
 const AppError = require('../../config/apiError');
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 // const { getLimitStatus } = require('../utils/rateLimit');
 
 class JwtService {
@@ -70,15 +70,15 @@ class JwtService {
    }
    async loginByEmail ({ email }) {
       try {
-         let user = await postgres.models.User.findOne({
+         let user = await db[process.env.DEFAULT_DB].models.User.findOne({
             attributes: ["id","bvn","firstName","lastName","firstLogin", "email","password", "refCode", "isEnabled", "isLocked", "twoFactorAuth", "uuidToken"],
-            where: { email: {[Sequelize.Op.iLike]: email}, },
+            where: { email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email}, },
             include: [
                 {
-                    model: postgres.models.TenantUserRole, 
+                    model: db[process.env.DEFAULT_DB].models.TenantUserRole, 
                     include: [
-                        { model: postgres.models.Tenant, attributes: ["id", "name"], },
-                        { model: postgres.models.Role, attributes: ["name"], },
+                        { model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"], },
+                        { model: db[process.env.DEFAULT_DB].models.Role, attributes: ["name"], },
                     ]
                 }
             ],
@@ -103,16 +103,16 @@ class JwtService {
    }
    async getUserAndTenant ({ userId, tenantId }) {
       try {
-         let user = await postgres.models.User.findOne({
+         let user = await db[process.env.DEFAULT_DB].models.User.findOne({
             attributes: ["id","bvn","firstName","lastName","email","password", "isEnabled", "isLocked"],
             where: { id: userId },
             include: [
                {
                   required: false,
-                  model: postgres.models.TenantUserRole, where: { tenantId: tenantId||uuidv4()},
+                  model: db[process.env.DEFAULT_DB].models.TenantUserRole, where: { tenantId: tenantId||uuidv4()},
                   include: [
-                     { model: postgres.models.Tenant, attributes: ["id", "name"], },
-                     { model: postgres.models.Role, attributes: ["name"], },
+                     { model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"], },
+                     { model: db[process.env.DEFAULT_DB].models.Role, attributes: ["name"], },
                   ]
                }
             ],

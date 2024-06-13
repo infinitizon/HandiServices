@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: WalletPage
+  },  {
+    path: 'fund',
+    loadChildren: () => import('./fund/fund.module').then( m => m.FundPageModule)
   }
+
 ];
 
 @NgModule({

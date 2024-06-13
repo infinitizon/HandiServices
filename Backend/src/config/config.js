@@ -16,6 +16,13 @@ module.exports = {
             }
         }
     },
+    "sqlite": {
+        "database": 'local-db',
+        "username": 'user',
+        "password": 'pass',
+        "host": './dev.sqlite',
+        "dialect": "sqlite",
+    },
     "development": {
         "databases": {
             "postgres": {
@@ -33,6 +40,13 @@ module.exports = {
                         "rejectUnauthorized": false
                     }
                 }
+            },
+            "sqlite": {
+                "database": 'local-db',
+                "username": 'user',
+                "password": 'pass',
+                "host": './dev.sqlite',
+                "dialect": "sqlite",
             },
         },
     },

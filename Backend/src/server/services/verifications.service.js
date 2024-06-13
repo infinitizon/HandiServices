@@ -6,7 +6,7 @@ const Vendors = {
 const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 const AppError = require('../../config/apiError')
-const { postgres } = require('../../database/models');
+const db = require('../../database/models');
 
 
 class VerificationsService {
@@ -16,11 +16,11 @@ class VerificationsService {
    }
    async verifyBVN ({ bvn, dob, firstname, lastname, refresh }) {
       try {
-         const bvnExists = await postgres.models.User.findOne({ where: { bvn } });
+         const bvnExists = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { bvn } });
          if (bvnExists)
             throw new AppError('A user is already signed up with this bvn', __line, __path.basename(__filename), { status: 409, show: true })
 
-         const bvnDataExists = await postgres.models.BvnData.findOne({where: {bvn}});
+         const bvnDataExists = await db[process.env.DEFAULT_DB].models.BvnData.findOne({where: {bvn}});
 
          if (bvnDataExists && !refresh) {
             const data = this.renameBVNParams(bvnDataExists.bvn_response);
@@ -49,7 +49,7 @@ class VerificationsService {
             await bvnDataExists.update({ bvn_response: vendorData.data });
             bvnData = bvnDataExists;
          } else {
-            bvnData = await postgres.models.BvnData.create({
+            bvnData = await db[process.env.DEFAULT_DB].models.BvnData.create({
                id: uuidv4(),
                bvn,
                bvn_response: vendorData.data,
@@ -84,7 +84,7 @@ class VerificationsService {
          if (!verified.success) throw new AppError(verified.message, __line, __path.basename(__filename), { status: verified.status });
 
          if(userId) {
-            const customer = await postgres.models.User.findByPk(userId, {
+            const customer = await db[process.env.DEFAULT_DB].models.User.findByPk(userId, {
                attributes: ['firstName', 'middleName', 'lastName'],
             })
             const bankAccountName = verified.data.accountName.split(" ");

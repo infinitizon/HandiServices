@@ -7,7 +7,15 @@ const routes: Routes = [
   {
     path: '',
     component: PersonalPage
+  },  {
+    path: 'address',
+    loadChildren: () => import('./address/address.module').then( m => m.AddressPageModule)
+  },
+  {
+    path: 'security-question',
+    loadChildren: () => import('./security-question/security-question.module').then( m => m.SecurityQuestionPageModule)
   }
+
 ];
 
 @NgModule({

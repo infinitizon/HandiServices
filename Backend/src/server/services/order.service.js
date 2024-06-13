@@ -1,13 +1,13 @@
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const axios = require('axios');
 const Pagination = require('../utils/pagination')
 const AppError = require("../../config/apiError");
 
 class OrderService {
    async createOrder({ auth, params, orders, transaction }) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const existingOrder = await postgres.models.Order.findOne({where: {userId: auth.userId, tenantId: params.tenantId, status: 'pending'}});
+         const existingOrder = await db[process.env.DEFAULT_DB].models.Order.findOne({where: {userId: auth.userId, tenantId: params.tenantId, status: 'pending'}});
          let cOrder = [];
          for(const o in orders) {
             let ord = {
@@ -20,7 +20,7 @@ class OrderService {
          let created;
          if(existingOrder) {
             for(const o of cOrder) {
-               const oi = await postgres.models.OrderItem.findOrCreate({
+               const oi = await db[process.env.DEFAULT_DB].models.OrderItem.findOrCreate({
                   where: {prodVendorXter: o.prodVendorXter},
                   defaults: {
                      value: o.value,
@@ -29,7 +29,7 @@ class OrderService {
                },);
                if(oi[1]) {
                   await existingOrder.addOrderItems(oi[0], {
-                     include: [postgres.models.OrderItem],
+                     include: [db[process.env.DEFAULT_DB].models.OrderItem],
                      transaction: t
                   });
                } else {
@@ -43,8 +43,8 @@ class OrderService {
                tenantId: params.tenantId,
                OrderItems: cOrder,
             }
-            created = await postgres.models.Order.create(order, {
-               include: [postgres.models.OrderItem],
+            created = await db[process.env.DEFAULT_DB].models.Order.create(order, {
+               include: [db[process.env.DEFAULT_DB].models.OrderItem],
                transaction: t
             });
          }
@@ -62,9 +62,9 @@ class OrderService {
       }
    }
    async updateOrder({ order, transaction }) {
-      const t = transaction ?? await postgres.transaction();
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
       try {
-         const existingOrder = await postgres.models.OrderItem.findByPk(order.orderId);
+         const existingOrder = await db[process.env.DEFAULT_DB].models.OrderItem.findByPk(order.orderId);
          if(!existingOrder)
             throw new AppError(`Order with id: ${order.orderId} does not exist`, __line, __path.basename(__filename), { status: 404, show: true });
 
@@ -84,12 +84,12 @@ class OrderService {
    }
    async getOrder({ orderId, }) { 
       try {
-         let order = await postgres.models.Order.findByPk(orderId, {
+         let order = await db[process.env.DEFAULT_DB].models.Order.findByPk(orderId, {
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: postgres.models.OrderItem,
+                  model: db[process.env.DEFAULT_DB].models.OrderItem,
                   duplicating: false,
                   attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
                },
@@ -110,51 +110,51 @@ class OrderService {
    async getOrders({ auth, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         let orders = await postgres.models.Order.findAndCountAll({
+         let orders = await db[process.env.DEFAULT_DB].models.Order.findAndCountAll({
             attributes: [
                "id", "status",
-               [Sequelize.literal(`SUM("OrderItems->ProductVendorCharacter".price * cast("OrderItems".value as double precision))`), 'amount'], 
-               [Sequelize.literal(`COUNT("OrderItems"."order_id")`), 'totalItems'], 
+               [db.Sequelize.literal(`SUM("OrderItems->ProductVendorCharacter".price * cast("OrderItems".value as double precision))`), 'amount'], 
+               [db.Sequelize.literal(`COUNT("OrderItems"."order_id")`), 'totalItems'], 
                "createdAt"
             ],
             include: [
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   attributes: ['id', 'firstName', 'middleName', 'lastName'],
                   duplicating: false,
                   // include: [
                   //    {
-                  //       model: postgres.models.Address,
+                  //       model: db[process.env.DEFAULT_DB].models.Address,
                   //       attributes: ['id'],
                   //       duplicating: false,
                   //    }
                   // ],
                },
                {
-                  model: postgres.models.Tenant,
+                  model: db[process.env.DEFAULT_DB].models.Tenant,
                   attributes: ['id', 'name'],
                   duplicating: false,
                   // include: [
                   //    {
-                  //       model: postgres.models.Address,
+                  //       model: db[process.env.DEFAULT_DB].models.Address,
                   //       attributes: ['id'],
                   //       duplicating: false,
                   //    }
                   // ],
                },
                {
-                  model: postgres.models.OrderItem,
+                  model: db[process.env.DEFAULT_DB].models.OrderItem,
                   attributes: [],
                   duplicating: false,
                   include: [
                      {
-                        model: postgres.models.ProductVendorCharacter, attributes: [],
+                        model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
                         duplicating: false,
                      }
                   ],
                },
                {
-                  model: postgres.models.Address, through: { attributes: [] },
+                  model: db[process.env.DEFAULT_DB].models.Address, through: { attributes: [] },
                   as: 'Addresses',
                   duplicating: false,
                },
@@ -196,7 +196,7 @@ class OrderService {
          // countQuery = countQuery.replace(/{{fields}}/g, `COUNT(o.id) as count`);
          // countQuery = countQuery.replace(/{{moreJoin}}/g, moreJoin);
          // countQuery = countQuery.replace(/{{group}}/g, group);
-         // const countOrders = await postgres.query(countQuery, {
+         // const countOrders = await db[process.env.DEFAULT_DB].query(countQuery, {
          //    type: Sequelize.QueryTypes.SELECT,
          // });
          
@@ -216,7 +216,7 @@ class OrderService {
          // qOrders = qOrders.replace(/{{moreJoin}}/g, moreJoin);
          // qOrders = qOrders.replace(/{{group}}/g, group);
          // qOrders = `${qOrders} ORDER BY "createdAt" ASC OFFSET ${offset} LIMIT ${limit}`;
-         // const rOrders = await postgres.query(qOrders, {
+         // const rOrders = await db[process.env.DEFAULT_DB].query(qOrders, {
          //    nest: true,
          //    type: Sequelize.QueryTypes.SELECT,
          // });
@@ -268,27 +268,27 @@ class OrderService {
    async getOrderDetails({ userId, orderId, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         let orders = await postgres.models.OrderItem.findAndCountAll({
+         let orders = await db[process.env.DEFAULT_DB].models.OrderItem.findAndCountAll({
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: postgres.models.Order,
+                  model: db[process.env.DEFAULT_DB].models.Order,
                   duplicating: false,
                   attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
                   include: [
                      {
-                        model: postgres.models.User,
+                        model: db[process.env.DEFAULT_DB].models.User,
                         attributes: ['id', 'firstName', 'middleName', 'lastName'],
                      }
                   ],
                   where: { ...(orderId && {id: orderId}), ...(userId && {userId}), ...(query.status && {status: query.status}) },
                },
                {
-                  model: postgres.models.ProductVendorCharacter,
+                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
                   include: [
                      {
-                        model: postgres.models.ProductCharacter,
+                        model: db[process.env.DEFAULT_DB].models.ProductCharacter,
                         attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
                      }
                   ],
@@ -332,14 +332,14 @@ class OrderService {
       }
    }
    async updateOrderStatus({orderId, status, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          const order = await this.getOrder({orderId});
          if(!order || !order.success)
             throw new AppError('Order not found', __line, __path.basename(__filename), { status: 404, show: true});
 
          await order.data.update({ status }, {transaction: t});
-         // postgres.models.OrderItem.update()
+         // db[process.env.DEFAULT_DB].models.OrderItem.update()
 
          transaction ? 0 : await t.commit();
          return { success: true, status: 200, message: `Order status updated successfully`, data: order }

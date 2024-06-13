@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { AuthService } from '@app/_shared/services/auth.service';
 import { environment } from '@environments/environment';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -27,7 +27,7 @@ export class MainPage implements OnInit {
     this.appContext.getUserInformation()
                   .subscribe(user=>{
                     if(!user?.id) {
-                      this.auth.isAuthenticated.subscribe(auth=>{
+                      this.auth.isAuthenticated.pipe(take(1)).subscribe(auth=>{
                         if (auth) {
                           this.getUserInformation();
                         }
