@@ -87,6 +87,11 @@ module.exports = {
                 { id: uuidv4(), product_id: '04ce6078-a792-4c68-ac3c-132675693f26', name: 'Pantalons', type: 'inc_dcr', min_price: 100, max_price: 1500, created_at: new Date(), updated_at: new Date() },
             ], {transaction}),
             console.log('product_xters seeded')
+            await queryInterface.bulkInsert('security_questions', [
+                { id: uuidv4(), label: 'Where were you born?', created_at: new Date(), updated_at: new Date() },
+                { id: uuidv4(), label: 'What is the name of your first car?', created_at: new Date(), updated_at: new Date() },
+            ], {transaction}),
+            console.log('security_questions seeded')
 
             await transaction.commit();
         } catch (error) {

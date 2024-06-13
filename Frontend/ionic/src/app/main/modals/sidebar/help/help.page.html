@@ -1,0 +1,39 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Personal Information</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid class="ion-no-padding ion-margin-vertical mt-5">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item detail routerLink="/main/sidebar/help/faq">
+            <ion-label>
+              Frequently Asked Questions
+            </ion-label>
+          </ion-item>
+          <ion-item detail routerLink="/main/sidebar/help/contact">
+            <ion-label>
+              Contact Us
+            </ion-label>
+          </ion-item>
+          <ion-item detail>
+            <ion-label>
+              Privacy Policy
+            </ion-label>
+          </ion-item>
+          <ion-item detail>
+            <ion-label>
+              Terms of Use
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

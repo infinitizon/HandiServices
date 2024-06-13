@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 // const {admin, FCM} = require('../../config/firebase');
 const genericRepo = require('../../repository');
 
@@ -137,10 +137,10 @@ class NotificationService {
       let conditions = {customerId: null};
       if(search){
         conditions = {
-          [Sequelize.Op.or]:{
-            activityType: {[Sequelize.Op.iLike]: `%${search}%`},
-            title: {[Sequelize.Op.iLike]: `%${search}%`},
-            body:{[Sequelize.Op.iLike]: `%${search}%`},
+          [db.Sequelize.Op.or]:{
+            activityType: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
+            title: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
+            body:{[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
           }
         }
       }

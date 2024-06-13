@@ -75,14 +75,14 @@ export class OTPComponent implements OnInit {
       this.container['verifyOTP'] = 'Verifying...';
       this.ngOtpInputRef.otpForm.disable();
       // if(this.data.status === 423) {
-        const payload = {email: this.options?.email, token: otp,};
+        const payload = {...this.options.formData, email: this.options?.email, token: otp,};
         // console.log(payload);
         this.http
         .post(this.options?.endpoint || `${environment.baseApiUrl}/auth/otp/verify`, payload)
         .pipe(take(1))
         .subscribe({
           next: (response: any) => {
-            if(response.success) this.verified.emit({verified: true})
+            if(response.success) this.verified.emit({verified: true, data: response})
           },
           error: (err) => {
             this.container['verifyOTP'] = err.error.message || 'Error Validating';

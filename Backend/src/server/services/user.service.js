@@ -1,5 +1,5 @@
 const Bcrypt = require('bcryptjs');
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const HttpStatus = require("http-status");
 const Helper = require('../utils/helper');
 const AppError = require("../../config/apiError");
@@ -7,14 +7,14 @@ const VerificationsService = require('../services/verifications.service');
 
 class UserService {
    async createUser({user, tenant, role, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          let salt = await Bcrypt.genSalt(12);
          user.password = await Bcrypt.hash(user.password || '123456789', salt);
-         const emailExists = await postgres.models.User.findOne({
+         const emailExists = await db[process.env.DEFAULT_DB].models.User.findOne({
              attributes: ['id', 'email', 'bvn'],
-             where: { [Sequelize.Op.or]: {
-                 email: {[Sequelize.Op.iLike]: user.email}
+             where: { [db.Sequelize.Op.or]: {
+                 email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: user.email}
              } },
          });
          if (emailExists) throw new AppError('Email/BVN already registered', __line, __path.basename(__filename), { status: HttpStatus.CONFLICT, show: true });
@@ -27,14 +27,14 @@ class UserService {
          user.refCode = null;
          do {
             user.refCode = refCode.replace(/[^a-zA-Z]/g, '').toUpperCase() + Helper.generatePassword(2, { includeSpecialChars: false });
-            refCodeExists = await postgres.models.User.count({ where: { refCode: `${user.refCode}` }, });
+            refCodeExists = await db[process.env.DEFAULT_DB].models.User.count({ where: { refCode: `${user.refCode}` }, });
          } while (refCodeExists > 0);
 
-         const createdUser = await postgres.models.User.create({
+         const createdUser = await db[process.env.DEFAULT_DB].models.User.create({
             ...user
          }, { transaction: t });
          // Populate tenant user roles for user and create them
-         await postgres.models.TenantUserRole.create({
+         await db[process.env.DEFAULT_DB].models.TenantUserRole.create({
             tenantId: tenant.id,
             userId: createdUser.id,
             roleId: role.id
@@ -55,7 +55,7 @@ class UserService {
       }
    }
    async updateProfile({userId, changes, transaction}) {
-      const t = transaction ?? await postgres.transaction();
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
       try {
          if(changes.password) {
             let salt = await Bcrypt.genSalt(12);
@@ -63,12 +63,12 @@ class UserService {
          }
 
          const {Media, ...userChanges} = changes;
-         const user = await postgres.models.User.findByPk( userId, {
+         const user = await db[process.env.DEFAULT_DB].models.User.findByPk( userId, {
             attributes: {excludes: ['password', 'uuidToken']},
             include: [{
-               model: postgres.models.Media, where: { ...(Media && {objectType: Media.objectType})}, required: false 
+               model: db[process.env.DEFAULT_DB].models.Media, where: { ...(Media && {objectType: Media.objectType})}, required: false 
             },{
-               model: postgres.models.Address, required: false 
+               model: db[process.env.DEFAULT_DB].models.Address, required: false 
             }]
          });
          if(Media) {
@@ -96,44 +96,44 @@ class UserService {
    static async getDetails({userId, tenantId}){
       let inclussions = [
          {
-            model: postgres.models.Beneficiary,
+            model: db[process.env.DEFAULT_DB].models.Beneficiary,
             attributes: ['accountNumber', 'bankCode', 'accountName', 'bankName', 'active', 'id'],
             required: false
          },
          {
-            model: postgres.models.Address,
+            model: db[process.env.DEFAULT_DB].models.Address,
             attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'state', 'country', 'isActive'], 
             required: false
          },
          { 
-            model: postgres.models.NextOfKin,
+            model: db[process.env.DEFAULT_DB].models.NextOfKin,
             attributes: ['id', 'relationship', 'name', 'phone', 'email', 'address', 'isPrimary', 'isEnabled', 'isLocked'], 
             required: false
          },
          { 
-            model: postgres.models.Media,
+            model: db[process.env.DEFAULT_DB].models.Media,
             required: false
          },
       ]
       if(tenantId){
          inclussions.push({
-            model: postgres.models.TenantUserRole,
+            model: db[process.env.DEFAULT_DB].models.TenantUserRole,
             where: {tenantId},
             attributes: ['roleId'],
             required: false,
             include: [
                {
-                  model: postgres.models.Tenant,
+                  model: db[process.env.DEFAULT_DB].models.Tenant,
                   attributes: ['id', 'name', ],
                },
                {
-                  model: postgres.models.Role,
+                  model: db[process.env.DEFAULT_DB].models.Role,
                   attributes: ['id', 'name', 'description'],
                }
             ],
          })
       }
-      const user = await postgres.models.User.findByPk(userId, {
+      const user = await db[process.env.DEFAULT_DB].models.User.findByPk(userId, {
          attributes: ['id', 'pId', 'bvn', 'refCode', 'referrer', 'firstName', 'middleName', 'lastName', 'email', 'refCode', 'deviceToken', 'dob', 'phone', 'gender', 'tier', 'showBalance', 'isEnabled', 'isLocked', 'twoFactorAuth', 'firstLogin', 'createdAt'],
          include: inclussions,
       })
@@ -143,15 +143,15 @@ class UserService {
    static async getRoles  ({roleId, roleName}) {
       try{
          let criteria = {
-            where: {[Sequelize.Op.or]: []},
+            where: {[db.Sequelize.Op.or]: []},
             includes: []
          }
          // criteria.where['']
          if(roleId || roleName) {
-            roleId? criteria.where[Sequelize.Op.or].push({id: roleId}) : 0;
-            roleName ? criteria.where[Sequelize.Op.or].push({name: roleName}) : 0;
+            roleId? criteria.where[db.Sequelize.Op.or].push({id: roleId}) : 0;
+            roleName ? criteria.where[db.Sequelize.Op.or].push({name: roleName}) : 0;
          }
-         const data = await postgres.models.Role.findAll(criteria) || [];
+         const data = await db[process.env.DEFAULT_DB].models.Role.findAll(criteria) || [];
          return { success: true, status: 200, message: `Role(s) fetched successfully`, data};
       }catch(error){
          return new AppError(
@@ -165,15 +165,15 @@ class UserService {
    async getUserRoles ({roleId, roleName}) {
       try{
          let criteria = {
-            where: {[Sequelize.Op.or]: []},
+            where: {[db.Sequelize.Op.or]: []},
             includes: []
          }
          // criteria.where['']
          if(roleId || roleName) {
-            roleId? criteria.where[Sequelize.Op.or].push({id: roleId}) : 0;
-            roleName ? criteria.where[Sequelize.Op.or].push({name: roleName}) : 0;
+            roleId? criteria.where[db.Sequelize.Op.or].push({id: roleId}) : 0;
+            roleName ? criteria.where[db.Sequelize.Op.or].push({name: roleName}) : 0;
          }
-         const data = await postgres.models.Role.findAll(criteria) || [];
+         const data = await db[process.env.DEFAULT_DB].models.Role.findAll(criteria) || [];
          return { success: true, status: 200, message: `Role(s) fetched successfully`, data};
       }catch(error){
          return new AppError(
@@ -186,9 +186,9 @@ class UserService {
    }
 
    static async beneficiary({ id, userId, nuban, bankCode, bankName, bankAccountName, transaction } ){
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try{
-         const user = await postgres.models.User.findByPk(userId);
+         const user = await db[process.env.DEFAULT_DB].models.User.findByPk(userId);
          if (!user.isEnabled || user.isLocked)
             throw new AppError('Verify your account to proceed', __line, __path.basename(__filename), { status: 403, show: true });
          
@@ -237,7 +237,7 @@ class UserService {
       try {
          let condition = userId ;
          if(bankCode) condition = {...condition, bankCode};
-         let beneficiaries = await postgres.models.Beneficiary.findAll({
+         let beneficiaries = await db[process.env.DEFAULT_DB].models.Beneficiary.findAll({
             where: condition,
          }) || [];
 
@@ -252,12 +252,12 @@ class UserService {
    }
 
    static async addBeneficiary ({ id, userId, nuban, bankCode, bankName, bankAccountName, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          let beneficiary;
          
          if (id) {
-            beneficiary = await postgres.models.Beneficiary.update(
+            beneficiary = await db[process.env.DEFAULT_DB].models.Beneficiary.update(
                {
                   accountNumber: nuban,
                   bankCode: bankCode,
@@ -267,7 +267,7 @@ class UserService {
                { where: { id, userId }, transaction: t }
             );
          } else {
-            beneficiary = await postgres.models.Beneficiary.create({
+            beneficiary = await db[process.env.DEFAULT_DB].models.Beneficiary.create({
                accountNumber: nuban,
                bankCode: bankCode,
                accountName: bankAccountName,
@@ -288,7 +288,7 @@ class UserService {
       }
    }
    async createUpdateAddress ({ id, original, userId, changes, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          let address = null;
          if(id) {
@@ -298,7 +298,7 @@ class UserService {
                throw new AppError(changed.show?changed.message:`Error getting address`, changed.line||__line, changed.line||__path.basename(__filename), { status: changed.status||400, show: changed.show});
             address = changed.data[0];
          } else {
-            address = await postgres.models.Address.create({
+            address = await db[process.env.DEFAULT_DB].models.Address.create({
                ...changes, userId
             }, {transaction: t})
          }

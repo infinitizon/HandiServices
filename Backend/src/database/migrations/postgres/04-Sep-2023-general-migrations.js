@@ -65,6 +65,10 @@ module.exports = {
             console.log('ChatSession');
             await queryInterface.createTable(postgres.models.ChatMessage.tableName, postgres.models.ChatMessage.tableAttributes, { transaction })
             console.log('ChatMessage');
+            await queryInterface.createTable(sqlite.models.SecurityQuestion.tableName, sqlite.models.SecurityQuestion.tableAttributes, { transaction })
+            console.log('SecurityQuestion');
+            await queryInterface.createTable(sqlite.models.UserSecurityQuestion.tableName, sqlite.models.UserSecurityQuestion.tableAttributes, { transaction })
+            console.log('UserSecurityQuestion');
             
             await transaction.commit();
         } catch (error) {

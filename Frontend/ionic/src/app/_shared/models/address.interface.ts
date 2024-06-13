@@ -1,4 +1,8 @@
 export interface IAddress {
+  id?: string;
+  phone?: string;
+  isActive?: boolean;
+  houseNo?: number;
   number: number;
   address1: string;
   address2: string;

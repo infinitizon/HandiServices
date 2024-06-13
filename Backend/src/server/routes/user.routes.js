@@ -22,6 +22,7 @@ router.route('/beneficiary')
 
 router.route('/address/:addressId')
       .get(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.getAddress)
+      .delete(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.deleteAddress)
       .patch( JoiMW.validateReq(AddressValidator.updateAddress), AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.updateAddress)
 router.route('/address')
       .get(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.getAddresses)

@@ -1,0 +1,19 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+    <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar/help"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">FAQs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-accordion-group class="ion-no-padding ion-margin-vertical mt-5">
+    <ion-accordion [value]="faq.id" *ngFor="let faq of faqs">
+      <ion-item slot="header">
+        <ion-label>{{faq.group.header}}</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">{{faq.group.content}}</div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>

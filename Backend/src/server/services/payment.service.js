@@ -167,12 +167,12 @@ class PaymentService {
       // if(module === 'invest'){
       //     call = await (new FundsAppService).getProductBankGateway(assetId)
       // }
-      // call = await postgres.models.Product.findAll({
+      // call = await db[process.env.DEFAULT_DB].models.Product.findAll({
       //   attributes: {exclude: ['updatedAt']},
       //   where: {commonId: assetId, commonType: 'assets'},
       //   include: [
       //     {
-      //       model: postgres.models.ProductBankGateway,
+      //       model: db[process.env.DEFAULT_DB].models.ProductBankGateway,
       //       attributes: {exclude: ['updatedAt']},
       //     }
       //   ],
@@ -221,7 +221,7 @@ class PaymentService {
         for (let dbCard of cardExists.data) {
           await dbCard.update({ isActive: false });
         }
-        return await postgres.models.card.create({
+        return await db[process.env.DEFAULT_DB].models.card.create({
           customer_id: transaction.customer.id,
           gateway: data.gateway,
           card_details: data.card,
@@ -238,11 +238,11 @@ class PaymentService {
       let whereGeneral = []
       // let whereSavePlan=[];
       for(const key of keys) {
-        whereGeneral.push(Sequelize.literal(`${key}='${criteria[key]}'`))
+        whereGeneral.push(db.Sequelize.literal(`${key}='${criteria[key]}'`))
       }
-      const cards = await postgres.models.card.findAll({
+      const cards = await db[process.env.DEFAULT_DB].models.card.findAll({
         where: {
-          [Sequelize.Op.and]: whereGeneral
+          [db.Sequelize.Op.and]: whereGeneral
         },
       });
       return { success: true, data: cards };
@@ -252,9 +252,9 @@ class PaymentService {
   };
   async getTransfer (criteria) {
     try {
-      const transfers = await postgres.models.sweep_queue.findAll({
+      const transfers = await db[process.env.DEFAULT_DB].models.sweep_queue.findAll({
         where: {
-          [Sequelize.Op.and]: criteria
+          [db.Sequelize.Op.and]: criteria
         },
       });
       return { success: true, data: transfers };
@@ -270,7 +270,7 @@ class PaymentService {
         },
         inclussions: [
             {
-                model: postgres.models.ProductBankGateway,
+                model: db[process.env.DEFAULT_DB].models.ProductBankGateway,
                 attributes: ['gateway', 'sub_account_id', 'business_secret']
             }
         ]

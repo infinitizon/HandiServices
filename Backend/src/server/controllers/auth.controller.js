@@ -1,6 +1,6 @@
 const Bcrypt = require('bcryptjs');
 
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 
 const AppError = require('../../config/apiError')
 const CryptoJS = require('../utils/crypto')
@@ -81,7 +81,7 @@ class AuthController {
          */
         try {
             let auth = res.locals.user;
-            const user = await postgres.models.User.findByPk(auth.userId);
+            const user = await db[process.env.DEFAULT_DB].models.User.findByPk(auth.userId);
             await user.update({ uuidToken: null })
             
             res.status(200).json({success: true, status: 200, message: `Logout successful`});
@@ -127,10 +127,10 @@ class AuthController {
           let { email } = req.body;
           if (!email) throw new AppError('Email required', __line, __path.basename(__filename), { status: 400, show: true });
           email = email.toLowerCase();
-          const user = await postgres.models.User.findOne({ where: { email: { [Sequelize.Op.iLike]: email } }, });
+          const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } }, });
           if (!user) throw new AppError('Account not registered, please sign up', __line, __path.basename(__filename), { status: 404, show: true });
           let otp = Helper.generateOTCode(6, false);
-          const token = await postgres.models.Token.create({
+          const token = await db[process.env.DEFAULT_DB].models.Token.create({
             token: otp,
             userId: user.id,
           });
@@ -202,7 +202,7 @@ class AuthController {
             if (!email || !password) throw new AppError('Email and Password required', __line, __path.basename(__filename), { status: 400, show: true });
             password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);
             email = email.toLowerCase();
-            const user = await postgres.models.User.findOne({ where: { email: { [Sequelize.Op.iLike]: email } }, });
+            const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } }, });
             if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
             const hashedPassword = Bcrypt.hashSync(password, 10);
             await user.update({ password: hashedPassword });
@@ -231,11 +231,11 @@ class AuthController {
             newPassword = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(newPassword)
             if (oldPassword === newPassword)
                 throw new AppError('New password cannot be the same as old!', __line, __path.basename(__filename), { status: 403, show: true });
-            const user = await postgres.models.User.findByPk(userId);
+            const user = await db[process.env.DEFAULT_DB].models.User.findByPk(userId);
             const correctPassword = Bcrypt.compareSync(oldPassword, user.password);
             if (!correctPassword) throw new AppError('Incorrect old password entered', __line, __path.basename(__filename), { status: 403, show: true });
             let hash = Bcrypt.hashSync(newPassword, 12);
-            await postgres.models.User.update(
+            await db[process.env.DEFAULT_DB].models.User.update(
                 { password: hash },
                 { where: { id: userId } }
             );
@@ -330,7 +330,7 @@ class AuthController {
             const authorized = await AuthService.verifyToken(auth, process.env.ACCESS_TOKEN_SECRET);
             if(!authorized.success) throw new AppError('Authentication invalid/Expired. Please login again', __line, __path.basename(__filename), { status: 401, show: true });
             
-            const user = await postgres.models.User.findOne({
+            const user = await db[process.env.DEFAULT_DB].models.User.findOne({
                 attributes: ['id', 'uuidToken'],
                 where: { id: authorized.data.userId },
             });
@@ -433,7 +433,7 @@ class AuthController {
                 }
             }
          */
-        const t = await postgres.transaction()
+        const t = await db[process.env.DEFAULT_DB].transaction()
         try {
             let post = req.body;
             // post.dob = moment(post.dob).format('YYYY-MM-DD');
@@ -607,11 +607,11 @@ class AuthController {
                 description: 'Server error'
         }
          */
-        const t = await postgres.transaction()
+        const t = await db[process.env.DEFAULT_DB].transaction()
         let { email, password } = req.body;
         try {
             let user = await genericRepo.setOptions('User', {
-                condition: { email: { [Sequelize.Op.iLike]: email } },
+                condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } },
             }).findOne();
             if(password) {
                 password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);

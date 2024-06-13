@@ -7,7 +7,19 @@ const routes: Routes = [
   {
     path: '',
     component: SidebarPage
+  },  {
+    path: 'security',
+    loadChildren: () => import('./security/security.module').then( m => m.SecurityPageModule)
+  },
+  {
+    path: 'personal',
+    loadChildren: () => import('./personal/personal.module').then( m => m.PersonalPageModule)
+  },
+  {
+    path: 'help',
+    loadChildren: () => import('./help/help.module').then( m => m.HelpPageModule)
   }
+
 ];
 
 @NgModule({

@@ -1,5 +1,5 @@
 const AppError = require('../../config/apiError')
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const Pagination = require('../utils/pagination')
 
 class FeedbackService {
@@ -10,12 +10,12 @@ class FeedbackService {
          // Define a filter object based on provided query parameters
          const reportFilter = {
             where: {
-                  ...(userId && {userId: { [Sequelize.Op.eq]: userId }} ), 
-                  ...(issue && {issue: { [Sequelize.Op.iLike]: issue }} ),
-                  ...(description && {description: { [Sequelize.Op.iLike]: description }} )
+                  ...(userId && {userId: { [db.Sequelize.Op.eq]: userId }} ), 
+                  ...(issue && {issue: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: issue }} ),
+                  ...(description && {description: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: description }} )
             },
             include: [{
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   attributes: ['id', 'firstName', 'lastName'],
             }],
          };
@@ -26,7 +26,7 @@ class FeedbackService {
          );
 
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const reports = await postgres.models.Feedback.findAndCountAll({
+         const reports = await db[process.env.DEFAULT_DB].models.Feedback.findAndCountAll({
                where: reportFilter.where,
                include: reportFilter.include,
                orderBy: [['createdAt', 'DESC']],
@@ -44,10 +44,10 @@ class FeedbackService {
    async getFeedback ({ id }) {
       try {
          
-         const report = await postgres.models.Feedback.findOne({
+         const report = await db[process.env.DEFAULT_DB].models.Feedback.findOne({
             where: {id},
             include:  [{
-                model: postgres.models.User,
+                model: db[process.env.DEFAULT_DB].models.User,
                 attributes: ['id', 'firstName', 'lastName'],
             }],
         });
@@ -62,11 +62,11 @@ class FeedbackService {
    }
    
    async createFeedback ({ userId, body, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          
          const { description, issue  } = body;
-         const report = await postgres.models.Feedback.create({
+         const report = await db[process.env.DEFAULT_DB].models.Feedback.create({
             description,
             issue,
             userId

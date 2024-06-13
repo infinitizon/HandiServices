@@ -19,6 +19,11 @@ router.route('/user/:user_id')
       .get( AuthController.authenticate, AuthController.authorize(['PROVIDER', 'PROVIDER_ADMIN', 'SUPER_ADMIN']), AdminController.getUser )
       .patch( AuthController.authenticate, AuthController.authorize(['PROVIDER', 'PROVIDER_ADMIN', 'SUPER_ADMIN']), AdminController.updateUser )
       .delete( AuthController.authenticate, AuthController.authorize(['PROVIDER', 'PROVIDER_ADMIN', 'SUPER_ADMIN']), AdminController.deleteUser );
+// Admin define Security Questions
+router.route('/security/questions')
+      .post( AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN']), JoiMW.validateReq(AssetValidator.addAssetBank), AdminController.addSecurityQuestion)
+      .put( AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN']), AdminController.updateSecurityQuestion)
+      .get( AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN']), AdminController.getSecurityQuestions);
 
 /**
  *  Order Routes

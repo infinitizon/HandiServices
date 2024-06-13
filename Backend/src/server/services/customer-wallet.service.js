@@ -1,12 +1,12 @@
 
 const AppError = require("../../config/apiError");
-const { postgres } = require("../../database/models");
+const db = require("../../database/models");
 
 class CustomerWalletService {
    async createWallet ({ userId, currency='NGN', isEnabled=true, isLocked=false, transaction }) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const wallet = await postgres.models.Wallet.create({
+         const wallet = await db[process.env.DEFAULT_DB].models.Wallet.create({
             userId, currency, total: 0, isEnabled, isLocked
          }, { transaction: t });
 
@@ -24,11 +24,11 @@ class CustomerWalletService {
 
    async getWallet ({ userId, currency='NGN', isEnabled=true, isLocked=false }) {
       try {
-         const walletProduct = await postgres.models.Product.findOne({
+         const walletProduct = await db[process.env.DEFAULT_DB].models.Product.findOne({
             attributes: ['id'],
-            where: {type: 'wallet'},
+            where: {type: '103'}, // id for wallet product
          });
-         const wallet = await postgres.models.Wallet.findOne({
+         const wallet = await db[process.env.DEFAULT_DB].models.Wallet.findOne({
             where: {userId, currency, isEnabled, isLocked}
          })
          if(!wallet)
@@ -45,9 +45,9 @@ class CustomerWalletService {
    }
 
    async updateBalance ({ userId, currency='NGN', amount, transaction }) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const wallet = await postgres.models.Wallet.findOne({
+         const wallet = await db[process.env.DEFAULT_DB].models.Wallet.findOne({
             where: {userId, currency }
          })
          if(!wallet)

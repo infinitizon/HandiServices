@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const Pagination = require('../utils/pagination')
 const CloudObjUploadService  = require('./cloud-obj-upload.service');
 const AppError = require("../../config/apiError");
@@ -15,12 +15,12 @@ class ProductService {
          if(includes.length > 0) {
             if(includes.includes('Media')) {
                criteria.includes.push({
-                  model: postgres.models.Media,
+                  model: db[process.env.DEFAULT_DB].models.Media,
                   attributes: ['id', 'name', 'link'], // Specify the attributes you want to include
               })
             }
          }
-         const asset = await postgres.models.Product.findOne(criteria) || null;
+         const asset = await db[process.env.DEFAULT_DB].models.Product.findOne(criteria) || null;
          return { success: true, status: 200, message: `Product retrieved successfully`, data: asset }
       } catch (error) {
           return new AppError(
@@ -33,12 +33,12 @@ class ProductService {
    }
    
    async updateAsset ({productId, changes, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          const {Media, ...userChanges} = changes;
-         const updatedAsset = await postgres.models.Product.findByPk( productId, {
+         const updatedAsset = await db[process.env.DEFAULT_DB].models.Product.findByPk( productId, {
             include: [{
-               model: postgres.models.Media, where: {objectType: Media.objectType}, required: false }]
+               model: db[process.env.DEFAULT_DB].models.Media, where: {objectType: Media.objectType}, required: false }]
          });
          if (!updatedAsset) {
             throw new AppError(updatedAsset.message||'Product does not exist', updatedAsset.line||__line, updatedAsset.file||__path.basename(__filename), { status: updatedAsset.status||404, show: updatedAsset.show||true });
@@ -65,12 +65,12 @@ class ProductService {
       }      
    }
    async createAsset ({body, creatorTnt, files, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       let uploadImage, uploaderService;
       try {
             
          body = {...body, ownedBy: creatorTnt};
-         const product = await postgres.models.Product.create(
+         const product = await db[process.env.DEFAULT_DB].models.Product.create(
             {...body}, { transaction: t }
          );
 
@@ -90,10 +90,10 @@ class ProductService {
             }
          }
          
-         const newProduct = await postgres.models.Product.findOne({
+         const newProduct = await db[process.env.DEFAULT_DB].models.Product.findOne({
             where: {id: product.id},
             include: [{
-               model: postgres.models.Media,
+               model: db[process.env.DEFAULT_DB].models.Media,
                attributes: ['id', 'name', 'link'],
             }],
             transaction: t
@@ -115,9 +115,9 @@ class ProductService {
       }
    }
    async createVendorCategory({tenantCategory, transaction}){
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const created = await postgres.models.TenantCategory.bulkCreate(tenantCategory, {transaction: t});
+         const created = await db[process.env.DEFAULT_DB].models.TenantCategory.bulkCreate(tenantCategory, {transaction: t});
          if (!created) throw new AppError('Tenant Category  could not be added', __line, __path.basename(__filename), { status: 409, show: true });
       
          transaction ? 0 : await t.commit();
@@ -133,9 +133,9 @@ class ProductService {
       }
    }
    async createVendorProductPrice({vendorPrice, transaction}){
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const created = await postgres.models.ProductVendorCharacter.create(vendorPrice, {transaction: t});
+         const created = await db[process.env.DEFAULT_DB].models.ProductVendorCharacter.create(vendorPrice, {transaction: t});
          if (!created) throw new AppError('Vendor pricing could not be added', __line, __path.basename(__filename), { status: 409, show: true });
       
          transaction ? 0 : await t.commit();
@@ -153,11 +153,11 @@ class ProductService {
    async getAllVendorProductPrices({tenantId, params, query={} }){
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const xters = await postgres.models.ProductVendorCharacter.findAndCountAll({
+         const xters = await db[process.env.DEFAULT_DB].models.ProductVendorCharacter.findAndCountAll({
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             include: [
                {
-                  model: postgres.models.ProductCharacter,
+                  model: db[process.env.DEFAULT_DB].models.ProductCharacter,
                   attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
                }
             ],
@@ -179,8 +179,8 @@ class ProductService {
    async getVendorProductPrice({id, where={},}){
       try {
          if(id) where = {...where, id};
-         const found = await postgres.models.ProductVendorCharacter.findOne({
-            include: [{model: postgres.models.ProductCharacter}],
+         const found = await db[process.env.DEFAULT_DB].models.ProductVendorCharacter.findOne({
+            include: [{model: db[process.env.DEFAULT_DB].models.ProductCharacter}],
             where
          });
       
@@ -195,15 +195,15 @@ class ProductService {
       }
    }
    async createXter({xteristic, params, transaction}){
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const xterExists = await postgres.models.ProductCharacter.findOne({
+         const xterExists = await db[process.env.DEFAULT_DB].models.ProductCharacter.findOne({
             attributes: ['id'],
             where: { name: xteristic.name, productId: params.category_id },
          });
          if (xterExists) throw new AppError('Characteristic already defined for product', __line, __path.basename(__filename), { status: 409, show: true });
          
-         const xter = await postgres.models.ProductCharacter.create({ ...xteristic, productId: params.category_id }, { transaction: t });
+         const xter = await db[process.env.DEFAULT_DB].models.ProductCharacter.create({ ...xteristic, productId: params.category_id }, { transaction: t });
 
          transaction ? 0 : await t.commit();
          return { success: true, status: 200, message: `Characteristic created successfully`, data: xter }
@@ -218,7 +218,7 @@ class ProductService {
       }
    }
    async updateXter({oldXter, changes, transaction}){
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          const updated = await oldXter.update(
             {...changes},
@@ -241,10 +241,10 @@ class ProductService {
    async getXter({ id, query={} }){
       try {
          console.log(query);
-         const xter = await postgres.models.ProductCharacter.findByPk(id, {
+         const xter = await db[process.env.DEFAULT_DB].models.ProductCharacter.findByPk(id, {
             attributes: ['id', 'name', 'type', 'misc', 'minPrice', 'maxPrice', 'createdAt'],
             include:[
-               {model: postgres.models.Product, attributes: ['id', 'title']}
+               {model: db[process.env.DEFAULT_DB].models.Product, attributes: ['id', 'title']}
             ],
          });         
 
@@ -268,10 +268,10 @@ class ProductService {
             condition.productWhere = { id: params.category_id }
          }
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const xters = await postgres.models.ProductCharacter.findAndCountAll({
+         const xters = await db[process.env.DEFAULT_DB].models.ProductCharacter.findAndCountAll({
             attributes: ['id', 'name', 'type', 'misc', 'minPrice', 'maxPrice', 'createdAt'],
             include:[
-               {model: postgres.models.Product, attributes: ['id', 'title'], where: condition.productWhere}
+               {model: db[process.env.DEFAULT_DB].models.Product, attributes: ['id', 'title'], where: condition.productWhere}
             ],
             limit, offset,
          });         
@@ -291,37 +291,37 @@ class ProductService {
       const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
       const { q } = query;
       const where = {
-         [Sequelize.Op.or]: [
-            {...(!isNaN(q) && {'$ProductVendorCharacter.price$' : { [Sequelize.Op.eq]: q } })},
-            {'$Product.title$' : { [Sequelize.Op.iLike]: `%${q}%` } },
-            {'$Product.summary$' : { [Sequelize.Op.iLike]: `%${q}%` } },
-            {'$Product.description$' : { [Sequelize.Op.iLike]: `%${q}%` } },
-            {'$Tenant.name$' : { [Sequelize.Op.iLike]: `%${q}%` } },
-            {'$ProductCharacter.name$' : { [Sequelize.Op.iLike]: `%${q}%` } },
+         [db.Sequelize.Op.or]: [
+            {...(!isNaN(q) && {'$ProductVendorCharacter.price$' : { [db.Sequelize.Op.eq]: q } })},
+            {'$Product.title$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
+            {'$Product.summary$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
+            {'$Product.description$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
+            {'$Tenant.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
+            {'$ProductCharacter.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
          ],
       }
       try {
-         const count = await postgres.models.ProductVendorCharacter.count({
+         const count = await db[process.env.DEFAULT_DB].models.ProductVendorCharacter.count({
             include: [
-               { model: postgres.models.Product, attributes: [], where: {type: { [Sequelize.Op.ne]: 'category' } }, duplicating: false },
+               { model: db[process.env.DEFAULT_DB].models.Product, attributes: [], where: {type: { [db.Sequelize.Op.ne]: 'category' } }, duplicating: false },
                { 
-                  model: postgres.models.Tenant, attributes: [], duplicating: false,
+                  model: db[process.env.DEFAULT_DB].models.Tenant, attributes: [], duplicating: false,
                },
-               { model: postgres.models.ProductCharacter, attributes: [], duplicating: false, }
+               { model: db[process.env.DEFAULT_DB].models.ProductCharacter, attributes: [], duplicating: false, }
             ],
             where
          })
-         const products = await postgres.models.ProductVendorCharacter.findAll({
-            attributes: ['id', 'price', [Sequelize.literal(`"Product"."title"`), 'product_title']],
+         const products = await db[process.env.DEFAULT_DB].models.ProductVendorCharacter.findAll({
+            attributes: ['id', 'price', [db.Sequelize.literal(`"Product"."title"`), 'product_title']],
             include: [
-               { model: postgres.models.Product, attributes: ['id', 'summary', 'title', 'description'], where: {type: { [Sequelize.Op.ne]: 'category' } }, duplicating: false, },
+               { model: db[process.env.DEFAULT_DB].models.Product, attributes: ['id', 'summary', 'title', 'description'], where: {type: { [db.Sequelize.Op.ne]: 'category' } }, duplicating: false, },
                { 
-                  model: postgres.models.Tenant, attributes: ['id', 'name', ], duplicating: false,
+                  model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ['id', 'name', ], duplicating: false,
                   include: [
-                     {model: postgres.models.Media, attributes: ['id', 'common_id', 'common_type', 'name', 'type', 'size', 'response', 'createdAt'], duplicating: false,}
+                     {model: db[process.env.DEFAULT_DB].models.Media, attributes: ['id', 'common_id', 'common_type', 'name', 'type', 'size', 'response', 'createdAt'], duplicating: false,}
                   ]
                },
-               { model: postgres.models.ProductCharacter, attributes: ['id', 'name', 'type', 'min_price', 'max_price'], duplicating: false, }
+               { model: db[process.env.DEFAULT_DB].models.ProductCharacter, attributes: ['id', 'name', 'type', 'min_price', 'max_price'], duplicating: false, }
             ],
             where,
             limit, offset
@@ -356,17 +356,17 @@ class ProductService {
          // Another one that looked even more accurate -> https://stackoverflow.com/questions/47619397/find-nearest-items-from-lat-lng-in-postgresql
          // `select * , ( point(lat, lng) <-> point(6.541994,3.3319645) )*111.325*1.60934 AS distance FROM addresses`
                     
-         // const vendors = await postgres.models.Tenant.findAndCountAll({
-         //    // attributes: ['id', 'name', 'email', 'phone', [Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
+         // const vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAndCountAll({
+         //    // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
          //    attributes: ['id', 'name', 'email', 'phone'],
          //    include: [
          //       {
-         //          model: postgres.models.Address,
-         //          attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', [Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
+         //          model: db[process.env.DEFAULT_DB].models.Address,
+         //          attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', [db.Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
          //          duplicating: false,
          //       },
          //       {
-         //          model: postgres.models.ProductVendorCharacter,
+         //          model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
          //          attributes: ['id'],
          //          duplicating: false,
          //          // eslint-disable-next-line camelcase
@@ -376,7 +376,7 @@ class ProductService {
          //    ],
          //    where: {isEnabled: true, isLocked: false},
          //    // order: [["distance", 'DESC']],
-         //    order: [[Sequelize.literal(`"Addresses.distance"`), 'ASC']],
+         //    order: [[db.Sequelize.literal(`"Addresses.distance"`), 'ASC']],
          //    limit, offset,
          // });
          // column Addresses.commonType does not exist...I need to use direct queries to solve this
@@ -403,15 +403,15 @@ class ProductService {
          let countQuery = `SELECT COUNT(t.id) as count FROM (${qProducts}) t`;
          countQuery = countQuery.replace(/{{order}}/g, '');
          countQuery = countQuery.replace(/{{pagination}}/g, '');
-         const countResult = await postgres.query(countQuery, {
-            type: Sequelize.QueryTypes.SELECT,
+         const countResult = await db[process.env.DEFAULT_DB].query(countQuery, {
+            type: db.Sequelize.QueryTypes.SELECT,
          });
          
          qProducts = qProducts.replace(/{{order}}/g, `ORDER BY "Addresses.distance" ASC`);
          qProducts = qProducts.replace(/{{pagination}}/g, `OFFSET ${offset} LIMIT ${limit}`);
-         const rTntProducts = await postgres.query(qProducts, {
+         const rTntProducts = await db[process.env.DEFAULT_DB].query(qProducts, {
            nest: true,
-           type: Sequelize.QueryTypes.SELECT,
+           type: db.Sequelize.QueryTypes.SELECT,
          });
          return { success: true, status: 200, message: `Vendors fetched successfully`, count: countResult[0]?.count, data: rTntProducts }
       } catch (error) {
@@ -428,29 +428,29 @@ class ProductService {
    async getRecommendedVendors({ params, query={} }) {
       try {
          // const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const vendors = await postgres.models.Tenant.findAll({
-            // attributes: ['id', 'name', 'email', 'phone', [Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
+         const vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
+            // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
             attributes: ['id', 'name', 'email', 'summary', 'phone'],
             include: [
                {
-                  model: postgres.models.Address,
+                  model: db[process.env.DEFAULT_DB].models.Address,
                   ...((query.lat && query.lng) && {attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', 
-                     [Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']
+                     [db.Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']
                   ],}),
                   ...((!query.lat || !query.lng) && {attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', ]}),
                   duplicating: false,
                },
                {
-                  model: postgres.models.Media,
+                  model: db[process.env.DEFAULT_DB].models.Media,
                   duplicating: false,
                },
                {
-                  model: postgres.models.Product,
-                  // where: { pId: {[Sequelize.Op.ne]: null} },
+                  model: db[process.env.DEFAULT_DB].models.Product,
+                  // where: { pId: {[db.Sequelize.Op.ne]: null} },
                   duplicating: false,
                },
                // {
-               //    model: postgres.models.ProductVendorCharacter,
+               //    model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
                //    attributes: ['id'],
                //    duplicating: false,
                //    // eslint-disable-next-line camelcase
@@ -458,10 +458,10 @@ class ProductService {
                //    where: { subCategoryId: params.subCategoryId }
                // }
             ],
-            where: {isEnabled: true, isLocked: false, pId: {[Sequelize.Op.ne]: null} },
+            where: {isEnabled: true, isLocked: false, pId: {[db.Sequelize.Op.ne]: null} },
             // order: [["distance", 'DESC']],
-            ...((query.lat && query.lng) && {order: [[Sequelize.literal(`"Addresses.distance"`), 'ASC']]}),
-            ...((!query.lat || !query.lng) && {order: [Sequelize.literal(`RANDOM()`)]}),
+            ...((query.lat && query.lng) && {order: [[db.Sequelize.literal(`"Addresses.distance"`), 'ASC']]}),
+            ...((!query.lat || !query.lng) && {order: [db.Sequelize.literal(`RANDOM()`)]}),
             // limit: 4,
          });
          

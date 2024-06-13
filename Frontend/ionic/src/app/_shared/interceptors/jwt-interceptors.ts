@@ -59,7 +59,7 @@ export class JwtInterceptor implements HttpInterceptor {
                     }),
                     catchError((error: HttpErrorResponse) => {
                         if ([401, 411].includes(error.status)) {
-                          // this.auth.logout();
+                          this.auth.logout();
                         }
                         throw error;
                     })

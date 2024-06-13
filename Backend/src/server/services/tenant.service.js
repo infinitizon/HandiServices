@@ -1,6 +1,6 @@
 
 const AppError = require('../../config/apiError')
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const Pagination = require('../utils/pagination');
 const genericRepo = require('../../repository');
 
@@ -8,39 +8,39 @@ class TenantService {
    async getTenant ({tenantId, tenantName, includes=[], roles=[],}) {
       try {
          let criteria = {
-            where: {[Sequelize.Op.or]: []},
+            where: {[db.Sequelize.Op.or]: []},
             include: [
-               { model: postgres.models.Product, attributes: ['id','pId','title'] },
+               { model: db[process.env.DEFAULT_DB].models.Product, attributes: ['id','pId','title'] },
                {
-                  model: postgres.models.TenantUserRole,
+                  model: db[process.env.DEFAULT_DB].models.TenantUserRole,
                   where: {tenantId},
                   attributes: ['role_id'],
                   include: [],
                },
-               {model: postgres.models.Address},
+               {model: db[process.env.DEFAULT_DB].models.Address},
             ]
          }
          if(tenantId || tenantName) {
-            tenantId? criteria.where[Sequelize.Op.or].push({id: tenantId}) : 0;
-            tenantName ? criteria.where[Sequelize.Op.or].push({name: tenantName}) : 0;
+            tenantId? criteria.where[db.Sequelize.Op.or].push({id: tenantId}) : 0;
+            tenantName ? criteria.where[db.Sequelize.Op.or].push({name: tenantName}) : 0;
          }
          for(let include of includes) {
             if(include == 'User') {
                criteria.include[0].include.push(
-                  { model: postgres.models.User, attributes: {exclude: ['password']},},
+                  { model: db[process.env.DEFAULT_DB].models.User, attributes: {exclude: ['password']},},
                )
             } else {
                criteria.include.push(
-                  { model: postgres.models[include]},
+                  { model: db[process.env.DEFAULT_DB].models[include]},
                )
             }
          }
          if(roles.length > 0) {
             criteria.include[0].include.push(
-               { model: postgres.models.Role, attributes: ['name'], where: {name: roles},},
+               { model: db[process.env.DEFAULT_DB].models.Role, attributes: ['name'], where: {name: roles},},
             )
          }
-         const tenant = await postgres.models.Tenant.findAll(criteria) || [];
+         const tenant = await db[process.env.DEFAULT_DB].models.Tenant.findAll(criteria) || [];
          return { success: true, status: 200, message: `Tenant retrieved successfully`, data: tenant }
       } catch (error) {
           return new AppError(
@@ -54,25 +54,25 @@ class TenantService {
    async getTenants ({tenantId, query}) {
       try {
          const { search } = query;
-         let condition = {[Sequelize.Op.and]: Sequelize.literal(`"Tenant"."id" IN (SELECT * FROM ( WITH RECURSIVE cte AS ( SELECT id FROM tenants WHERE id='${tenantId}' UNION ALL SELECT t.id FROM tenants t JOIN cte ON cte.id=t.p_id ) SELECT * FROM cte)t)`)}
+         let condition = {[db.Sequelize.Op.and]: db.Sequelize.literal(`"Tenant"."id" IN (SELECT * FROM ( WITH RECURSIVE cte AS ( SELECT id FROM tenants WHERE id='${tenantId}' UNION ALL SELECT t.id FROM tenants t JOIN cte ON cte.id=t.p_id ) SELECT * FROM cte)t)`)}
          if (search) {
             condition = {
                ...condition,
-               [Sequelize.Op.or]: [
-                  { name: { [Sequelize.Op.iLike]: `%${search}%` }, },
-                  { email: { [Sequelize.Op.iLike]: `%${search}%` }, },
-                  { phone: { [Sequelize.Op.iLike]: `%${search}%` }, },
+               [db.Sequelize.Op.or]: [
+                  { name: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
+                  { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
+                  { phone: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
                ],
             };
          }
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const count = await postgres.models.Tenant.findOne({
-            attributes: [[Sequelize.literal(`COUNT("Tenant"."id")`), 'count']],
+         const count = await db[process.env.DEFAULT_DB].models.Tenant.findOne({
+            attributes: [[db.Sequelize.literal(`COUNT("Tenant"."id")`), 'count']],
          })
-         const tenants = await postgres.models.Tenant.findAll({
+         const tenants = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
             include: [
-               { model: postgres.models.Product, attributes: ['id','title', 'type'] },
-               { model: postgres.models.Media, },
+               { model: db[process.env.DEFAULT_DB].models.Product, attributes: ['id','title', 'type'] },
+               { model: db[process.env.DEFAULT_DB].models.Media, },
             ],
             where: condition,
             offset, limit,
@@ -98,7 +98,7 @@ class TenantService {
             criteria.where['id'] =  typeId;
          }
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const types = await postgres.models.TenantType.findAll({
+         const types = await db[process.env.DEFAULT_DB].models.TenantType.findAll({
             where: criteria.where,
             offset, limit,
          }) || [];
@@ -114,21 +114,21 @@ class TenantService {
       }
    }
    async createTenants ({tenants, creatorTenant,  transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          let createdTenants = [];
          // Generate user cred then create
          for (const tnt of tenants) {
             tnt.pId = creatorTenant.id;
             
-            const exists = await postgres.models.Tenant.findOne({ where: { email: { [ Sequelize.Op.iLike]: tnt.email }} })
+            const exists = await db[process.env.DEFAULT_DB].models.Tenant.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: tnt.email }} })
             if(exists) throw new AppError(`Email provided already exists. No two businesses can have thesame email`, __line, __path.basename(__filename), { status: 404, show: true });
 
-            const category = await postgres.models.Product.findOne({where: {id: [tnt.category]}});
+            const category = await db[process.env.DEFAULT_DB].models.Product.findOne({where: {id: [tnt.category]}});
             if(!category) throw new AppError(`Category with id: '${tnt.category}' does not exist`, __line, __path.basename(__filename), { status: 404, show: true });
             const createdTnt = await genericRepo.setOptions('Tenant', {
                data: tnt,
-               inclussions: [{ model: postgres.models.Address },{ model: postgres.models.Product }],
+               inclussions: [{ model: db[process.env.DEFAULT_DB].models.Address },{ model: db[process.env.DEFAULT_DB].models.Product }],
                transaction: t,
             }).create();
             await createdTnt.addProduct(category, { transaction: t, returning: true })
@@ -149,7 +149,7 @@ class TenantService {
       }
    }
    async updateTenant ({tenantId, creatorTenant, changes, transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          
          // let tenantType = 'SUB_AGENT';
@@ -159,9 +159,9 @@ class TenantService {
             creatorTenant?changes.pId = creatorTenant.data.id:0;
             
             const {Media, Addresses, ...tntChanges} = changes;
-            const tenant = await postgres.models.Tenant.findByPk( tenantId, {
+            const tenant = await db[process.env.DEFAULT_DB].models.Tenant.findByPk( tenantId, {
                include: [{
-                  model: postgres.models.Media, where: { ...(Media && {objectType: Media.objectType})}, required: false 
+                  model: db[process.env.DEFAULT_DB].models.Media, where: { ...(Media && {objectType: Media.objectType})}, required: false 
                }]
             });            
             if(Media) {
@@ -174,13 +174,13 @@ class TenantService {
             }
             for(let address of Addresses) {
                if(address.id) {
-                  await postgres.models.Address.update(address, {where: {id:address.id}})
+                  await db[process.env.DEFAULT_DB].models.Address.update(address, {where: {id:address.id}})
                } else {
                   await tenant.createAddress(address);
                }
             }
             await tenant.update(tntChanges, { include: [{
-               model: postgres.models.Address, required: false 
+               model: db[process.env.DEFAULT_DB].models.Address, required: false 
             }], transaction: t });
             // createdTenants.push(tenant)
          // }
@@ -198,11 +198,11 @@ class TenantService {
       }
    }
    async updateTntUsrRole ({user, role, tenant,  transaction}) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          
          console.log(JSON.parse(JSON.stringify(user.TenantUserRoles[0])));
-         let updated = await postgres.models.TenantUserRole.update({
+         let updated = await db[process.env.DEFAULT_DB].models.TenantUserRole.update({
                tenantId: tenant.id,
                roleId: role.id
             },{
@@ -213,7 +213,7 @@ class TenantService {
             },
             transaction: t
          });
-         // let currTntUsrRole = await postgres.models.TenantUserRole.findOne({
+         // let currTntUsrRole = await db[process.env.DEFAULT_DB].models.TenantUserRole.findOne({
          //    where: {
          //       userId: user.id, 
          //       tenantId: user.TenantUserRoles[0]?.Tenant?.id,

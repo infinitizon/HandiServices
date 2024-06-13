@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const genericRepo = require('../../repository');
 const AppError = require('../../config/apiError')
 const { ProductService, CloudObjUploadService, AuthService, } = require('../services')
@@ -24,7 +24,7 @@ class ProductController {
       /* #swagger.responses[500] = {
          description: 'Internal server error.'
       } */
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          let { tenantId, } = res.locals.user;
          let { pId, ...body} = req.body; // { type, title, metaTitle, sku, summary, description, price }
@@ -202,7 +202,7 @@ class ProductController {
                description: 'Server error'
             }
          */
-      let t = await postgres.transaction();
+      let t = await db[process.env.DEFAULT_DB].transaction();
       // let bulkCreate = [];
       try {
          // const { productId } = req.params;
@@ -272,7 +272,7 @@ class ProductController {
    }
    static async createVendorProductPrice(req, res, next) {
       /* #swagger.tags = ['Character'] */
-      const t = await postgres.transaction()
+      const t = await db[process.env.DEFAULT_DB].transaction()
       try {
          let auth = res.locals?.user;
          let { prices } = req.body;
@@ -457,23 +457,23 @@ class ProductController {
          let filter = {}; let category;
          if(categoryId) {
             filter = {pId: categoryId };
-            category = await postgres.models.Product.findByPk(categoryId, {
+            category = await db[process.env.DEFAULT_DB].models.Product.findByPk(categoryId, {
                attributes: ['id', 'type','title']
             })
          } else if (type) {
-            filter = {type: Object.keys(postgres.models.Product.ProductType).find(k=>postgres.models.Product.ProductType[k]===type)}
+            filter = {type: Object.keys(db[process.env.DEFAULT_DB].models.Product.ProductType).find(k=>db[process.env.DEFAULT_DB].models.Product.ProductType[k]===type)}
          }
          // Define a filter object based on provided query parameters
          const productFilter = {
             where: filter,
-            include: [{model: postgres.models.Media}]
+            include: [{model: db[process.env.DEFAULT_DB].models.Media}]
          };
          // if(auth?.role && auth?.role =='PROVIDER_ADMIN') {
             productFilter.include.push({
-               model: postgres.models.Tenant,
+               model: db[process.env.DEFAULT_DB].models.Tenant,
                ...((!auth?.role && !req.query.tenantId) && {attributes: []}),
                through: { attributes: [] }, 
-               ...((auth?.role && auth?.role =='PROVIDER_ADMIN') && {include: [{model: postgres.models.Address}]}),
+               ...((auth?.role && auth?.role =='PROVIDER_ADMIN') && {include: [{model: db[process.env.DEFAULT_DB].models.Address}]}),
                where: {...(((auth?.role && auth?.role =='PROVIDER_ADMIN') || (!auth && req.query.tenantId)) && {id: auth?.tenantId || req.query.tenantId})},
                ...((!auth?.role && !req.query.tenantId) && {required: false}),
             })
@@ -485,11 +485,11 @@ class ProductController {
          );
    
          // Find products based on the filter
-         const products = await postgres.models.Product.findAll({
-            ...((!auth?.role && !req.query.tenantId) && {attributes: ["id", "pId", "type", "title", "summary", "createdAt", [Sequelize.literal(`COUNT("Tenants"."id")`), "totalVendors"] ]}),
+         const products = await db[process.env.DEFAULT_DB].models.Product.findAll({
+            ...((!auth?.role && !req.query.tenantId) && {attributes: ["id", "pId", "type", "title", "summary", "createdAt", [db.Sequelize.literal(`COUNT("Tenants"."id")`), "totalVendors"] ]}),
             where: productFilter.where,
             include: productFilter.include,
-            ...((!auth?.role && !req.query.tenantId) && {group: [`""Product"."id"`, `"Media"."id"`],}),
+            ...((!auth?.role && !req.query.tenantId) && {group: [`Product.id`, `Media.id`],}),
          })
          let resp = {
             status: 200, success: true, message: `Products fetched successfully`, category, data: products,
@@ -551,7 +551,7 @@ class ProductController {
          const product = await genericRepo.setOptions('Product', {
                condition: {id: productId},
                inclussions: [{
-                  model: postgres.models.Media,
+                  model: db[process.env.DEFAULT_DB].models.Media,
                   attributes: ['id', 'name', 'link'], // Specify the attributes you want to include
                }],
          }).findOne();
@@ -697,7 +697,7 @@ class ProductController {
          const userTenants = await genericRepo.setOptions('TenantUserRole', {
                condition: { userId },
                inclussions: [{
-                  model: postgres.models.Tenant,
+                  model: db[process.env.DEFAULT_DB].models.Tenant,
                   attributes: ['id','name']
                }],
          }).findAll();
@@ -714,7 +714,7 @@ class ProductController {
             ],
          },
          include: [{
-            model: postgres.models.Media,
+            model: db[process.env.DEFAULT_DB].models.Media,
             attributes: ['id', 'name', 'link'],
          }],
          };
