@@ -14,6 +14,10 @@ const routes: Routes = [
   {
     path: 'security-question',
     loadChildren: () => import('./security-question/security-question.module').then( m => m.SecurityQuestionPageModule)
+  },
+  {
+    path: 'nok',
+    loadChildren: () => import('./nok/nok.module').then( m => m.NokPageModule)
   }
 
 ];

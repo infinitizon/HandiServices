@@ -1,0 +1,78 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Next Of Kin</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="nokForm" (ngSubmit)="onSubmitNOK()">
+    <ion-grid class="ion-margin">
+      <ion-row class="ion-margin-top mt-3">
+        <ion-col>
+          <ion-item [button]="true" lines="none" class="ion-no-margin ion-no-padding" id="select-relationship" [detail]="false">
+            <ion-input type="text" label="Relationship" labelPlacement="floating" placeholder="choose relationship"
+            errorText="{{uiErrors.relationship || 'Invalid relationship'}}" formControlName="relationship"
+            ></ion-input>
+          </ion-item>
+          <ion-modal trigger="select-relationship" [initialBreakpoint]="0.85" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalNOK>
+            <ng-template>
+              <app-search
+                class="ion-page"
+                (selectionChange)="onSelectNOK($event, modalNOK)"
+                [options]="nokSearchOptions"
+                (selectionCancel)="modalNOK.dismiss()"
+              ></app-search>
+            </ng-template>
+          </ion-modal>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none" class="ion-no-margin ion-no-padding">
+            <ion-input type="text" label="Name of Next of Kin" labelPlacement="floating" placeholder="Enter Next of Kin Name"
+            errorText="{{uiErrors.name || 'Invalid name'}}" formControlName="name"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item class="ion-no-margin ion-no-padding">
+            <ion-intl-tel-input formControlName="phone" fill="outline"
+              [preferredCountries]="['ng', 'us', 'gb', 'ca']" [onlyCountries]="['ng']"
+              [enablePlaceholder]="true"
+              [inputPlaceholder]="'Enter your phone'" #phone>
+            </ion-intl-tel-input>
+          </ion-item>
+          <ion-text *ngIf="nokForm.get('phone')?.invalid && nokForm.get('phone')?.touched" color="danger"><p>{{uiErrors.phone || 'Invalid phone'}}</p></ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none" class="ion-no-margin ion-no-padding">
+            <ion-input type="email" label="Email" labelPlacement="floating" placeholder="foo@bar.com"
+            errorText="{{uiErrors.email || 'Invalid email'}}" formControlName="email"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none" class="ion-no-margin ion-no-padding">
+            <ion-input type="text" label="Address" labelPlacement="floating" placeholder="Enter address of Next of Kin"
+            errorText="{{uiErrors.address || 'Invalid address'}}" formControlName="address"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-margin-top ion-text-center">
+        <ion-col class="ion-margin-top">
+          <ion-button expand="block" type="submit">Confirm</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

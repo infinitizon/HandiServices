@@ -1,6 +1,6 @@
 class Helper {
   
-  static generateOTCode = (size = 6, alpha = true) => {
+  static generateOTCode (size = 6, alpha = true) {
     let characters = alpha
       ? "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
       : "0123456789";
@@ -12,9 +12,9 @@ class Helper {
       // characters.splice(index, 1);
     }
     return selections;
-  };
+  }
 
-  static generatePassword = (length, {includeNumbers=true, includeUpperChars=true, includeLowerChars=true, includeSpecialChars=true}) => {
+  static generatePassword (length, {includeNumbers=true, includeUpperChars=true, includeLowerChars=true, includeSpecialChars=true}) {
         let numberChars = "0123456789";
         let upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         let lowerChars = "abcdefghiklmnopqrstuvwxyz";
@@ -38,10 +38,10 @@ class Helper {
         return array;
     }
   }
-  static capitalize = (s) => {
+  static capitalize (s) {
     return s && s[0].toUpperCase() + s.slice(1);
   }
-  static getMimeType = (base64)=>{
+  static getMimeType (base64) {
     const signatures = {
       JVBERi0: 'application/pdf',
       R0lGODdh: 'image/gif',
@@ -50,9 +50,9 @@ class Helper {
       '/9j/': 'image/jpg',
     };
     for(const sign in signatures)if(base64.startsWith(sign)) return signatures[sign];
-  };
+  }
 
-  static checkToken = async ({time, tokenTime}) => {
+  static async checkToken ({time, tokenTime}) {
     let now = new Date()
     now.setMinutes(now.getMinutes())
     now = new Date(now)
@@ -63,7 +63,7 @@ class Helper {
     return true
   }
 
-  static faq = async () => {
+  static async faq () {
     const faqs = [
       {id: 1, question: 'How do I subscribe', answer: '<br>Follow the steps below to subscribe<ul><li>Select available investment product.</li><li>View details of the transaction.</li><li>Input units to subscribe,CSCS and Bank details</li><li>Read and accept the terms and conditions of the application and prospectus</li><li>Proceed to pay</li><li>You will receive a notification of the transaction in your email</li></ul>'},
       {id: 2,question: 'What is a CSCS No?', answer: 'The CSCS No. (Central Securities Clearing System) and CHN (Clearing House Number) are investors unique identifier to purchase and/or sell securities.'},
@@ -86,6 +86,9 @@ class Helper {
       {id: 19,question: 'How do I contact your customer care?', answer: '<div class="text-danger"><b>Telephone</b> - (0700 46837862452)<br><b>Email</b> – info@primaryofferng.com</div>'},
     ]
     return faqs
+  }
+  static getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
   }
 }
 

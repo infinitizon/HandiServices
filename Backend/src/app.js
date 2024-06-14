@@ -15,6 +15,7 @@ const swaggerDocument = require('../docs/swagger/swagger-output.json');
 const cors = require('cors');
 // const log = require('./log/logController');
 
+const LOVRoutes = require("./server/routes/lov.routes")
 const authRoutes = require("./server/routes/auth.routes")
 const productRoutes = require("./server/routes/product.routes")
 const testRoutes = require("./server/routes/test.routes")
@@ -47,6 +48,7 @@ app.get('/', (req, res) => {
 // app.use(log.logRequest);
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument)); // define route to swagger document
+app.use('/api/v1/lovs', LOVRoutes)
 app.use('/api/v1/tests', testRoutes)
 app.use('/api/v1/products', productRoutes)
 app.use('/api/v1/auth', authRoutes)

@@ -1,8 +1,8 @@
 const db = require('../../database/models');
-
+const DBEnums = require('../../database/db-enums');
 const CryptoJS = require('../utils/crypto')
 const AppError = require('../../config/apiError');
-const { UserService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
+const { UserService, NOKService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
 const AddressService = require('../services/address.service');
 const { successResponse } = require('../utils/responder');
 const genericRepo = require('../../repository');
@@ -509,6 +509,64 @@ class UserController {
                error.message
                , error.line || __line, error.file || __path.basename(__filename), { name: error.name, status: error.status ?? 500, show: error.show })
          );
+      }
+   }
+
+   static async addNOK (req, res, next) {
+      try {
+         const { userId } = res.locals.user;
+         const body = req.body;
+         const nok =  await (new NOKService).addNOK({ userId, body });
+         if (!nok || !nok.success)
+            throw new AppError(nok.show?nok.message:`Could not add Next of Kin`, __line, __path.basename(__filename), { status: 403, show: nok.show });
+         
+         res.status(nok.status).json(nok);
+         res.locals.resp = nok;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+            new AppError(
+               error.message
+               , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+         );
+      }
+   }
+   static async getNOK (req, res, next) {
+      try {
+         const { userId } = res.locals.user;
+         const noks =  await (new NOKService).getNOKs({ userId })
+         if (!noks || !noks.success)
+            throw new AppError(noks.show?noks.message:`Couldn't fetch next of kin details`, __line, __path.basename(__filename), { status: noks.status, show: noks.show });
+         
+         const data = JSON.parse(JSON.stringify(noks.data[0]));
+         res.status(noks.status).json({...noks, data: {...data, relationship: DBEnums.NOKRelationships.find(g=>g.label===data.relationship)}});
+         res.locals.resp = noks;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+                    new AppError(
+                        error.message
+                        , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+                );
+      }
+   }
+   static async updateNOK (req, res, next) {
+      try {
+         const {id} = req.params;
+         const updates = req.body;
+         const updated =  await (new NOKService).updateNOK({ id, updates })
+         if (!updated || !updated.success)
+            throw new AppError(updated.show?updated.message:`Couldn't fetch next of kin details`, __line, __path.basename(__filename), { status: updated.status, show: updated.show });
+         
+         res.status(updated.status).json(updated);
+         res.locals.resp = updated;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+                    new AppError(
+                        error.message
+                        , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+                );
       }
    }
 

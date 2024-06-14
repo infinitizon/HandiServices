@@ -15,6 +15,12 @@ router.post('/wallet/complete', UserController.walletCallbackUrl);
 router.post('/order/complete', UserController.orderCallbackUrl);
 router.get('/vendors/recommend', UserController.recommended )
 
+router.route('/nok/:id')
+      .patch(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.updateNOK)
+router.route('/nok')
+      .get(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.getNOK)
+      .post(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.addNOK);
+
 router.route('/beneficiary')
       .get(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.getBeneficiary)
       .patch(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.addBeneficiary)
