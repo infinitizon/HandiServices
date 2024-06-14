@@ -50,7 +50,7 @@ module.exports = {
             },
         },
     },
-    "localhostdev": {
+    "staging": {
         "databases": {
             "postgres": {
                 "database": process.env.DB_PG_DB_NAME,
@@ -59,15 +59,16 @@ module.exports = {
                 "host": process.env.DB_PG_HOST,
                 "dialect": "postgres",
                 "timezone": process.env.DB_PG_TIMEZONE,
+                "ssl": true,
+                "rejectUnauthorized": false,
+                "dialectOptions": {
+                    "ssl": {
+                        "require": true,
+                        "rejectUnauthorized": false
+                    }
+                }
             },
         },
-    },
-    "test": {
-        "username": "root",
-        "password": null,
-        "database": "database_test",
-        "host": "127.0.0.1",
-        "dialect": "mysql"
     },
     "production": {
         "databases": {
