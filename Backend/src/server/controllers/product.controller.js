@@ -1,4 +1,5 @@
 const db = require('../../database/models');
+const DBEnums = require('../../database/db-enums');
 const genericRepo = require('../../repository');
 const AppError = require('../../config/apiError')
 const { ProductService, CloudObjUploadService, AuthService, } = require('../services')
@@ -461,7 +462,7 @@ class ProductController {
                attributes: ['id', 'type','title']
             })
          } else if (type) {
-            filter = {type: Object.keys(db[process.env.DEFAULT_DB].models.Product.ProductType).find(k=>db[process.env.DEFAULT_DB].models.Product.ProductType[k]===type)}
+            filter = {type: DBEnums.ProductType.find(g=>g.label===type).code}
          }
          // Define a filter object based on provided query parameters
          const productFilter = {

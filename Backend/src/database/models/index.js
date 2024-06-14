@@ -26,14 +26,17 @@ for(let i = 0; i < databases.length; ++i) {
     .catch((err) => {
        Logger.error({status: err.code??500, message: `Error connecting to ${database}...${err.message}`})
     });
-
+  let modelPath = database;
+  if(process.env.NODE_ENV !== 'production') {
+    modelPath = (['sqlite'].includes(database)?'postgres':database);
+  }
   fs
-    .readdirSync(path.join(__dirname, database))
+    .readdirSync(path.join(__dirname, modelPath))
     .filter(file => {
       return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
     })
     .forEach(file => {
-      require(path.join(__dirname, database, file))(db[database], Sequelize.DataTypes);
+      require(path.join(__dirname, modelPath, file))(db[database], Sequelize.DataTypes);
     });
 }
 

@@ -20,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'sidebar',
-    loadChildren: () => import('./modals/sidebar/sidebar.module').then( m => m.SidebarPageModule)
+    loadChildren: () => import('./sidebar/sidebar.module').then( m => m.SidebarPageModule)
   },
   {
     path: '',

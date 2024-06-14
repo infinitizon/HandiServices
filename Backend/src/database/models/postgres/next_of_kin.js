@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
    class NextOfKin extends Model {
       /**
@@ -22,7 +23,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       userId: DataTypes.UUID,
       relationship: {
-         type: DataTypes.STRING(20),
+         type: DataTypes.SMALLINT,
+         defaultValue: 100,
+         get() {
+             const rawValue = this.getDataValue('relationship');
+             return  DBEnums.NOKRelationships.find(g=>g.code===rawValue).label
+         },
+         set(value) {
+            const result = DBEnums.NOKRelationships.find(g=>g.code===value)
+                ? value
+                : DBEnums.NOKRelationships.find(g=>g.label===value).code;
+             this.setDataValue('relationship', result);
+         }
       },
       name: {
          type: DataTypes.STRING,

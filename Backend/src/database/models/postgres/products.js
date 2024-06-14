@@ -1,13 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
    class Product extends Model {
-      static ProductType = {
-          100: 'category', 
-          101: 'sub_category',
-          102: 'product',
-          103: 'wallet',
-      }
       /**
        * Helper method for defining associations.
        * This method is not a part of DataTypes lifecycle.
@@ -58,12 +53,12 @@ module.exports = (sequelize, DataTypes) => {
          defaultValue: 100,
          get() {
              const rawValue = this.getDataValue('type');
-             return Product.ProductType[rawValue]
+             return  DBEnums.ProductType.find(g=>g.code===rawValue).label
          },
          set(value) {
-             const result = Object.keys(Product.ProductType).includes(value)
-                 ? value
-                 : getKeyByValue(Product.ProductType, value);
+            const result = DBEnums.ProductType.find(g=>g.code===value)
+                ? value
+                : DBEnums.ProductType.find(g=>g.label===value).code;
              this.setDataValue('type', result);
          }
       },

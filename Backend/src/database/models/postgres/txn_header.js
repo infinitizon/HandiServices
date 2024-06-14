@@ -1,19 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
     class TxnHeader extends Model {
-        static TxnHeaderStatus = {
-            100: 'pending', 
-            101: 'failed',
-            102: 'success',
-            103: 'reversed',
-            104: 'abandoned',
-            105: 'pending_approval',
-        }
-        static TxnHeaderType = {
-            100: 'credit', 
-            101: 'debit',
-        }
         getCommon(options) {
            if (!this.commonType) return Promise.resolve(null);
            const mixinMethodName = `get${uppercaseFirst(this.commonType)}`;
@@ -95,12 +84,12 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 100,
             get() {
                 const rawValue = this.getDataValue('status');
-                return TxnHeader.TxnHeaderStatus[rawValue]
+                return  DBEnums.TxnStatus.find(g=>g.code===rawValue).label
             },
             set(value) {
-                const result = Object.keys(TxnHeader.TxnHeaderStatus).includes(value)
-                    ? value
-                    : getKeyByValue(TxnHeader.TxnHeaderStatus, value);
+               const result = DBEnums.TxnStatus.find(g=>g.code===value)
+                   ? value
+                   : DBEnums.TxnStatus.find(g=>g.label===value).code;
                 this.setDataValue('status', result);
             }
         },
@@ -108,12 +97,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.SMALLINT,
             get() {
                 const rawValue = this.getDataValue('type');
-                return TxnHeader.TxnHeaderType[rawValue]
+                return  DBEnums.TxnHeaderType.find(g=>g.code===rawValue).label
             },
             set(value) {
-                const result = Object.keys(TxnHeader.TxnHeaderType).includes(value)
-                    ? value
-                    : getKeyByValue(TxnHeader.TxnHeaderType, value);
+               const result = DBEnums.TxnHeaderType.find(g=>g.code===value)
+                   ? value
+                   : DBEnums.TxnHeaderType.find(g=>g.label===value).code;
                 this.setDataValue('type', result);
             }
         },
