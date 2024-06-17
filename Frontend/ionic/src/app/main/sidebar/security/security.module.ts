@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
+import { SharedModule } from '@app/_shared/shared.module';
 import { SecurityPageRoutingModule } from './security-routing.module';
 
 import { SecurityPage } from './security.page';
@@ -13,7 +14,8 @@ import { SecurityPage } from './security.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    SecurityPageRoutingModule
+    SecurityPageRoutingModule,
+    SharedModule,
   ],
   declarations: [SecurityPage]
 })

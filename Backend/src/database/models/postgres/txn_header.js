@@ -97,7 +97,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.SMALLINT,
             get() {
                 const rawValue = this.getDataValue('type');
-                return  DBEnums.TxnHeaderType.find(g=>g.code===rawValue).label
+                return  DBEnums.TxnHeaderType.find(g=>g.code===rawValue)?.label
             },
             set(value) {
                const result = DBEnums.TxnHeaderType.find(g=>g.code===value)

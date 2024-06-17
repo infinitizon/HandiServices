@@ -101,9 +101,7 @@ class PaymentController {
         try {
             console.log(req.headers['content-type'])
             const { userId, tenantId } = res.locals.user
-            const user = await genericRepo.setOptions('User', {
-                condition: { id: userId }
-            }).findOne()
+            const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { id: userId }})
             // const user1 = await db[process.env.DEFAULT_DB].models.customer.findByPk(User.id)
             let {txnHeader, txnDetails} = req.body
             // eslint-disable-next-line no-unused-vars

@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require('../database/models');
+const db = require('../database/models');
 class GenericRepo {
    constructor() {
       if (GenericRepo.instance) {
@@ -11,7 +11,7 @@ class GenericRepo {
    setOptions(model, { selectOptions, condition, paginateOptions, transaction, inclussions, data, array, changes, returning, group }) {
       console.log(model, { selectOptions, condition, paginateOptions, transaction, inclussions, data, array, changes, returning, group })
       this.query = { selectOptions, condition, paginateOptions, transaction, inclussions, data, array, changes, returning, group };
-      this.dbQuery = postgres.models[model]
+      this.dbQuery = db[process.env.DEFAULT_DB].models[model]
       return this
    }
 

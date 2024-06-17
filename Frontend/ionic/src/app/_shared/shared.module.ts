@@ -13,6 +13,8 @@ import { ImgPickerComponent } from './components/picker/img-picker/img-picker.co
 import { HeaderComponent } from './components/header/header.component';
 import { OTPComponent } from './components/otp/otp.component';
 import { SearchComponent } from './components/search/search.component';
+import { PMTGatewayComponent } from './components/payment/gateway/gateway.component';
+import { PMTCompleteComponent } from './components/payment/complete/complete.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     OTPComponent,
     SearchComponent,
+    PMTGatewayComponent, PMTCompleteComponent,
   ],
   providers: [
   ],
@@ -44,6 +47,7 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     OTPComponent,
     SearchComponent,
+    PMTGatewayComponent, PMTCompleteComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

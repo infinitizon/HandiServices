@@ -9,7 +9,6 @@ import { SignupPageRoutingModule } from './signup-routing.module';
 
 import { SignupPage } from './signup.page';
 import { SharedModule } from '@app/_shared/shared.module';
-import { StartComponent } from './start/start.component';
 
 @NgModule({
   imports: [
@@ -25,7 +24,6 @@ import { StartComponent } from './start/start.component';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [
     SignupPage,
-    StartComponent,
   ]
 })
 export class SignupPageModule {}

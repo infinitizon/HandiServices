@@ -45,11 +45,11 @@
               <ion-button expand="block" size="small" fill="clear">Forgot your password?</ion-button>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-padding-horizontal ion-align-items-center mt-5">
+          <ion-row class="ion-padding-horizontal ion-align-items-center mt-5" *ngIf="container.useFingerprint">
             <ion-col class="fingerprint">
               <ion-button disabled="true" expand="block" size="small" fill="clear">Login with touch ID</ion-button>
               <div class="ion-text-center" style="margin: auto;">
-                <ion-avatar color="medium">
+                <ion-avatar color="medium" (click)="useFingetPrint()">
                   <ion-img [src]="'/assets/images/home/finger-print.svg'"></ion-img>
                 </ion-avatar>
               </div>

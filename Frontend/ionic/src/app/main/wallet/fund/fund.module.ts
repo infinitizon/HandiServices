@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { FundPageRoutingModule } from './fund-routing.module';
 
 import { FundPage } from './fund.page';
+import { SharedModule } from '@app/_shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    FundPageRoutingModule
+    FundPageRoutingModule,
+    SharedModule
   ],
   declarations: [FundPage]
 })
