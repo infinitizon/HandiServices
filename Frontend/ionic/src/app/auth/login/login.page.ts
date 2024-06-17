@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { FingerprintAIO } from '@awesome-cordova-plugins/fingerprint-aio';
 import { Crypto } from '@app/_shared/classes/Crypto';
 import { CommonService } from '@app/_shared/services/common.service';
 import { environment } from '@environments/environment';
@@ -14,6 +13,7 @@ import { FormErrors, ValidationMessages } from './login.validators';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { IOTPVerified } from '@app/_shared/models/otp.model';
 import { IonModal } from '@ionic/angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +31,7 @@ export class LoginPage implements OnInit {
     password: true,
     submitting: false,
     requireOTP: false,
+    useFingerprint: false,
     OTPOptions: {
       id: null,
       email: '',
@@ -38,6 +39,7 @@ export class LoginPage implements OnInit {
       formData: {}
     },
   }
+  loginSub$ = new Subscription();
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -52,66 +54,31 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: [
-        null,
+        'infinitizon+5@gmail.com',
         [Validators.required, Validators.pattern(this.commonService.email)],
       ],
-      password: [null, [Validators.required, Validators.minLength(8)]],
+      password: ['Dickele_1', [Validators.required, Validators.minLength(8)]],
       rememberMe: [null],
     });
-    this.authByFingerPrint();
+    this.useFingetPrint();
+  }
+  useFingetPrint() {
+    this.storageService.get('useFingerprint').then(async val=>{
+      if(val) {
+        this.container.useFingerprint = true;
+        this.appContext.loadBiometricSecret().then(async (u: any)=>{
+          const user = JSON.parse(u);
+          this.loginForm.patchValue({
+            email: user.email,
+            password: user.password
+          });
+          const fd = JSON.parse(JSON.stringify(this.loginForm.value));
+          await this.login(fd)
+        })
+      }
+    })
   }
 
-  authByFingerPrint() {
-    FingerprintAIO.isAvailable()
-                  .then(()=>{
-                    FingerprintAIO.show({
-                      title: 'Authentication required',
-                      subtitle: 'Verify identity',
-                      description: 'Unlock using fingerprints',
-                      disableBackup: true,
-                      cancelButtonTitle: "Return"
-                    }).then(val=>{
-                      console.log(JSON.stringify(val));
-                    }, err=>{
-                      console.log(JSON.stringify(err));
-                    })
-                  }, err=>{
-                    console.log(`Fingerprint not available`);
-                  })
-  }
-  registerBiometricSecret(mySecret: any) {
-    FingerprintAIO.isAvailable()
-                  .then(()=>{
-                    FingerprintAIO.registerBiometricSecret({
-                      title: 'Authentication required 1',
-                      subtitle: 'Verify identity',
-                      description: 'Unlock using fingerprints',
-                      secret: mySecret,
-                      disableBackup: true,
-                      cancelButtonTitle: "Return"
-                    }).then(val=>{
-                      console.log(JSON.stringify(val));
-                    }).catch( err=>{
-                      console.log(JSON.stringify(err));
-                    })
-                  })
-  }
-  loadBiometricSecret() {
-    FingerprintAIO.isAvailable()
-                  .then(()=>{
-                    FingerprintAIO.loadBiometricSecret({
-                      title: 'Authentication required 1',
-                      subtitle: 'Verify identity',
-                      description: 'Unlock using fingerprints',
-                      disableBackup: true,
-                      cancelButtonTitle: "Return"
-                    }).then(val=>{
-                      console.log(JSON.stringify(val));
-                    }).catch( err=>{
-                      console.log(JSON.stringify(err));
-                    })
-                  })
-          }
   async onSubmit() {
     if (this.loginForm.invalid) {
       this.uiErrors = JSON.parse(JSON.stringify(this.formErrors))
@@ -128,12 +95,15 @@ export class LoginPage implements OnInit {
     }).encryptWithKeyAndIV(fd.password);
     fd.password = encrypted;
 
+    await this.login(fd)
+  }
+  async login(fd: any) {
     this.container['submitting'] = true;
     const loadingEl = await this.loadingCtrl.create({
       message: `Logging you in...`
     });
     await loadingEl.present();
-    this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
+    this.loginSub$ = this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
               .subscribe({
                 next: async (response: Partial<ILogin>)=>{
                   await loadingEl.dismiss();
@@ -147,7 +117,8 @@ export class LoginPage implements OnInit {
                       color: 'danger',
                       message: err?.error?.error?.message
                     });
-                    await toast.present()
+                    await toast.present();
+                    this.loginSub$.unsubscribe()
                   }
 
                   if(err?.status === 419) {
@@ -164,6 +135,7 @@ export class LoginPage implements OnInit {
             })
   }
   successLogin(response: any) {
+    this.loginSub$.unsubscribe()
     if (response?.multiTenant) {
     } else {
         const user = response.user;

@@ -7,7 +7,10 @@
           <ion-card-content class="ion-no-padding">
             <ion-label class="ion-margin-end">
               <small class="ion-margin">Home Service Wallet <ion-icon name="eye-outline"></ion-icon></small>
-              <h1 class="ion-margin">{{ container.walletBalance?.total | currency:container.walletBalance?.currency:"symbol-narrow"}}</h1>
+              <h1 class="ion-margin">
+                <span *ngIf="!container.walletBalanceLoading">{{ container.walletBalance?.total | currency:container.walletBalance?.currency:"symbol-narrow"}}</span>
+                <span *ngIf="container.walletBalanceLoading"><ion-spinner></ion-spinner></span>
+              </h1>
             </ion-label>
             <ion-label class="ion-margin-vertical"><small class="ion-margin-vertical">View transaction history <ion-icon name="analytics-outline"></ion-icon></small></ion-label>
           </ion-card-content>

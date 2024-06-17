@@ -40,8 +40,9 @@ export class MainPage implements OnInit {
   getUserInformation() {
     this.userSubscription$ = this.http
       .get(`${environment.baseApiUrl}/users`)
-      .subscribe(
-        (response: any) => {
+      .pipe(take(1))
+      .subscribe({
+        next: (response: any) => {
           this.appContext.userInformation$.next(response.data);
           if (response) {
             console.log(`this.userInformation => `, response);
@@ -52,7 +53,7 @@ export class MainPage implements OnInit {
             }
           }
         },
-        (errResp) => {}
-      );
+        error: (errResp) => {}
+      });
   }
 }

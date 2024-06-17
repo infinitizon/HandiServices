@@ -117,7 +117,7 @@ export class NokPage implements OnInit {
       message: 'Processing...',
     }).then(loadingEl=>{
       loadingEl.present();
-      (this.oldData.id ? this.http.patch(`${environment.baseApiUrl}/users/nok/${this.oldData.id}`, data,) : this.http.post(`${environment.baseApiUrl}/users/nok`, data))
+      (this.oldData?.id ? this.http.patch(`${environment.baseApiUrl}/users/nok/${this.oldData.id}`, data,) : this.http.post(`${environment.baseApiUrl}/users/nok`, data))
         .subscribe({
           next: async (response: any) => {
             await loadingEl.dismiss();

@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastController } from '@ionic/angular';
+import { FingerprintAIO } from '@awesome-cordova-plugins/fingerprint-aio';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,7 @@ export class ApplicationContextService {
 
   userInformation$ = new BehaviorSubject<any>(null);
   location$ = new BehaviorSubject<any>(null)
+  walletBalance$ = new BehaviorSubject<any>(null)
 
   constructor(
     private toastCtrl: ToastController,
@@ -70,6 +72,9 @@ export class ApplicationContextService {
   getUserLocation(): Observable<any> {
     return this.location$.asObservable();
   }
+  getWalletBalance(): Observable<any> {
+    return this.walletBalance$.asObservable();
+  }
   setCurrentCoord() {
     if(!Capacitor.isPluginAvailable('Geolocation')) {
       return;
@@ -85,4 +90,41 @@ export class ApplicationContextService {
 
     });
   }
+  authByFingerPrint(): Promise<any> {
+    return FingerprintAIO.isAvailable()
+                  .then(()=>{
+                    return FingerprintAIO.show({
+                      title: 'Authentication required',
+                      subtitle: 'Verify identity',
+                      description: 'Authenticate with fingerprints',
+                      disableBackup: true,
+                      cancelButtonTitle: "Return"
+                    })
+                  })
+  }
+  registerBiometricSecret(mySecret: any): Promise<any> {
+    return FingerprintAIO.isAvailable()
+                  .then(()=>{
+                    return FingerprintAIO.registerBiometricSecret({
+                      title: 'Authentication required',
+                      subtitle: 'Verify identity',
+                      description: 'Register your fingerprints for future requests',
+                      secret: mySecret,
+                      disableBackup: true,
+                      cancelButtonTitle: "Return"
+                    })
+                  })
+  }
+  loadBiometricSecret() {
+    return FingerprintAIO.isAvailable()
+                  .then(()=>{
+                    return FingerprintAIO.loadBiometricSecret({
+                      title: 'Authentication required',
+                      subtitle: 'Verify identity',
+                      description: 'Signin using fingerprints',
+                      disableBackup: true,
+                      cancelButtonTitle: "Return"
+                    })
+                  })
+          }
 }

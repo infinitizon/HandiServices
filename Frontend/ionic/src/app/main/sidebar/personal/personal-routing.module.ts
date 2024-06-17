@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'nok',
     loadChildren: () => import('./nok/nok.module').then( m => m.NokPageModule)
+  },
+  {
+    path: 'bank',
+    loadChildren: () => import('./bank/bank.module').then( m => m.BankPageModule)
   }
 
 ];

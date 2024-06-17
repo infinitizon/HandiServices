@@ -1,0 +1,102 @@
+
+<ion-header class="header ion-no-shadow ion-no-border ion-padding mb-0">
+  <ion-toolbar color="translucent" class="mt-4">
+    <ion-title>Payment Options</ion-title>
+    <ion-buttons slot="primary" class="notifications">
+        <ion-button shape="round" color="tertiary" fill="outline" (click)="cancel()">
+          <ion-icon name="close-outline" slot="icon-only" color="danger"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="mt-0 pt-0">
+  <ion-grid class="ion-padding">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item lines="none">
+            <ion-label>
+              <ion-text color="secondary">
+                <small>Payment amount</small>
+              </ion-text>
+              <h1>{{ (data.amount || 0) | currency:data.currency:"symbol-narrow"}}</h1>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="full" (click)="onOptionClick('wallet', modal)">
+            <ion-icon aria-hidden="true" color="secondary" name="wallet-outline" slot="start"></ion-icon>
+            <ion-label>
+              <ion-text color="medium">
+                <p>Wallet</p>
+              </ion-text>
+              <ion-text color="secondary">
+                <small>Current balance is {{ (wallet.amount || 0) | currency:wallet.currency:"symbol-narrow"}}</small>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="full" (click)="onOptionClick('cards', modal)">
+            <ion-icon aria-hidden="true" color="secondary" name="card-outline" slot="start"></ion-icon>
+            <ion-label>
+              <ion-text color="medium">
+                <p>Saved Cards</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="full" (click)="onOptionClick('partners', modal)">
+            <ion-icon aria-hidden="true" color="secondary" name="people-outline" slot="start"></ion-icon>
+            <ion-label>
+              <ion-text color="medium">
+                <p>Our payment partners</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal #modal>
+    <ng-template>
+      <ion-header class="ion-no-shadow ion-no-border ion-padding mb-0 mt-4">
+        <ion-toolbar>
+          <ion-icon aria-hidden="true" color="secondary" name="{{container.options.header.icon}}" slot="start" size="large"></ion-icon>
+          <ion-title>{{container.options.header.title}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button shape="round" fill="outline" (click)="modal.dismiss()">
+              <ion-icon name="close-outline" slot="icon-only" color="danger"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div *ngIf="this.container.options.option === 'cards'"></div>
+        <div *ngIf="this.container.options.option === 'partners'">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-item class="partners" lines="full" (click)="onChoosePartner('paystack', modal)">
+                  <ion-thumbnail slot="start">
+                    <ion-img role="button" [src]="'/assets/logo/paystack.svg'"></ion-img>
+                  </ion-thumbnail>
+                  <ion-label>
+                    <ion-text color="medium">
+                      <p>Paystack</p>
+                    </ion-text>
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-content>
+      <ion-footer class="ion-no-shadow ion-no-border">
+        <ion-grid class="ion-padding-horizontal">
+          <ion-row>
+            <ion-col>
+              <ion-button fill="outline" expand="block" color="danger" (click)="modal.dismiss()">Choose a different option</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>
