@@ -1,0 +1,25 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar/my-business"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Choose Your Category</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">category</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-list class="ion-margin-vertical mt-3">
+    <ion-item detail *ngFor="let category of categories" (click)="onCategoryDetail(category)">
+      <ion-label>
+        <h3>{{category.title}}</h3>
+        <p>{{category.summary}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
