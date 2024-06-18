@@ -7,7 +7,12 @@ const routes: Routes = [
   {
     path: '',
     component: SubCategoryPage
+  },
+  {
+    path: 'pricing/:categoryId/:serviceId',
+    loadChildren: () => import('./pricing/pricing.module').then( m => m.PricingPageModule)
   }
+
 ];
 
 @NgModule({

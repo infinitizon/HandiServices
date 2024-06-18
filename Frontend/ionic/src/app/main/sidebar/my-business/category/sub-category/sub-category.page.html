@@ -20,28 +20,18 @@
     </ion-toolbar>
   </ion-header>
   <ion-list class="ion-margin-vertical mt-3">
-    <ion-item detail *ngFor="let service of services">
+    <ion-item detail *ngFor="let service of services" [routerLink]="['/main/sidebar/my-business/category/sub-category/pricing/', categoryId, service.id]">
       <ion-label>
         <h3>{{service.title}}</h3>
         <p>{{service.summary}}</p>
       </ion-label>
     </ion-item>
+    <ion-item *ngIf="container['servicesLoading']">
+      <ion-label>
+        Refreshing list
+      </ion-label>
+    </ion-item>
   </ion-list>
-  <ion-modal  trigger="open-modal" [initialBreakpoint]="0.5" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalService>
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{'Add New Service'}}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="modalService.dismiss()">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        Add service here
-      </ion-content>
-    </ng-template>
-  </ion-modal>
   <ion-modal trigger="select-service" [initialBreakpoint]="0.85" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalSearch>
     <ng-template>
       <app-search
