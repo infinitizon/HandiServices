@@ -1,5 +1,5 @@
 const AppError = require('../../../config/apiError');
-const { postgres } = require('../../../database/models');
+const db = require('../../../database/models');
 const { CloudObjUploadService, TenantService, UserService, OtpService, OrderService,} = require('../../services');
 
 
@@ -25,7 +25,7 @@ class TenantController {
          description: 'Server error'
          }
       */
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          const auth = res.locals.user;
          const { header, details } = req.body;
@@ -55,7 +55,7 @@ class TenantController {
       }
    }
    static async completeUserTenant (req, res, next) {
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          let { userId, ...body } = req.body;
 
@@ -78,8 +78,7 @@ class TenantController {
          if(!tenants || !tenants.success)
             throw new AppError(tenants.message||`Error completing your store`, tenants.line||__line, tenants.file||__path.basename(__filename), { status: tenants.status||409 });
       
-         const otpSent = await (new OtpService).generateOTP({email: userDetails.email, transaction: t });
-         console.log(otpSent);
+         await (new OtpService).generateOTP({email: userDetails.email, transaction: t });
          
          t.commit();
          res.status(tenants.status).json(tenants);
@@ -119,7 +118,7 @@ class TenantController {
       */
       let uploaded;
       let uploaderService
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          // const auth = res.locals.user;
          let { details } = req.body;

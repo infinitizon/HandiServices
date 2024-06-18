@@ -1,4 +1,4 @@
-const { postgres, mssql } = require('../../../database/models');
+const db= require('../../../database/models');
 const AppError = require('../../../config/apiError');
 
 const EmailService = require('../../services/email-builder.service');
@@ -6,7 +6,7 @@ const EmailService = require('../../services/email-builder.service');
 class EmailController {
     static send = async(req, res, next) => {
         let {recipients, sender, subject, name, message, customer_id} = req.body;
-        const customer = await postgres.models.customer.findOne({
+        const customer = await db[process.env.DEFAULT_DB].models.customer.findOne({
             where: { id: customer_id??null }
         });
         new EmailService({sender, recipient: recipients, subject, message})

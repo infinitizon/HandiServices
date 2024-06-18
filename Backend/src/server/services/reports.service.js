@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const AppError = require('../../config/apiError');
 
 class ReportsService {
@@ -15,11 +15,11 @@ class ReportsService {
 
          query = query.replace(/{{currency}}/g, s_currency);
          query = query.replace(/{{user_id}}/g, s_user_id);
-         const summary = await postgres.query(
+         const summary = await db[process.env.DEFAULT_DB].query(
                query
                , {
                nest: true,
-               type: Sequelize.QueryTypes.SELECT
+               type: db.Sequelize.QueryTypes.SELECT
             })
          
          return { status: 201, success: true, data: summary, message: 'Summary retrieved successfully' };
@@ -45,11 +45,11 @@ class ReportsService {
          
          query = query.replace(/{{currency}}/g, s_currency);
          query = query.replace(/{{user_id}}/g, s_user_id);
-         const summary = await postgres.query(
+         const summary = await db[process.env.DEFAULT_DB].query(
                query
                , {
                nest: true,
-               type: Sequelize.QueryTypes.SELECT
+               type: db.Sequelize.QueryTypes.SELECT
             })
 
          return { status: 201, success: true, data: summary, message: 'Summary retrieved successfully' };
@@ -82,8 +82,8 @@ class ReportsService {
 
 
          const response = await Promise.all([
-            postgres.query( query , { type: Sequelize.QueryTypes.SELECT }),
-            postgres.query( custQuery , { type: Sequelize.QueryTypes.SELECT })
+            db[process.env.DEFAULT_DB].query( query , { type: db.Sequelize.QueryTypes.SELECT }),
+            db[process.env.DEFAULT_DB].query( custQuery , { type: db.Sequelize.QueryTypes.SELECT })
          ]);
          return { status: 201, success: true, data: {subscribers: response[1][0]?.count, totalPaid: response[0]}, message: 'Summary retrieved successfully' };
       } catch (error) {

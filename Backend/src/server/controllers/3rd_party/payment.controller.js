@@ -1,6 +1,6 @@
 const PaymentService = require('../../services/payment.service');
 
-const { postgres } = require('../../../database/models');
+const db = require('../../../database/models');
 const transaction = require('../../services/transaction.service');
 // const utils = require('../../utils/utils');
 const helper = require('../../utils/helper');
@@ -97,14 +97,12 @@ class PaymentController {
           description: 'Server error'
        }
     */
-        const t = await postgres.transaction();
+        const t = await db[process.env.DEFAULT_DB].transaction();
         try {
             console.log(req.headers['content-type'])
             const { userId, tenantId } = res.locals.user
-            const user = await genericRepo.setOptions('User', {
-                condition: { id: userId }
-            }).findOne()
-            // const user1 = await postgres.models.customer.findByPk(User.id)
+            const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { id: userId }})
+            // const user1 = await db[process.env.DEFAULT_DB].models.customer.findByPk(User.id)
             let {txnHeader, txnDetails} = req.body
             // eslint-disable-next-line no-unused-vars
             let {currency, description, reference, source, type, gatewayParams, paymentType, savedCardId, gateway, redirectUrl, callbackParams, amount, details, } = txnHeader 
@@ -225,7 +223,7 @@ class PaymentController {
         }
     }
     static async callbackUrl (req, res ) {
-        const t = await postgres.transaction();
+        const t = await db[process.env.DEFAULT_DB].transaction();
         try {
             console.log('Payment callback hit')
             console.log(req.query)
@@ -238,11 +236,11 @@ class PaymentController {
                 condition: {reference: data.txRef},
                 inclussions: [
                     {
-                        model: postgres.models.TxnDetail,
+                        model: db[process.env.DEFAULT_DB].models.TxnDetail,
                         attributes: ['id'],
                         include: [
                             {
-                                model: postgres.models.User,
+                                model: db[process.env.DEFAULT_DB].models.User,
                                 attributes: ['id']
                             }
                         ]
@@ -410,7 +408,7 @@ class PaymentController {
                 await logTransfer.save();
             else {
                 logTransfer.narration
-                await postgres.models.sweep_queue.create(logTransfer)
+                await db[process.env.DEFAULT_DB].models.sweep_queue.create(logTransfer)
             }
             res.status(resp.code).json(resp);
             res.locals.resp = resp;

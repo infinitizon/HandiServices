@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="options.multiple">
+      <ion-button (click)="cancelChanges()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>{{ options.title || 'Select Item(s)' }}</ion-title>
+    <ion-buttons slot="end" *ngIf="options.multiple">
+      <ion-button (click)="confirmChanges()">Done</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar (ionInput)="searchbarInput($event)"></ion-searchbar>
+    <ion-progress-bar type="indeterminate" *ngIf="container['fetching']"></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" class="ion-no-padding">
+  <ion-list id="modal-list" [inset]="true" *ngIf="data && options.multiple">
+    <ion-item *ngFor="let item of filteredItems; trackBy: trackItems">
+      <ion-checkbox [value]="item[options.label]" [checked]="isChecked(item[options.label])" (ionChange)="checkboxChange($event)">
+        {{ item[options.label] }}
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-list id="modal-list" [inset]="true" *ngIf="data && !options.multiple">
+    <ion-item *ngFor="let item of filteredItems; trackBy: trackItems" (click)="selectChange(item)">
+      <ion-label>{{ item[options.label] }}</ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-list id="modal-list" [inset]="true" *ngIf="!data">
+    <ion-item>
+      <ion-label>
+        {{container['fetching']? 'Fetching new data' :'No data found'}}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+

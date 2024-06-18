@@ -1,16 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
    class Order extends Model {
-      static OrderStatus = {
-          100: 'pending', 
-          101: 'failed',
-          102: 'cancelled',
-          103: 'placed',
-          104: 'inprogress',
-          105: 'done',
-          106: 'completed',
-      }
       /**
        * Helper method for defining associations.
        * This method is not a part of DataTypes lifecycle.
@@ -57,12 +49,12 @@ module.exports = (sequelize, DataTypes) => {
          defaultValue: 100,
          get() {
              const rawValue = this.getDataValue('status');
-             return Order.OrderStatus[rawValue]
+             return  DBEnums.OrderStatus.find(g=>g.code===rawValue).label
          },
          set(value) {
-             const result = Object.keys(Order.OrderStatus).includes(value)
-                 ? value
-                 : getKeyByValue(Order.OrderStatus, value);
+            const result = DBEnums.OrderStatus.find(g=>g.code===value)
+                ? value
+                : DBEnums.OrderStatus.find(g=>g.label===value).code;
              this.setDataValue('status', result);
          }
       },

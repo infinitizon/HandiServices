@@ -1,0 +1,62 @@
+
+<form [formGroup]="addressForm" (ngSubmit)="onSubmitVendor()">
+  <ion-grid class="ion-no-margin ion-no-padding mt-4">
+    <ion-row>
+      <ion-col>
+        <ion-item class="ion-no-margin ion-no-padding">
+          <ion-intl-tel-input formControlName="phone" fill="outline"
+            [preferredCountries]="['ng', 'us', 'gb', 'ca']" [onlyCountries]="['ng']"
+            [enablePlaceholder]="true"
+            [inputPlaceholder]="'Enter your phone'" #phone>
+          </ion-intl-tel-input>
+          <!-- <ion-button fill="clear"  aria-label="Show/hide"> -->
+            <ion-icon role="button" name="information-circle-outline" aria-hidden="true" slot="end" id="phone"></ion-icon>
+          <!-- </ion-button> -->
+          <ion-modal #modalPhone trigger="phone" [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25]">
+            <ng-template>
+              <div class="block ion-padding-vertical">
+                <ion-item lines="none" class="ion-align-items-start">
+                  <ion-label>
+                    <h1>Why do we need your phone number?</h1>
+                  </ion-label>
+                  <ion-icon name="close-outline" slot="end" (click)="modalPhone.dismiss()"></ion-icon>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label>
+                    <p>At Home Service, we prioritize the security and protection of your financial information. That's why we require your phone number during the account creation process.</p>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </ng-template>
+          </ion-modal>
+        </ion-item>
+        <ion-text *ngIf="addressForm.get('phone')?.invalid && addressForm.get('phone')?.touched" color="danger"><p>{{uiErrors.phone || 'Invalid phone'}}</p></ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item lines="none" class="ion-no-margin ion-no-padding">
+          <ion-input type="text" label="Enter your address" labelPlacement="floating" placeholder="Please wait, loading..."
+          errorText="{{uiErrors.address || 'Invalid address'}}" #address formControlName="address"
+          ></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item class="ion-no-margin ion-no-padding mt-4" lines="none">
+            <ion-toggle formControlName="isDefault">
+              Set as default address
+            </ion-toggle>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-margin-top ion-text-center">
+      <ion-col class="ion-margin-top">
+        <ion-button expand="block" type="submit" [disabled]="container.saving">Save <ion-spinner name="dots" *ngIf="container.saving"></ion-spinner></ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>

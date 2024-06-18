@@ -1,6 +1,6 @@
 const moment = require("moment");
 const xlsx = require("xlsx");
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const genericRepo = require("../../repository");
 const { abortIf } = require("../utils/responder");
 const httpStatus = require("http-status");
@@ -18,8 +18,8 @@ class FaqService {
       condition = {
         ...condition,
         [Op.or]: [
-          {question:{ [Sequelize.Op.iLike]: `%${search}%`}},
-          {answer:{ [Sequelize.Op.iLike]: `%${search}%`}}
+          {question:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+          {answer:{ [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
         ]
 
       }

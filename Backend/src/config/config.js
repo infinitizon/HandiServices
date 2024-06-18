@@ -16,6 +16,13 @@ module.exports = {
             }
         }
     },
+    "sqlite": {
+        "database": 'local-db',
+        "username": 'user',
+        "password": 'pass',
+        "host": './dev.sqlite',
+        "dialect": "sqlite",
+    },
     "development": {
         "databases": {
             "postgres": {
@@ -34,9 +41,16 @@ module.exports = {
                     }
                 }
             },
+            "sqlite": {
+                "database": 'local-db',
+                "username": 'user',
+                "password": 'pass',
+                "host": './dev.sqlite',
+                "dialect": "sqlite",
+            },
         },
     },
-    "localhostdev": {
+    "staging": {
         "databases": {
             "postgres": {
                 "database": process.env.DB_PG_DB_NAME,
@@ -45,15 +59,16 @@ module.exports = {
                 "host": process.env.DB_PG_HOST,
                 "dialect": "postgres",
                 "timezone": process.env.DB_PG_TIMEZONE,
+                "ssl": true,
+                "rejectUnauthorized": false,
+                "dialectOptions": {
+                    "ssl": {
+                        "require": true,
+                        "rejectUnauthorized": false
+                    }
+                }
             },
         },
-    },
-    "test": {
-        "username": "root",
-        "password": null,
-        "database": "database_test",
-        "host": "127.0.0.1",
-        "dialect": "mysql"
     },
     "production": {
         "databases": {

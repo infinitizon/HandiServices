@@ -1,6 +1,7 @@
 
 const TenantService = require('./tenant.service')
 const UserService = require('./user.service')
+const NOKService = require('./nok.service')
 const CustomerWalletService = require('./customer-wallet.service')
 const PaymentService = require('./payment.service')
 const RateLimitService = require('./rate-limit.service')
@@ -25,6 +26,7 @@ module.exports = {
     TransactionService,
     TenantService,
     UserService,
+    NOKService,
     CustomerWalletService,
     PaymentService,
     RateLimitService,

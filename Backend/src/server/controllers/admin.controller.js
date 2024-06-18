@@ -1,7 +1,7 @@
 // const moment = require('moment');
 const genericRepo = require('../../repository');
 const AppError = require('../../config/apiError');
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 
 const {TenantService, UserService, AssetService, EmailService, OrderService } = require('../services');
 const Pagination = require('../utils/pagination');
@@ -83,8 +83,8 @@ class AdminController {
          query = query.replace(/{{userCustomeRole}}/g, userCustomeRole);
 
          const countQuery = query.replace(/{{fields}}/g, `COUNT(u.id) as count`)
-         const countResult = await postgres.query(countQuery, {
-            type: Sequelize.QueryTypes.SELECT
+         const countResult = await db[process.env.DEFAULT_DB].query(countQuery, {
+            type: db.Sequelize.QueryTypes.SELECT
          });
 
          query = query.replace(/{{fields}}/g, `u.id, u.first_name AS "firstName", u.last_name AS "lastName", u.email, u.phone, u.created_at AS "createdAt"
@@ -92,9 +92,9 @@ class AdminController {
                , "TenantUserRoles->Tenant"."name" AS "TenantUserRoles.Tenant.name"`);
          
          query = `${query} ORDER BY u."created_at" DESC OFFSET ${offset} LIMIT ${limit}`;
-         const users = await postgres.query(query, {
+         const users = await db[process.env.DEFAULT_DB].query(query, {
             nest: true,
-            type: Sequelize.QueryTypes.SELECT
+            type: db.Sequelize.QueryTypes.SELECT
          });
          res.status(200).json({ success: true, message: `Users retrieved successfully`, count: countResult[0]?.count, users });
       }
@@ -175,7 +175,7 @@ class AdminController {
       }
       * 
       */
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          const { tenantId } = res.locals.user;
          let { header, details } = req.body;
@@ -258,7 +258,7 @@ class AdminController {
          const userRole = await genericRepo.setOptions('TenantUserRole', {
             condition: { userId, tenantId },
             selectOptions: ['role_id'],
-            inclussions: [{ model: postgres.models.Role, attributes: ['name'] }]
+            inclussions: [{ model: db[process.env.DEFAULT_DB].models.Role, attributes: ['name'] }]
          }).findOne();
 
          const user = await genericRepo.setOptions('User', { condition: { id } }).findOne();
@@ -329,7 +329,7 @@ class AdminController {
          const userRole = await genericRepo.setOptions('TenantUserRole', {
             condition: { userId, tenantId },
             selectOptions: ['roleId'],
-            inclussions: [{ model: postgres.models.Role, attributes: ['name'] }]
+            inclussions: [{ model: db[process.env.DEFAULT_DB].models.Role, attributes: ['name'] }]
          }).findOne();
 
          // TODO: Remove this after using user role from header
@@ -426,7 +426,7 @@ class AdminController {
                condition: {parentId: parentId},
                inclussions: [
                   {
-                  model: postgres.models.AssetBankGateway
+                  model: db[process.env.DEFAULT_DB].models.AssetBankGateway
                   }
                ]
             }).findOne()
@@ -447,7 +447,7 @@ class AdminController {
       }
    }
    static async updateAssetBanks (req, res, next) {
-      let t = await postgres.transaction();
+      let t = await db[process.env.DEFAULT_DB].transaction();
       let bulkCreate = [];
       try {
          const { code, name } = req.body.bank;
@@ -550,7 +550,7 @@ class AdminController {
          // eslint-disable-next-line no-underscore-dangle
          await genericRepo.setOptions('AssetBank', {  
          condition: {
-            [Sequelize.Op.or]: [
+            [db.Sequelize.Op.or]: [
                { id: req.params.id },
                { parentId: req.params.id },
             ],
@@ -566,7 +566,7 @@ class AdminController {
             gateway: 'flutterwave',
          }
          }).findOne()
-         // await postgres.models.saveplan_asset_banks_gateways.findOne({
+         // await db[process.env.DEFAULT_DB].models.saveplan_asset_banks_gateways.findOne({
          //   where: {
          //     saveplan_asset_bank_id: req.params.id,
          //     gateway: 'flutterwave',
@@ -582,7 +582,7 @@ class AdminController {
          await genericRepo.setOptions('AssetBankGateway', {
             condition: { assetBankId: req.params.id }
          })._delete()
-         // await postgres.models.saveplan_asset_banks_gateways.destroy({
+         // await db[process.env.DEFAULT_DB].models.saveplan_asset_banks_gateways.destroy({
          //   where: { saveplan_asset_bank_id: req.params.id },
          // });
    
@@ -616,6 +616,9 @@ class AdminController {
          );  
       }
    }
+   static async addSecurityQuestion (req, res, next) {}
+   static async updateSecurityQuestion (req, res, next) {}
+   static async getSecurityQuestions (req, res, next) {}
    static async downloadTemplates (req, res, next) {
       try{
          const {templateName} = req.query

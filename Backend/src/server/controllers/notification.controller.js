@@ -1,4 +1,4 @@
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const {
   getPagination,
   getPagingData,
@@ -74,7 +74,7 @@ class NotificationController {
           __path.basename(__filename),
           { status: 400, show: true }
         );
-      const user = await postgres.models.customer.findByPk(id);
+      const user = await db[process.env.DEFAULT_DB].models.customer.findByPk(id);
       user.deviceToken = deviceToken;
       //register to Topic
       await NotificationService.subscribeToTopic({
@@ -213,10 +213,10 @@ class NotificationController {
       let id = req.user.id;
       let { page, size } = req.query;
       // const notifications =
-      //   await postgres.models.notificationLog.findAndCountAll({
+      //   await db[process.env.DEFAULT_DB].models.notificationLog.findAndCountAll({
       //     limit: size,
       //     offset: page,
-      //     where: { [Sequelize.Op.or]: [
+      //     where: { [db.Sequelize.Op.or]: [
       //       { customerId: id },
       //       { activityType: 'Admin preset notification' },
       //     ]},
@@ -224,7 +224,7 @@ class NotificationController {
       //   });
 
         const notifications = await genericRepo.setOptions('NotificationLog', {
-          condition: { [Sequelize.Op.or]: [
+          condition: { [db.Sequelize.Op.or]: [
             { customerId: id },
             { activityType: 'Admin preset notification' },
           ]},

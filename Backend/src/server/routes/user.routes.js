@@ -15,6 +15,12 @@ router.post('/wallet/complete', UserController.walletCallbackUrl);
 router.post('/order/complete', UserController.orderCallbackUrl);
 router.get('/vendors/recommend', UserController.recommended )
 
+router.route('/nok/:id')
+      .patch(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.updateNOK)
+router.route('/nok')
+      .get(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.getNOK)
+      .post(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.addNOK);
+
 router.route('/beneficiary')
       .get(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.getBeneficiary)
       .patch(AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.addBeneficiary)
@@ -22,6 +28,7 @@ router.route('/beneficiary')
 
 router.route('/address/:addressId')
       .get(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.getAddress)
+      .delete(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.deleteAddress)
       .patch( JoiMW.validateReq(AddressValidator.updateAddress), AuthController.authenticate, AuthController.authorize(['PROVIDER_ADMIN', 'CUSTOMER']), UserController.updateAddress)
 router.route('/address')
       .get(AuthController.authenticate, AuthController.authorize(['SUPER_ADMIN','PROVIDER_ADMIN', 'CUSTOMER']), UserController.getAddresses)

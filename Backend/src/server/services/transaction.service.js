@@ -1,6 +1,6 @@
 const moment = require("moment");
 const xlsx = require("xlsx");
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const genericRepo = require("../../repository");
 const { abortIf } = require("../utils/responder");
 const httpStatus = require("http-status");
@@ -11,7 +11,7 @@ const Pagination = require('../utils/pagination')
 
 class TxnService {
    async createTransaction ({ txnBody, transaction, returning = false }) {
-      const t = transaction ? transaction : await postgres.transaction();
+      const t = transaction ? transaction : await db[process.env.DEFAULT_DB].transaction();
       try {
          let { txnHeader, txnDetails } = txnBody
          let {callbackParams} = txnHeader
@@ -29,7 +29,7 @@ class TxnService {
                data: txnHeader,
                inclussions: [
                   {
-                  model: postgres.models.TxnDetail
+                  model: db[process.env.DEFAULT_DB].models.TxnDetail
                   }
                ],
                transaction: t,
@@ -72,32 +72,32 @@ class TxnService {
          }
          condition = {
             createdAt: {
-               [Sequelize.Op.between]: [query.startDate, query.endDate],
+               [db.Sequelize.Op.between]: [query.startDate, query.endDate],
             },
          };
          if (query.search) {
             condition = {
                ...condition,
-               [Sequelize.Op.or]: [
+               [db.Sequelize.Op.or]: [
                   {
-                  gatewayReference: { [Sequelize.Op.iLike]: `%${query.search}%` },
+                  gatewayReference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${query.search}%` },
                   },
                   {
-                  reference: { [Sequelize.Op.iLike]: `%${query.search}%` },
+                  reference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${query.search}%` },
                   },
                ],
             };
          }
          const inclussions = [
             {
-               model: postgres.models.User,
+               model: db[process.env.DEFAULT_DB].models.User,
                where: {
                   ...(role === "CUSTOMER" && userInclussionCondition),
                },
                attributes: ["email", "firstName"],
                // ...(role === 'SUPER_ADMIN' || role === 'TENANT_ADMIN' &&{include: [
                //   {
-               //     model: postgres.models.TenantUserRole,
+               //     model: db[process.env.DEFAULT_DB].models.TenantUserRole,
                //     where: {
                //       ...(tenant_id &&
                //         (role === "SUPER_ADMIN" || role === "TENANT_ADMIN") && {
@@ -108,16 +108,16 @@ class TxnService {
                // ]}),
             },
             {
-               model: postgres.models.TxnHeader,
+               model: db[process.env.DEFAULT_DB].models.TxnHeader,
                ...(role === 'TENANT_ADMIN' && {where: {
                   tenantId
                }}),
                attributes: {exclude: [ 'updatedAt', 'deletedAt' ]},
                // include: [{
-               //    model: postgres.models.Product,
+               //    model: db[process.env.DEFAULT_DB].models.Product,
                //    attributes: ['title', 'summary'],
                //    include: [{
-               //       model: postgres.models.Media,
+               //       model: db[process.env.DEFAULT_DB].models.Media,
                //       attributes: ['link'],
                //       required: false
                //    }],
@@ -125,7 +125,7 @@ class TxnService {
             },
          ]
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const txns = await postgres.models.TxnDetail.findAndCountAll({
+         const txns = await db[process.env.DEFAULT_DB].models.TxnDetail.findAndCountAll({
             attributes: ["amount", "userId", "currency", "id", "status", "createdAt"],
             include: inclussions,
             where: condition,
@@ -169,7 +169,7 @@ class TxnService {
             condition,
             inclussions: [
                {
-               model: postgres.models.TxnHeader,
+               model: db[process.env.DEFAULT_DB].models.TxnHeader,
                ...(userId && { where: trxnHeaderCondition }),
                attributes: [
                   "id",
@@ -185,10 +185,10 @@ class TxnService {
                ],
                include: [
                   {
-                     model: postgres.models.Asset,
+                     model: db[process.env.DEFAULT_DB].models.Asset,
                      attributes: ["name", "subTitle", "description", "sharePrice"],
                      include: [{
-                     model: postgres.models.Media,
+                     model: db[process.env.DEFAULT_DB].models.Media,
                      attributes: ['name', 'type', 'link']
                      }]
                   }
@@ -211,7 +211,7 @@ class TxnService {
    }
 
    async uploadTransaction ({ transaction, proofOfPayment, auth, originalUrl, action}, next) {
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          const {userId, tenantId} = auth
          let {txnHeader, txnDetails} = transaction
@@ -229,7 +229,7 @@ class TxnService {
             data: txnHeader,
             inclussions: [
                {
-               model: postgres.models.TxnDetail
+               model: db[process.env.DEFAULT_DB].models.TxnDetail
                }
             ],
             transaction: t,
@@ -291,14 +291,14 @@ class TxnService {
             },
             inclussions: [
                {
-               model: postgres.models.Role,
+               model: db[process.env.DEFAULT_DB].models.Role,
                where: {
                   name: "CUSTOMER",
                },
                attributes: ["id"],
                },
                {
-               model: postgres.models.User,
+               model: db[process.env.DEFAULT_DB].models.User,
                attributes: [
                   "id",
                   "first_name",
@@ -330,11 +330,11 @@ class TxnService {
    async getAllPendingBulkTransactions ({ query={}}) {
       try{
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const txnHistory = await postgres.models.TxnHeader.findAndCountAll({
+         const txnHistory = await db[process.env.DEFAULT_DB].models.TxnHeader.findAndCountAll({
          attributes: [ 'id', 'amount', 'reference', 'currency', 'status', 'createdAt' ],
          include: [
             {
-               model: postgres.models.AuditLogs,
+               model: db[process.env.DEFAULT_DB].models.AuditLogs,
             },
          ],
          limit, offset,
@@ -353,16 +353,16 @@ class TxnService {
    async getTxnWtLogDetails ({ headerId, query={}}) {
       try{
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         const txnHistory = await postgres.models.TxnDetail.findAndCountAll({
+         const txnHistory = await db[process.env.DEFAULT_DB].models.TxnDetail.findAndCountAll({
          attributes: [ 'amount', 'createdAt' ],
          include: [
             {
-               model: postgres.models.TxnHeader,
+               model: db[process.env.DEFAULT_DB].models.TxnHeader,
                attributes: [ 'amount', 'reference', 'currency', 'status', 'createdAt' ],
                where: {id: headerId}
             },
             {
-               model: postgres.models.User,
+               model: db[process.env.DEFAULT_DB].models.User,
                attributes: [ 'firstName', 'middleName', 'lastName', 'phone', 'email' ],
             },
          ],
@@ -384,21 +384,21 @@ class TxnService {
          console.log(auth, query);
          let inclussions = [
          {
-            model: postgres.models.TxnHeader,
+            model: db[process.env.DEFAULT_DB].models.TxnHeader,
             attributes: [
                'amount', 'reference', 'currency', 'channel', 'module'
             ],
             include: [
                {
-               model: postgres.models.Media,
+               model: db[process.env.DEFAULT_DB].models.Media,
                attributes: ['link']
                },
                {
-               model: postgres.models.TxnDetail,
+               model: db[process.env.DEFAULT_DB].models.TxnDetail,
                attributes: ['userId', 'amount', 'description', 'status' ],
                include: [
                   {
-                     model: postgres.models.User,
+                     model: db[process.env.DEFAULT_DB].models.User,
                      attributes: ['email']
                   }
                ],
@@ -426,16 +426,16 @@ class TxnService {
 
 
    async approveBulkTransactions ({status, auth, id}) {
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try{
          const { userId } = auth
          const mapping = {
             approved: 'success',
             rejected: 'failed'
          }
-         const TxnHeader = await postgres.models.TxnHeader.findByPk(id, {
+         const TxnHeader = await db[process.env.DEFAULT_DB].models.TxnHeader.findByPk(id, {
             include: [
-               {model: postgres.models.AuditLogs}
+               {model: db[process.env.DEFAULT_DB].models.AuditLogs}
             ]
          });        
          const bulkTransaction = await TxnHeader.AuditLogs[0];

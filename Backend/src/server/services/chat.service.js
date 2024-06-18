@@ -1,12 +1,12 @@
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const Pagination = require('../utils/pagination')
 const AppError = require("../../config/apiError");
 
 class ChatService {
    async startSession({ pId, sessionId, userId, message, timestamp, transaction }) {
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const created = await postgres.models.Order.create({
+         const created = await db[process.env.DEFAULT_DB].models.Order.create({
             pId, sessionId, userId, message, ...(timestamp && {createdAt: new Date(timestamp)})
          }, { transaction: t });
 
@@ -24,9 +24,9 @@ class ChatService {
       }
    }
    async createChat({ pId, sessionId, userId, message, timestamp, transaction }) {
-      const t = transaction ?? await postgres.transaction();
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
       try {
-         const created = await postgres.models.ChatMessage.create({
+         const created = await db[process.env.DEFAULT_DB].models.ChatMessage.create({
             pId, sessionId, userId, message, ...(timestamp && {createdAt: new Date(timestamp)})
          }, { transaction: t });
 
@@ -44,9 +44,9 @@ class ChatService {
       }
    }
    async updateChat({ order, transaction }) {
-      const t = transaction ?? await postgres.transaction();
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
       try {
-         const existingOrder = await postgres.models.OrderItem.findByPk(order.orderId);
+         const existingOrder = await db[process.env.DEFAULT_DB].models.OrderItem.findByPk(order.orderId);
          if(!existingOrder)
             throw new AppError(`Order with id: ${order.orderId} does not exist`, __line, __path.basename(__filename), { status: 404, show: true });
 
@@ -66,12 +66,12 @@ class ChatService {
    }
    async getOrder({ orderId, }) { 
       try {
-         let order = await postgres.models.Order.findByPk(orderId, {
+         let order = await db[process.env.DEFAULT_DB].models.Order.findByPk(orderId, {
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: postgres.models.OrderItem,
+                  model: db[process.env.DEFAULT_DB].models.OrderItem,
                   duplicating: false,
                   attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
                },
@@ -90,24 +90,24 @@ class ChatService {
    }
    async getTenantSessions({ tenantId }) { 
       try {
-         let sessions = await postgres.models.ChatSession.findAll({
+         let sessions = await db[process.env.DEFAULT_DB].models.ChatSession.findAll({
             include: [
                {
-                  model: postgres.models.Order,
+                  model: db[process.env.DEFAULT_DB].models.Order,
                   attributes: ['id'],
-                  where: {status: {[Sequelize.Op.ne]: 'completed'}}
+                  where: {status: {[db.Sequelize.Op.ne]: 'completed'}}
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Customer',
                   attributes: ['id', 'firstName', 'lastName'],
                   include: [{
-                     model: postgres.models.Media, required: false,
+                     model: db[process.env.DEFAULT_DB].models.Media, required: false,
                      where: {objectType: 'avatar'}
                   },]
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Admin',
                   attributes: ['id', 'firstName', 'lastName'],
                },
@@ -127,10 +127,10 @@ class ChatService {
       }
    }
    async claimSession({ auth, session, transaction }) { 
-      const t = transaction ?? await postgres.transaction()
+      const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          let sessions = null
-         let sesn = await postgres.models.ChatSession.findOne({where: { sessionId: session.sessionId }, transaction: t });
+         let sesn = await db[process.env.DEFAULT_DB].models.ChatSession.findOne({where: { sessionId: session.sessionId }, transaction: t });
          if(auth.role === 'PROVIDER_ADMIN') {
             if(sesn.claim) 
                throw new AppError(`Chat session already claimed by `, __line, __path.basename(__filename), { status: 409, show: true });
@@ -140,7 +140,7 @@ class ChatService {
          }
          if(auth.role === 'CUSTOMER') {
             if(!sesn) {
-               sessions = await postgres.models.ChatSession.create(
+               sessions = await db[process.env.DEFAULT_DB].models.ChatSession.create(
                   { userId: auth.userId, tenantId: session.tenantId, sessionId: session.sessionId},
                   { transaction: t }
                );
@@ -164,16 +164,16 @@ class ChatService {
    async chatHistory({ sessionId }) { 
       try {
          // const { limit, offset } = Pagination.getPagination(query?.page, query?.perPage);
-         let order = await postgres.models.ChatMessage.findAll({
+         let order = await db[process.env.DEFAULT_DB].models.ChatMessage.findAll({
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   duplicating: false,
                   attributes: ['id', 'firstName', 'lastName'],
                   include: [{
-                     model: postgres.models.Media,
+                     model: db[process.env.DEFAULT_DB].models.Media,
                      duplicating: false, required: false,
                      where: {objectType: 'avatar'}
                   },],

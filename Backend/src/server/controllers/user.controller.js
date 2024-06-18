@@ -1,8 +1,8 @@
-const { postgres, Sequelize } = require('../../database/models');
-
+const db = require('../../database/models');
+const DBEnums = require('../../database/db-enums');
 const CryptoJS = require('../utils/crypto')
 const AppError = require('../../config/apiError');
-const { UserService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
+const { UserService, NOKService, CloudObjUploadService, AuthService, CustomerWalletService, VerificationsService, OrderService, ProductService } = require('../services')
 const AddressService = require('../services/address.service');
 const { successResponse } = require('../utils/responder');
 const genericRepo = require('../../repository');
@@ -110,7 +110,7 @@ class UserController {
       }
    }
    static async cartify (req, res, next) {
-      const t = await postgres.transaction()
+      const t = await db[process.env.DEFAULT_DB].transaction()
       try {
          let auth = res.locals.user;
          const params = req.params;
@@ -186,7 +186,7 @@ class UserController {
       */
       try {
          const refCodes = await genericRepo.setOptions('User', {
-            condition: { refCode: { [Sequelize.Op.iLike]: '%' + req.query.q + '%',} },
+            condition: { refCode: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: '%' + req.query.q + '%',} },
             selectOptions: ['id', 'refCode', 'firstName', 'middleName', 'lastName'],
             order: [['firstName', 'ASC']]
          }).findAll();
@@ -358,6 +358,23 @@ class UserController {
          );
       }
    }
+   static async deleteAddress (req, res, next) {
+      try {
+         const params = req.params;
+         const address = await (new AddressService()).deleteAddress({ id: params.addressId });
+         if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
+      
+         res.status(address.status).json(address);
+         res.locals.resp = address;
+      } catch (error) {
+         console.log(error.message);
+         return next(
+                  new AppError(
+                     error.message
+                     , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+         );
+      }      
+   }
    static async getCountries (req, res, next) {
       try {
          let countries = await (new AddressService()).getCountries()
@@ -495,6 +512,64 @@ class UserController {
       }
    }
 
+   static async addNOK (req, res, next) {
+      try {
+         const { userId } = res.locals.user;
+         const body = req.body;
+         const nok =  await (new NOKService).addNOK({ userId, body });
+         if (!nok || !nok.success)
+            throw new AppError(nok.show?nok.message:`Could not add Next of Kin`, __line, __path.basename(__filename), { status: 403, show: nok.show });
+         
+         res.status(nok.status).json(nok);
+         res.locals.resp = nok;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+            new AppError(
+               error.message
+               , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+         );
+      }
+   }
+   static async getNOK (req, res, next) {
+      try {
+         const { userId } = res.locals.user;
+         const noks =  await (new NOKService).getNOKs({ userId })
+         if (!noks || !noks.success)
+            throw new AppError(noks.show?noks.message:`Couldn't fetch next of kin details`, __line, __path.basename(__filename), { status: noks.status, show: noks.show });
+         
+         const data = JSON.parse(JSON.stringify(noks.data[0]));
+         res.status(noks.status).json({...noks, data: {...data, relationship: DBEnums.NOKRelationships.find(g=>g.label===data.relationship)}});
+         res.locals.resp = noks;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+                    new AppError(
+                        error.message
+                        , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+                );
+      }
+   }
+   static async updateNOK (req, res, next) {
+      try {
+         const {id} = req.params;
+         const updates = req.body;
+         const updated =  await (new NOKService).updateNOK({ id, updates })
+         if (!updated || !updated.success)
+            throw new AppError(updated.show?updated.message:`Couldn't fetch next of kin details`, __line, __path.basename(__filename), { status: updated.status, show: updated.show });
+         
+         res.status(updated.status).json(updated);
+         res.locals.resp = updated;
+      } catch (error) {
+         console.error(error.message);
+         return next(
+                    new AppError(
+                        error.message
+                        , error.line||__line, error.file||__path.basename(__filename), {name: error.name, status: error.status??500, show: error.show})
+                );
+      }
+   }
+
    static async getBeneficiary (req, res, next) {
       try {
          const { userId } = res.locals.user;
@@ -518,8 +593,8 @@ class UserController {
       try {
          const { userId } = res.locals.user;
          let { id, nuban, bankCode, bankName, bankAccountName } = req.body;
-         const user = await postgres.models.User.findByPk(userId);
-         // const bvn = await postgres.models.bvnData.findOne({where: {customerId}})
+         const user = await db[process.env.DEFAULT_DB].models.User.findByPk(userId);
+         // const bvn = await db[process.env.DEFAULT_DB].models.bvnData.findOne({where: {customerId}})
          if (!user.isEnabled || user.isLocked)
             throw new AppError('Verify your account to proceed', __line, __path.basename(__filename), { status: 403, show: true });
          
@@ -675,7 +750,7 @@ class UserController {
                });
             return;
          }
-         const user =  await postgres.models.User.findOne({
+         const user =  await db[process.env.DEFAULT_DB].models.User.findOne({
             attributes: ['id'],
             where: {email: verified?.customer?.email, isEnabled: true, isLocked: false}
          });
@@ -708,7 +783,7 @@ class UserController {
                .send({ success: false, message: message ? message : 'Couldnt complete payment',});
             return;
          }
-         const user =  await postgres.models.User.findOne({
+         const user =  await db[process.env.DEFAULT_DB].models.User.findOne({
             attributes: ['id'],
             where: {email: verified?.customer?.email, isEnabled: true, isLocked: false}
          });

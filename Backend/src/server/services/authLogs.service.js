@@ -1,5 +1,5 @@
 const AppError = require('../../config/apiError')
-const { postgres, Sequelize } = require("../../database/models");
+const db = require("../../database/models");
 const genericRepo = require('../../repository');
 
 
@@ -11,43 +11,43 @@ class AuditLogsService {
          const auditLogs = await genericRepo
            .setOptions("AuditLogs", {
              condition: {
-               ...(search && {[Sequelize.Op.or]: [
-                  {commonType:{ [Sequelize.Op.iLike]: `%${search}%`}},
-                  {action:{ [Sequelize.Op.iLike]: `%${search}%`}}
+               ...(search && {[db.Sequelize.Op.or]: [
+                  {commonType:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+                  {action:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
                ]}),
                tenantId
              },
              inclussions: [
                {
-                 model: postgres.models.BulkTransactionLogs,
+                 model: db[process.env.DEFAULT_DB].models.BulkTransactionLogs,
                  required: false
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Maker',
                   attributes: [
                     'id', 'firstName', 'lastName', 'email'
                   ],
                   where: {
-                     ...(search && {[Sequelize.Op.or]: [
-                        {firstName:{ [Sequelize.Op.iLike]: `%${search}%`}},
-                        {lastName:{ [Sequelize.Op.iLike]: `%${search}%`}},
-                        {email:{ [Sequelize.Op.iLike]: `%${search}%`}}
+                     ...(search && {[db.Sequelize.Op.or]: [
+                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
                      ]})
                   },
                   required: false
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Checker',
                   attributes: [
                      'id', 'firstName', 'lastName', 'email'
                   ],
                   where: {
-                     ...(search && {[Sequelize.Op.or]: [
-                        {firstName:{ [Sequelize.Op.iLike]: `%${search}%`}},
-                        {lastName:{ [Sequelize.Op.iLike]: `%${search}%`}},
-                        {email:{ [Sequelize.Op.iLike]: `%${search}%`}}
+                     ...(search && {[db.Sequelize.Op.or]: [
+                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
+                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
                      ]})
                   },
                   required: false
@@ -75,18 +75,18 @@ class AuditLogsService {
             condition: {id, tenantId},
             inclussions: [
                {
-                  model: postgres.models.BulkTransactionLogs,
+                  model: db[process.env.DEFAULT_DB].models.BulkTransactionLogs,
                   required: false
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Maker',
                   attributes: [
                   'id', 'firstName', 'lastName', 'email'
                   ]
                },
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   as: 'Checker',
                   attributes: [
                      'id', 'firstName', 'lastName', 'email'

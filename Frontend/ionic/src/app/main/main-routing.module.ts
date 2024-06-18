@@ -20,13 +20,17 @@ const routes: Routes = [
   },
   {
     path: 'sidebar',
-    loadChildren: () => import('./modals/sidebar/sidebar.module').then( m => m.SidebarPageModule)
+    loadChildren: () => import('./sidebar/sidebar.module').then( m => m.SidebarPageModule)
   },
   {
     path: '',
     redirectTo: '/main/home',
     pathMatch: 'full'
+  },  {
+    path: 'payment',
+    loadChildren: () => import('./payment/payment.module').then( m => m.PaymentPageModule)
   },
+
 
 
 ];

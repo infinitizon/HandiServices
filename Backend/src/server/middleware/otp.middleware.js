@@ -1,24 +1,24 @@
 
 const AppError = require('../../config/apiError');
-const { postgres, Sequelize } = require('../../database/models');
+const db = require('../../database/models');
 const OtpService = require('../services/otp.service');
 const Helper = require('../utils/helper');
 
 class OTPMiddleware {
    static async generate(req, res, next) {
-      const t = await postgres.transaction();
+      const t = await db[process.env.DEFAULT_DB].transaction();
       try {
          let { email } = req.body;
          if ( !email ) throw new AppError('Email are required', __line, __path.basename(__filename), { status: 400, show: true });
-         const user = await postgres.models.User.findOne({
-            where: { [Sequelize.Op.or]: {
-                  ...(email && {email: {[Sequelize.Op.iLike]: email}})
+         const user = await db[process.env.DEFAULT_DB].models.User.findOne({
+            where: { [db.Sequelize.Op.or]: {
+                  ...(email && {email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email}})
                }
             },
          });
          if (!user) throw new AppError("User account not found!", __line, __path.basename(__filename), { status: 404, show: true });
                   
-         const token = await postgres.models.Token.findOrCreate({
+         const token = await db[process.env.DEFAULT_DB].models.Token.findOrCreate({
             where: { userId: user.id },
             defaults: {
                token: Helper.generateOTCode(6, false),

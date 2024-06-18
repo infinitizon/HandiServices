@@ -1,5 +1,5 @@
 
-const { postgres } = require('../../../database/models');
+const db = require('../../../database/models');
 
 const AppError = require('../../../config/apiError');
 const helper = require('../../utils/helper');
@@ -13,7 +13,7 @@ class BankTransferService {
          const paymentData={
             link: callbackUrl + '?redirectUrl=' + redirectUrl + '&amount=' + amount + '&reference=' + txRef
          }
-         const TxnHeader = await postgres.models.TxnHeader.findOne({where: {reference: txRef}})
+         const TxnHeader = await db[process.env.DEFAULT_DB].models.TxnHeader.findOne({where: {reference: txRef}})
          if(!TxnHeader)
             return new AppError(`Transaction not found`, __line, __path.basename(__filename), { status: 404, show: true});
          
@@ -73,15 +73,15 @@ class BankTransferService {
             condition: {reference},
             inclussions: [
                {
-                  model: postgres.models.User,
+                  model: db[process.env.DEFAULT_DB].models.User,
                   attributes: ['id', 'bvn', 'phone', 'email' ]
                }
             ]
          }).findOne()
-         // const txn = await postgres.models.transaction.findOne({
+         // const txn = await db[process.env.DEFAULT_DB].models.transaction.findOne({
          //    attributes: ['id', 'amount', 'description', 'reference'],
          //    include: [
-         //       {model: postgres.models.customer, as: 'customer', attributes: ['id', 'bvn', 'phone', 'email']}
+         //       {model: db[process.env.DEFAULT_DB].models.customer, as: 'customer', attributes: ['id', 'bvn', 'phone', 'email']}
          //    ],
          //    where: {reference}
          // });

@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { MainPageRoutingModule } from './main-routing.module';
 
 import { MainPage } from './main.page';
-import { SidebarComponent } from './modals/sidebar-modal/sidebar.component';
 
 @NgModule({
   imports: [
@@ -18,7 +17,6 @@ import { SidebarComponent } from './modals/sidebar-modal/sidebar.component';
   ],
   declarations: [
     MainPage,
-    SidebarComponent,
   ]
 })
 export class MainPageModule {}

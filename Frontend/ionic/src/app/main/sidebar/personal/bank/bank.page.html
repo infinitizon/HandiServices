@@ -1,0 +1,61 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar/personal"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Bank Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="bankForm">
+    <ion-grid class="ion-margin">
+      <ion-row class="ion-margin-top mt-3">
+        <ion-col>
+          <ion-item [button]="true" lines="none" class="ion-no-margin ion-no-padding" id="select-bank" [detail]="false">
+            <ion-input type="text" label="Bank Name" labelPlacement="floating" placeholder="Choose your bank"
+            errorText="{{uiErrors.bank || 'Invalid bank'}}" formControlName="bankName"
+            ></ion-input>
+          </ion-item>
+          <ion-modal trigger="select-bank" [initialBreakpoint]="0.85" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalBank>
+            <ng-template>
+              <app-search
+                class="ion-page"
+                (selectionChange)="onSelectBank($event, modalBank)"
+                [options]="bankSearchOptions"
+                (selectionCancel)="modalBank.dismiss()"
+              ></app-search>
+            </ng-template>
+          </ion-modal>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none" class="ion-no-margin ion-no-padding">
+            <ion-input type="text" label="Account Number" labelPlacement="floating" placeholder="Enter your account number"
+            errorText="{{uiErrors.nuban || 'Invalid account number'}}" (ionInput)="onNubanChanged($event)" formControlName="nuban"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none" class="ion-no-margin ion-no-padding">
+            <ion-input type="text" label="Account Name" labelPlacement="floating" placeholder="Account Name" [readonly]="true"
+            errorText="{{uiErrors.bankAccountName || 'Invalid account name'}}" formControlName="bankAccountName"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
+<ion-footer class="ion-no-shadow ion-no-border">
+  <ion-grid class="ion-margin">
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" type="submit" (click)="onSubmitNOK()">Confirm</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

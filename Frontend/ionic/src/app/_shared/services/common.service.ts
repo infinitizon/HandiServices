@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 import { HttpClient } from '@angular/common/http';
+import { PMTCompleteComponent } from '../components/payment/complete/complete.component';
+import { ModalController, NavController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +29,9 @@ export class CommonService {
   container: any = {};
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private modalCtrl: ModalController,
+    private navCtrl: NavController
   ) { }
 
 
@@ -159,5 +163,19 @@ export class CommonService {
     return arr.map((e:any, i: number) => {
                 return i % size === 0 ? arr.slice(i, i + size) : null;
               }).filter((e: any)=> e);
+  }
+  paymentComplete (data: any, navigateTo: string) {
+    this.modalCtrl.create({
+      component: PMTCompleteComponent,
+      componentProps: {data},
+      backdropDismiss: false,
+      animated: true,
+      keyboardClose: false,
+    }).then(modalEl=>{
+      modalEl.present();
+      modalEl.onDidDismiss().then(dismissed =>{
+        this.navCtrl.navigateBack(navigateTo);
+      })
+    });
   }
 }
