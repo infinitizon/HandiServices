@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'user-category', component: UserCategoryComponent },
       { path: 'login', component: LoginComponent },
       { path: 'signup', component: SignUpComponent },
+      { path: 'signup/:id', component: SignUpComponent },
       // { path: 'signup-continue', component: SignUpContinueComponent },
       { path: 'forgot-password', component: ForgotPasswordComponent },
       { path: 'reset-password/:token-details', component: ResetPasswordComponent },

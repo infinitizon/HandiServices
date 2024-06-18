@@ -42,9 +42,9 @@
     </div>
 
     <div class="button-wrapper mt-4">
-      <button (click)="onOtpChange()"  type="submit" class="action-btn col-md-12 w-100" [disabled]="otp?.length != 6">
+      <button (click)="onOtpChange(otp)"  type="submit" class="action-btn col-md-12 w-100" [disabled]="otp?.length != 6">
       <div class="d-flex justify-content-center align-items-center">
-        <span class="">Next </span> <app-loader2 *ngIf="submitting"></app-loader2>
+        <span class="">Verify</span> <app-loader2 *ngIf="submitting"></app-loader2>
       </div>
       </button>
     </div>

@@ -77,7 +77,7 @@ export class OtpComponent implements OnInit {
     this.container['generating'] = true;
     this.submitting = true;
     // this.ngOtpInputRef.setValue('');
-    this.http.post(`${environment.baseApiUrl}/auth/otp/generate`, {email: this.options?.email})
+    this.http.post(`${environment.baseApiUrl}/auth/otp/generate`, {email: this.options?.user?.email})
     .subscribe({
       next: (response: any) => {
         this.container['generating'] = false;
@@ -120,12 +120,9 @@ export class OtpComponent implements OnInit {
     if(otp.length == 6) {
       this.submitting = true;
       this.container['verifyOTP'] = 'Verifying...';
-      // this.ngOtpInputRef.otpForm.disable();
-      // if(this.data.status === 423) {
-        const payload = {email: this.options?.email, token: otp,};
-        // console.log(payload);
+        const payload = {email: this.options?.user?.email, token: otp, password: this.options?.password};
         this.http
-        .post(`${environment.baseApiUrl}/auth/otp/verify`, payload)
+        .post(`${environment.baseApiUrl}` + this.options.endpoints, payload)
         .pipe(take(1))
         .subscribe({
           next: (response: any) => {

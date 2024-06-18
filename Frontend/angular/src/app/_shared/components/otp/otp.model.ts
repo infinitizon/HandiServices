@@ -3,4 +3,8 @@ export interface IOTP {
   subTitle?: string;
   timer?: string;
   email: string;
+  verified?: boolean;
+  endpoints?: string;
+  password?: string;
+  user?: any;
 }
