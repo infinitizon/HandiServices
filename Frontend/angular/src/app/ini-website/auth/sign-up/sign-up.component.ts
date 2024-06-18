@@ -132,25 +132,20 @@ export class SignUpComponent implements OnInit {
 
   }
 
-  businessOnit() {
+  businessOnit(id: any) {
     this.container.gettingUser = true;
-    this.http.get(`${environment.baseApiUrl}/users/vendor/user/${this.container?.OTPOptions?.user?.id}`)
-       .subscribe({
-       next: (user: any)=>{
-        if(!user.data) {
+        if(!id) {
           this.router.navigate(['/auth/signup/vendor']);
           this.commonServices.snackBar(`There is no user attached to this account. Please register or contact admin`, 'error');
           return;
         }
-        this.container.user = user.data
         this.thirdForm.patchValue({
-          userId: user?.data?.id
+          userId: id
         });
 
-        this.container.gettingUser = false;
-      }
-    })
+    this.container.gettingUser = false;
     this.getCategories();
+  //  this.stepper.next();
   }
 
   showEyes() {
@@ -215,7 +210,8 @@ export class SignUpComponent implements OnInit {
           this.authService.signup$.next({email: fd.email});
           this.commonServices.snackBar(response.message || `Signup successful`);
           if(this.vendorExists) {
-            this.businessOnit();
+            this.businessOnit(response?.user?.id);
+            stepper.next();
           } else {
             stepper.next();
           }
