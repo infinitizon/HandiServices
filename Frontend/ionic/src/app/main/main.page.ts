@@ -43,6 +43,7 @@ export class MainPage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (response: any) => {
+          this.userSubscription$.unsubscribe();
           this.appContext.userInformation$.next(response.data);
           if (response) {
             console.log(`this.userInformation => `, response);
@@ -53,7 +54,9 @@ export class MainPage implements OnInit {
             }
           }
         },
-        error: (errResp) => {}
+        error: (errResp) => {
+          this.userSubscription$.unsubscribe();
+        }
       });
   }
 }

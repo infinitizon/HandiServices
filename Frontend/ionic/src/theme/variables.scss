@@ -74,5 +74,14 @@
       --background: none
     }
   }
+  ion-item {
+    ion-label {
+      h3 {
+        margin: 0; padding: 0;
+      }
+      p {font-size: 0.8rem;}
+    }
+  }
+
 }
 
