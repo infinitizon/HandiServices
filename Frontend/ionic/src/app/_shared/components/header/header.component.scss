@@ -1,12 +1,28 @@
-.notifications{
-    ion-img{
-    background: var(--ion-color-tertiary);
-    border-radius: 50%;
-  }
-}
+// .notifications{
+//     ion-img{
+//     background: var(--ion-color-tertiary);
+//     border-radius: 50%;
+//   }
+// }
 .header {
   .location {
     line-height: 0.8rem;
     margin-left: 0.7rem;
+  }
+}
+ion-buttons {
+  ion-button {
+    position: relative;
+    border-radius: 50%;
+    ion-badge {
+      position: absolute;
+      font-size: 5pt;
+      right: 0;
+      top: 0;
+      z-index: 99999;
+    }
+    &.custom-class::part(native) {
+      overflow: visible;
+    }
   }
 }

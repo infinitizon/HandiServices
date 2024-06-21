@@ -134,16 +134,16 @@ class UserController {
          const order = await orderOrder.createOrder({ auth, params, orders, transaction: t });
          if(!order || !order.success) 
             throw new AppError(order.show?order.message:`Error creating order`, __line, order.file||__path.basename(__filename), { status: order.status||500, show: order.show });
-         
-         for (const addr of addresses) {
-            const address = addr.id ?
-                     await (new AddressService()).updateAddress({ userId: auth.userId, ...addr, transaction: t }) :
-                     await (new AddressService()).addAddress({ user, ...addr, transaction: t });
-            if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
+         if(addresses) {
+            for (const addr of addresses) {
+               const address = addr.id ?
+                        await (new AddressService()).updateAddress({ userId: auth.userId, ...addr, transaction: t }) :
+                        await (new AddressService()).addAddress({ user, ...addr, transaction: t });
+               if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
 
-            await order.data.addAddress(address.data, { transaction: t });
+               await order.data.addAddress(address.data, { transaction: t });
+            }
          }
-
 
          await t.commit();
          res.status(order.status).json(order);
@@ -714,9 +714,22 @@ class UserController {
    static async checkout (req, res, next) {
       console.log(`Trying to complete the spayment`)
       try {
+         const auth = res.locals.user;
+         if(auth.role!=='CUSTOMER') 
+            throw new AppError(`You need to login as a customer to checkout a request`,__line, __path.basename(__filename), { status: 400, show: true })
          const orderService = new OrderService;
-
-         let data = req.body;
+         const cart = await orderService.getOrderDetails({ userId: auth.userId, orderId: req.body?.callbackParams?.assetId })
+         if(!cart || !cart.success)
+            throw new AppError(cart.show?cart.message:`We couldn't fetch your cart details`, cart.line||__line, cart.file||__path.basename(__filename), { status: cart.status||400, show: cart.show })
+         let amount = 0;
+         cart.data?.forEach(p=>{
+            amount += (+p.value * p?.ProductVendorCharacter?.price)
+         })
+         let data = {
+            ...req.body, 
+            amount, 
+            description: `Payment for order ${req.body?.callbackParams?.assetId}`
+         };
          const pmt = await orderService.call3rdPartyServices({
             authorization: req.headers.authorization,
             uuidToken: req.headers['x-uuid-token'],

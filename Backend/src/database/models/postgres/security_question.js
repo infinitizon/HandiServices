@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
          type: DataTypes.UUID,
          defaultValue: DataTypes.UUIDV4
       },
-      label: DataTypes.UUID,
+      label: DataTypes.STRING,
    }, {
       sequelize,
       paranoid: true,

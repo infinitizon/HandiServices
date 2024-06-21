@@ -18,8 +18,8 @@ class FaqService {
       condition = {
         ...condition,
         [Op.or]: [
-          {question:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-          {answer:{ [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
+          {question:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+          {answer:{ [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}}
         ]
 
       }

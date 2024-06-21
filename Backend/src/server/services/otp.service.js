@@ -5,30 +5,36 @@ const db = require('../../database/models');
 const EmailService = require('../services/email-builder.service');
 
 class OtpService {
-  async generateOTP ({email, subject, message, next}) {
+  async generateOTP ({email, subject, message, transaction, next}) {
+    const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
     try {
       const user = await genericRepo.setOptions('User', {
-        condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } },
+        condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email } },
       }).findOne();
       if (!user) throw new AppError("Account not registered, please sign up", __line, __path.basename(__filename), { status: 404, show: true });
       let otp = Helper.generateOTCode(6, false);
       let tokenExists = await genericRepo.setOptions('Token', {
           condition: { used: false, userId: user.id },
+          transaction: t
       }).findOne();
       if (tokenExists) {
-          await tokenExists.update({ createdAt: Date.now(), token: otp });
+          await tokenExists.update({ createdAt: Date.now(), token: otp }, { transaction: t });
       } else {
           await genericRepo.setOptions('Token', {
               data: { token: otp, userId: user.id },
+              transaction: t
           }).create();
       }
       new EmailService({ recipient: user.email, sender: 'info@HandiServices.com', subject: subject ? subject : 'One Time Password' })
           .setCustomerDetails(user)
           .setEmailType({ type: 'resend_otp', meta: { user, otp, message } })
           .execute();
+          
+      transaction ? 0 : await t.commit();
       return { success: true, message: 'OTP generated successfully'}
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message)
+      transaction ? 0 : await t.rollback();
       return next(
           new AppError(
           error.message
@@ -42,7 +48,7 @@ class OtpService {
      try {
         if (!token) throw new AppError('Token is required', __line, __path.basename(__filename), { status: 400, show: true });
 
-        let user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email }} });
+        let user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email }} });
         if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
 
         const tokenExists = await db[process.env.DEFAULT_DB].models.Token.findOne({ where: { token, userId: user.id }, });

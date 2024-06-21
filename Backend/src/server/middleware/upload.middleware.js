@@ -1,6 +1,6 @@
 const XLSX = require('xlsx');
 module.exports = class TransactionMiddleware {
-   static construct = async (req, res, next) => {
+   static async construct (req, res, next) {
       const { role, ...rest } = res.locals.user
       let details = [], header = { ...req.body };
       header.userRole ? header.userRole?.toUpperCase() : 0;
@@ -13,13 +13,13 @@ module.exports = class TransactionMiddleware {
             let result = [];
             for (const sheetName of sheet_name_list) {
                let xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-               const format = this.generateBulkFileDetails(req.body.fileType, xlData)
+               const format = TransactionMiddleware.generateBulkFileDetails(req.body.fileType, xlData)
                result = format;
             }
             details = result
          }
       } else if(typeof req.body === 'object' &&  Object.keys(req.body).length > 0) {
-         details = this.generateBulkFileDetails(req.body.fileType, [req.body])
+         details = TransactionMiddleware.generateBulkFileDetails(req.body.fileType, [req.body])
       }
       req.body = {
          header,
@@ -28,11 +28,11 @@ module.exports = class TransactionMiddleware {
       next();
    }
    
-   static generateBulkFileDetails = (fileType, arr) => {
+   static generateBulkFileDetails (fileType, arr) {
       const result = []
       for(let item of arr){
          if(fileType==='tenant') {
-            item.Addresses = (item.Addresses && typeof item.Addresses=='string') ? [JSON.parse(item.Addresses)] : null
+            item.Addresses = (item.Addresses && typeof item.Addresses=='string') ? [JSON.parse(item.Addresses)] : []
             result.push(item);
          }
          if(fileType==='user') {

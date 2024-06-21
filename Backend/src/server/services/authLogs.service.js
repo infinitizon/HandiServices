@@ -12,8 +12,8 @@ class AuditLogsService {
            .setOptions("AuditLogs", {
              condition: {
                ...(search && {[db.Sequelize.Op.or]: [
-                  {commonType:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-                  {action:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
+                  {commonType:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+                  {action:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}}
                ]}),
                tenantId
              },
@@ -30,9 +30,9 @@ class AuditLogsService {
                   ],
                   where: {
                      ...(search && {[db.Sequelize.Op.or]: [
-                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
+                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}}
                      ]})
                   },
                   required: false
@@ -45,9 +45,9 @@ class AuditLogsService {
                   ],
                   where: {
                      ...(search && {[db.Sequelize.Op.or]: [
-                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}},
-                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`}}
+                        {firstName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+                        {lastName:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}},
+                        {email:{ [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`}}
                      ]})
                   },
                   required: false

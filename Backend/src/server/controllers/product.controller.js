@@ -284,8 +284,9 @@ class ProductController {
             const found = await productService.getVendorProductPrice({where: {subCategoryId, prodXterId: vendorPrice.characteristic, vendorId: auth.tenantId}});
             if(!found || !found.success)
                throw new AppError(found.show?found.message:`Error creating characteristic`, found.line||__line, found.file||__path.basename(__filename), { status: found.status||500 });
-            if(found && found.success && found.data && found.data?.price ==vendorPrice.price)
-               throw new AppError(`You have already created ${found.data?.ProductCharacter.name}`, found.line||__line, found.file||__path.basename(__filename), { status: found.status||500 });
+            if(found && found.success && found.data)
+            // if(found && found.success && found.data && found.data?.price ==vendorPrice.price)
+               throw new AppError(`You have already created ${found.data?.ProductCharacter.name} pricing`, found.line||__line, found.file||__path.basename(__filename), { status: 400 });
 
             vendorPrice = {...vendorPrice, subCategoryId, vendorId: auth.tenantId, prodXterId: vendorPrice.characteristic}
             const xter = await productService.createVendorProductPrice({vendorPrice, transaction: t});
@@ -296,7 +297,7 @@ class ProductController {
          }
 
          await t.commit();
-         res.status(201).json({ success: true, status: 201, message: `Tenant Category created successfully`, data: createdPrices });
+         res.status(201).json({ success: true, status: 201, message: `Product pricing created successfully`, data: createdPrices });
       } catch (error) {
          await t.rollback();
          console.log(error.message);

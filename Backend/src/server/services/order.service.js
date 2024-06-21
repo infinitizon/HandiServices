@@ -1,4 +1,5 @@
 const db = require('../../database/models');
+const DBEnums = require('../../database/db-enums');
 const axios = require('axios');
 const Pagination = require('../utils/pagination')
 const AppError = require("../../config/apiError");
@@ -7,7 +8,7 @@ class OrderService {
    async createOrder({ auth, params, orders, transaction }) {
       const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const existingOrder = await db[process.env.DEFAULT_DB].models.Order.findOne({where: {userId: auth.userId, tenantId: params.tenantId, status: 'pending'}});
+         const existingOrder = await db[process.env.DEFAULT_DB].models.Order.findOne({where: {userId: auth.userId, status: 'pending'}});
          let cOrder = [];
          for(const o in orders) {
             let ord = {
@@ -109,121 +110,82 @@ class OrderService {
    
    async getOrders({ auth, tenantId, query={} }) { 
       try {
-         const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         let orders = await db[process.env.DEFAULT_DB].models.Order.findAndCountAll({
-            attributes: [
-               "id", "status",
-               [db.Sequelize.literal(`SUM("OrderItems->ProductVendorCharacter".price * cast("OrderItems".value as double precision))`), 'amount'], 
-               [db.Sequelize.literal(`COUNT("OrderItems"."order_id")`), 'totalItems'], 
-               "createdAt"
+         // const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
+         let vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
+            attributes: ["id", "name", 
+               [db.Sequelize.literal(`COUNT("ProductVendorCharacters->OrderItems"."id")`), 'totalItems'], 
             ],
             include: [
                {
-                  model: db[process.env.DEFAULT_DB].models.User,
-                  attributes: ['id', 'firstName', 'middleName', 'lastName'],
-                  duplicating: false,
-                  // include: [
-                  //    {
-                  //       model: db[process.env.DEFAULT_DB].models.Address,
-                  //       attributes: ['id'],
-                  //       duplicating: false,
-                  //    }
-                  // ],
-               },
-               {
-                  model: db[process.env.DEFAULT_DB].models.Tenant,
-                  attributes: ['id', 'name'],
-                  duplicating: false,
-                  // include: [
-                  //    {
-                  //       model: db[process.env.DEFAULT_DB].models.Address,
-                  //       attributes: ['id'],
-                  //       duplicating: false,
-                  //    }
-                  // ],
-               },
-               {
-                  model: db[process.env.DEFAULT_DB].models.OrderItem,
-                  attributes: [],
-                  duplicating: false,
-                  include: [
-                     {
-                        model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
-                        duplicating: false,
-                     }
-                  ],
-               },
-               {
-                  model: db[process.env.DEFAULT_DB].models.Address, through: { attributes: [] },
-                  as: 'Addresses',
-                  duplicating: false,
-               },
+                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: ["id"],
+                  duplicating: false, required: true,
+                  include: [{
+                     model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: ["id"],
+                     duplicating: false, required: true,
+                     include: [{
+                        model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", "status", 'createdAt'],
+                        where: {...(query.userId && {userId: query.userId})},
+                        duplicating: false, required: true,
+                     }]
+                  }]
+               }
             ],
-            where: { ...(tenantId && { tenantId }), ...(query.userId && {userId: query.userId}) },
-            limit, offset,
-            group: [`"Order"."id"`, `"User"."id"`, `"Tenant"."id"`, `"Addresses"."id"`],
-            order: [['createdAt', 'DESC']],
-         });
-         orders?.rows?.forEach(element => {            
-            element.dataValues.availableOrderStatus = this.getAvailableOrderStatuses(auth.role, element.status)
-         });
-         return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count[0]?.count, data: orders?.rows }
-         // let condition = 'WHERE o."deleted_at" IS NULL ';
-         // if(tenantId) {
-         //    condition += ` AND o."tenant_id"='${tenantId}' `
-         // }
-         // if(query.orderId) {
-         //    condition += ` AND o."id"='${query.orderId}' `
-         // }
-         // if(query.userId) {
-         //    condition += ` AND o."user_id"='${query.userId}' `
-         // }
-         
-         // let moreJoin = ``;
-         // let group = ``;
-         // let qOrders = `
-         //    SELECT {{fields}}
-         //    FROM "orders" o
-         //       INNER JOIN "users" u ON o."user_id" = u."id" AND (u."deleted_at" IS NULL) 
-         //       INNER JOIN "tenants" t ON o."tenant_id" = t."id" AND (t."deleted_at" IS NULL) 
-         //       LEFT OUTER JOIN "addresses" ua ON u."id" = ua."common_id" AND (ua."deleted_at" IS NULL AND ua."is_active" = true AND ua."common_type" = 'user') 
-         //       LEFT OUTER JOIN "addresses" ta ON t."id" = ta."common_id" AND (ta."deleted_at" IS NULL AND ua."is_active" = true AND ta."common_type" = 'tenant') 
-         //       {{moreJoin}}
-         //       ${condition} 
-         //       {{group}}
-         // `;
-         // let countQuery = qOrders.replace(/{{condition}}/g, condition);
-         // countQuery = countQuery.replace(/{{fields}}/g, `COUNT(o.id) as count`);
-         // countQuery = countQuery.replace(/{{moreJoin}}/g, moreJoin);
-         // countQuery = countQuery.replace(/{{group}}/g, group);
-         // const countOrders = await db[process.env.DEFAULT_DB].query(countQuery, {
-         //    type: Sequelize.QueryTypes.SELECT,
+            group: [`Tenant.id`,`ProductVendorCharacters->OrderItems->Order.id`],
+            // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
+         })
+         return { success: true, status: 200, message: `Orders fetched successfully`, data: vendors }
+
+         // let orders = await db[process.env.DEFAULT_DB].models.Order.findAndCountAll({
+         //    attributes: [
+         //       "id", "status",
+         //       [db.Sequelize.literal(`SUM("OrderItems->ProductVendorCharacter".price * cast("OrderItems".value as double precision))`), 'amount'], 
+         //       [db.Sequelize.literal(`COUNT("OrderItems"."order_id")`), 'totalItems'], 
+         //       "createdAt"
+         //    ],
+         //    include: [
+         //       {
+         //          model: db[process.env.DEFAULT_DB].models.User,
+         //          attributes: ['id', 'firstName', 'middleName', 'lastName'],
+         //          duplicating: false,
+         //          // include: [
+         //          //    {
+         //          //       model: db[process.env.DEFAULT_DB].models.Address,
+         //          //       attributes: ['id'],
+         //          //       duplicating: false,
+         //          //    }
+         //          // ],
+         //       },
+         //       {
+         //          model: db[process.env.DEFAULT_DB].models.OrderItem,
+         //          attributes: [],
+         //          duplicating: false,
+         //          include: [
+         //             {
+         //                model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
+         //                duplicating: false,
+         //                include: [{
+         //                   model: db[process.env.DEFAULT_DB].models.Tenant,
+         //                   attributes: ['id', 'name'],
+         //                   duplicating: false,
+         //                }],
+         //             }
+         //          ],
+         //       },
+         //       {
+         //          model: db[process.env.DEFAULT_DB].models.Address, through: { attributes: [] },
+         //          as: 'Addresses',
+         //          duplicating: false,
+         //       },
+         //    ],
+         //    where: { ...(tenantId && { tenantId }), ...(query.userId && {userId: query.userId}) },
+         //    limit, offset,
+         //    group: [`Order.id`, `User.id`, `OrderItems->ProductVendorCharacter->Tenant.id`, `Addresses.id`],
+         //    order: [['createdAt', 'DESC']],
          // });
-         
-         // moreJoin = `
-         //    INNER JOIN "order_items" oi ON o."id" = oi."order_id" AND (oi."deleted_at" IS NULL)
-         //    INNER JOIN "product_vendor_xters" pvx ON oi."prod_vendor_xter" = pvx."id" AND (pvx."deleted_at" IS NULL)
-         // `;
-         // group = `GROUP BY o."id",u."id",t."id",ua."id",ta."id"`;
-         // qOrders = qOrders.replace(
-         //    /{{fields}}/g,
-         //    `o."id", SUM(cast(oi.value as double precision) * pvx.price) amount, COUNT(oi."order_id") totalItems, o."status", o."created_at" AS "createdAt"
-         //    , u."id" AS "User.id", u."first_name" AS "User.firstName", u."middle_name" AS "User.middleName", u."last_name" AS "User.lastName", ua."id" AS "User.Addresses.id"
-         //    , t."id" AS "Tenant.id", t."name" AS "Tenant.name"
-         //    , ta."id" AS "Tenant.Addresses.id"
-         //    , (point(ta.lat, ta.lng) <-> point(ua.lat, ua.lng))*111.325*1.60934 AS "User.Addresses.distance"`
-         // );
-         // qOrders = qOrders.replace(/{{moreJoin}}/g, moreJoin);
-         // qOrders = qOrders.replace(/{{group}}/g, group);
-         // qOrders = `${qOrders} ORDER BY "createdAt" ASC OFFSET ${offset} LIMIT ${limit}`;
-         // const rOrders = await db[process.env.DEFAULT_DB].query(qOrders, {
-         //    nest: true,
-         //    type: Sequelize.QueryTypes.SELECT,
+         // orders?.rows?.forEach(element => {            
+         //    element.dataValues.availableOrderStatus = this.getAvailableOrderStatuses(auth.role, element.status)
          // });
-         // rOrders.forEach(element => {            
-         //    element.availableOrderStatus = this.getAvailableOrderStatuses(auth.role, element.status)
-         // });
-         // return { success: true, status: 200, message: `Orders fetched successfully`, count: countOrders[0]?.count, data: rOrders }
+         // return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count[0]?.count, data: orders?.rows }
       } catch (error) {
          console.log(error.message)
          return new AppError(
@@ -282,7 +244,7 @@ class OrderService {
                         attributes: ['id', 'firstName', 'middleName', 'lastName'],
                      }
                   ],
-                  where: { ...(orderId && {id: orderId}), ...(userId && {userId}), ...(query.status && {status: query.status}) },
+                  where: { ...(orderId && {id: orderId}), ...(userId && {userId}), ...(query.status && {status:  DBEnums.OrderStatus.find(g=>g.label===query.status).code}) },
                },
                {
                   model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
@@ -290,6 +252,10 @@ class OrderService {
                      {
                         model: db[process.env.DEFAULT_DB].models.ProductCharacter,
                         attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
+                     },
+                     {
+                        model: db[process.env.DEFAULT_DB].models.Tenant,
+                        attributes: ['id', 'name'],
                      }
                   ],
                   where: { ...(tenantId && {vendorId: tenantId}) },
@@ -338,7 +304,7 @@ class OrderService {
          if(!order || !order.success)
             throw new AppError('Order not found', __line, __path.basename(__filename), { status: 404, show: true});
 
-         await order.data.update({ status }, {transaction: t});
+         await order.data.update({ status: DBEnums.OrderStatus.find(g=>g.label===status).code }, {transaction: t});
          // db[process.env.DEFAULT_DB].models.OrderItem.update()
 
          transaction ? 0 : await t.commit();

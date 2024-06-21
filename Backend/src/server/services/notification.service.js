@@ -138,9 +138,9 @@ class NotificationService {
       if(search){
         conditions = {
           [db.Sequelize.Op.or]:{
-            activityType: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
-            title: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
-            body:{[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%`},
+            activityType: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`},
+            title: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`},
+            body:{[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%`},
           }
         }
       }

@@ -1,0 +1,31 @@
+.input{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;   /* <---- NEW    */
+  ion-label{
+    display: block;
+    text-align: center;
+    &.result {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  }
+}
+
+::ng-deep ion-input.fund-input {
+  --background: none;
+  height: 100px;
+  font-size: 3rem;
+  text-align: center;
+
+}
+:host ::ng-deep ion-item::part(native) {
+  div.item-inner{
+    padding-right: 0;
+  }
+}
+ion-button.pad {
+  font-size: 1.5rem;
+  font-weight: lighter;
+}

@@ -25,15 +25,16 @@ export class MainPage implements OnInit {
   ionViewWillEnter() {
 
     this.appContext.getUserInformation()
-                  .subscribe(user=>{
-                    if(!user?.id) {
-                      this.auth.isAuthenticated.pipe(take(1)).subscribe(auth=>{
-                        if (auth) {
-                          this.getUserInformation();
-                        }
-                      })
-                    }
-                  })
+        .pipe(take(1))
+        .subscribe(user=>{
+          if(!user?.id) {
+            this.auth.isAuthenticated.pipe(take(1)).subscribe(auth=>{
+              if (auth) {
+                this.getUserInformation();
+              }
+            })
+          }
+        })
 
   }
 
@@ -43,6 +44,7 @@ export class MainPage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (response: any) => {
+          this.userSubscription$.unsubscribe();
           this.appContext.userInformation$.next(response.data);
           if (response) {
             console.log(`this.userInformation => `, response);
@@ -53,7 +55,9 @@ export class MainPage implements OnInit {
             }
           }
         },
-        error: (errResp) => {}
+        error: (errResp) => {
+          this.userSubscription$.unsubscribe();
+        }
       });
   }
 }

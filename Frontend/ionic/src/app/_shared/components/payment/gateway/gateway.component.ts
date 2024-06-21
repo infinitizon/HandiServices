@@ -5,6 +5,7 @@ import { IonModal } from '@ionic/angular/common';
 import { InAppBrowser, InAppBrowserEvent } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
+import { of, switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-gateway',
@@ -22,7 +23,9 @@ export class PMTGatewayComponent implements OnInit {
         title: ''
       },
       option: ''
-    }
+    },
+    partners: [],
+    loadingPartners: false,
   }
   constructor(
     private http: HttpClient,
@@ -38,10 +41,32 @@ export class PMTGatewayComponent implements OnInit {
   }
   ionViewWillEnter(): void {
     this.appCtx.getWalletBalance()
-      .subscribe(async (wallet: any)=>{
-        this.wallet = wallet;
-        console.log(this.wallet)
+      .pipe(
+        take(1),
+        switchMap(wallet=>{
+          if(wallet) return of({data: wallet})
+          else return this.http.get(`${environment.baseApiUrl}/users/wallet/fetch`)
+        })
+      ).subscribe(async (wallet: any)=>{
+        this.wallet = wallet.data;
+        this.appCtx.walletBalance$.next(wallet.data);
       })
+    this.container.loadingPartners = true;
+    this.http
+      .get(this.data?.gatewayEndpoints ?? `${environment.baseApiUrl}/3rd-party-services/gateway?module=${this.data?.callbackParams?.module}&id=${this.data?.callbackParams?.assetId}`)
+      .subscribe({
+        next: (response: any) => {
+          this.container.loadingPartners = false;
+          // this.container['cardLoading'] = false;
+          this.container.partners = response.data
+          // this.bankPayment = response.data.filter((card: any) => {
+          //   return card.type === 'bank';
+          // });
+        },
+        error: (err) => {
+          this.container.loadingPartners = false;
+        }
+      });
   }
   cancel() {
     this.modalCtrl.dismiss(null, 'cancel');
@@ -71,21 +96,7 @@ export class PMTGatewayComponent implements OnInit {
         .subscribe({
           next: (response: any) => {
             loadinEl.dismiss();
-            const browser = this.iab.create(response.data.authorization_url, '_blank', {
-              hideurlbar: 'yes',
-              hidenavigationbuttons: 'yes',
-              toolbarcolor: '#ffffff',
-              closebuttoncolor: '#ff0000'
-            })
-
-            browser.on('loadstart').subscribe((event: InAppBrowserEvent)=>{
-                if (event && event.url && event.url.includes('success')) {
-                  browser.close();
-                  modal.dismiss()
-                  this.modalCtrl.dismiss(new URL(event.url), 'close', 'main-gateway');
-                  this.response.emit(new URL(event.url))
-                }
-            })
+            this.completePmt(response, modal)
           },
           error: (err: any) => {
             loadinEl.dismiss();
@@ -94,6 +105,22 @@ export class PMTGatewayComponent implements OnInit {
               // this.commonServices.snackBar(errResp?.error?.error?.message || `Error saving request`, 'error');
           }
       });
+    })
+  }
+  completePmt(response: any, modal: IonModal) {
+    const browser = this.iab.create(response.data.authorization_url, '_blank', {
+      hideurlbar: 'yes',
+      hidenavigationbuttons: 'yes',
+      toolbarcolor: '#ffffff',
+      closebuttoncolor: '#ff0000'
+    })
+    browser.on('loadstart').subscribe((event: InAppBrowserEvent)=>{
+      if (event && event.url && event.url.includes('success')) {
+        browser.close();
+        modal.dismiss()
+        this.modalCtrl.dismiss(new URL(event.url), 'close', 'main-gateway');
+        this.response.emit(new URL(event.url))
+      }
     })
   }
 }

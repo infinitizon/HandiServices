@@ -5,7 +5,7 @@ import { environment } from '@environments/environment';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { ModalController } from '@ionic/angular';
 import { PMTGatewayComponent } from '@app/_shared/components/payment/gateway/gateway.component';
-import { of, switchMap } from 'rxjs';
+import { Subscription, of, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '@app/_shared/services/common.service';
 
@@ -16,6 +16,7 @@ import { CommonService } from '@app/_shared/services/common.service';
 })
 export class FundPage implements OnInit {
 
+  walletSubscription$ = new Subscription
   walletForm!: FormGroup;
   errors: any = [];
   formErrors: any = FormErrors;
@@ -50,7 +51,7 @@ export class FundPage implements OnInit {
     }
     let fd = JSON.parse(JSON.stringify(this.walletForm.value));
     const getUrl = window.location;
-    this.appCtx.getWalletBalance()
+    this.walletSubscription$ = this.appCtx.getWalletBalance()
                 .pipe(
                   switchMap(wallet=>{
                     if(wallet) return of({data: wallet})
@@ -59,7 +60,8 @@ export class FundPage implements OnInit {
                 )
                 .subscribe(async (response: any)=>{
                   const wallet = response.data
-                  console.log(wallet);
+                  this.appCtx.walletBalance$.next(response.data);
+                  this.walletSubscription$.unsubscribe()
 
                   const data = {
                     ...fd,
@@ -91,7 +93,7 @@ export class FundPage implements OnInit {
                     success: (result.searchParams)?.get('success') == 'true' ? true : false,
                     message: (result.searchParams)?.get('message') ?? ((result.searchParams)?.get('success') == 'true'?'Wallet top up succesfully': 'Error completing payment')
                   }
-                  this.commonService.paymentComplete(complete, '/main/wallet');
+                  // this.commonService.paymentComplete(complete, '/main/wallet');
                 })
 
   }

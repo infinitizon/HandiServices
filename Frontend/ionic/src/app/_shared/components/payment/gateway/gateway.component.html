@@ -19,7 +19,7 @@
               <ion-text color="secondary">
                 <small>Payment amount</small>
               </ion-text>
-              <h1>{{ (data.amount || 0) | currency:data.currency:"symbol-narrow"}}</h1>
+              <h1 class="mt-1">{{ (data.amount || 0) | currency:data.currency:"symbol-narrow"}}</h1>
             </ion-label>
           </ion-item>
           <ion-item lines="full" (click)="onOptionClick('wallet', modal)">
@@ -29,7 +29,7 @@
                 <p>Wallet</p>
               </ion-text>
               <ion-text color="secondary">
-                <small>Current balance is {{ (wallet.amount || 0) | currency:wallet.currency:"symbol-narrow"}}</small>
+                <small>Current balance is {{ (wallet?.total || 0) | currency:wallet?.currency:"symbol-narrow"}}</small>
               </ion-text>
             </ion-label>
           </ion-item>
@@ -71,9 +71,21 @@
         <div *ngIf="this.container.options.option === 'cards'"></div>
         <div *ngIf="this.container.options.option === 'partners'">
           <ion-grid>
-            <ion-row>
-              <ion-col>
+            <ion-row *ngFor="let partner of container.partners">
+              <ion-col *ngIf="partner?.['gateway'] === 'paystack'">
                 <ion-item class="partners" lines="full" (click)="onChoosePartner('paystack', modal)">
+                  <ion-thumbnail slot="start">
+                    <ion-img role="button" [src]="'/assets/logo/paystack.svg'"></ion-img>
+                  </ion-thumbnail>
+                  <ion-label>
+                    <ion-text color="medium">
+                      <p>Paystack</p>
+                    </ion-text>
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+              <ion-col *ngIf="partner?.['gateway'] === 'flutterwave'">
+                <ion-item class="partners" lines="full" (click)="onChoosePartner('flutterwave', modal)">
                   <ion-thumbnail slot="start">
                     <ion-img role="button" [src]="'/assets/logo/paystack.svg'"></ion-img>
                   </ion-thumbnail>

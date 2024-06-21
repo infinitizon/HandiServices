@@ -12,7 +12,7 @@ class OTPMiddleware {
          if ( !email ) throw new AppError('Email are required', __line, __path.basename(__filename), { status: 400, show: true });
          const user = await db[process.env.DEFAULT_DB].models.User.findOne({
             where: { [db.Sequelize.Op.or]: {
-                  ...(email && {email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email}})
+                  ...(email && {email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email}})
                }
             },
          });

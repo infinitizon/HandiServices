@@ -10,7 +10,7 @@ import { FormErrors, ValidationMessages } from './vPassword.validators';
 import { CommonService } from '@app/_shared/services/common.service';
 import { ILogin } from '@app/_shared/models/Login';
 import { IOTPVerified } from '@app/_shared/models/otp.model';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 
 @Component({
@@ -53,9 +53,10 @@ export class SecurityPage {
 
   ionViewWillEnter() {
     this.appCtx.getUserInformation()
-              .subscribe(val=>{
-                this.container.twoFA=val.twoFactorAuth
-              })
+        .pipe(take(1))
+        .subscribe(val=>{
+          this.container.twoFA=val?.twoFactorAuth
+        })
     this.storageService.get('useFingerprint').then(value=>{
       this.container.fingerprint = value;
     })
