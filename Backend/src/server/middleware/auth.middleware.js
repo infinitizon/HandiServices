@@ -12,7 +12,7 @@ class AuthMiddleware {
       let { email, password } = req.body;
       password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);
       const user = await db[process.env.DEFAULT_DB].models.User.findOne({ 
-        where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email.trim() }  }, 
+        where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email.trim() }  }, 
         attributes: ["id", "email", "password", "twoFactorAuth"],
       });
   

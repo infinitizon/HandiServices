@@ -1,0 +1,66 @@
+<ion-grid class="ion-text-center ion-padding">
+  <ion-row style="height: 40vh;">
+    <ion-col class="input">
+      <ion-label class="ion-text-center d-block">Enter amount to fund</ion-label>
+      <ion-item lines="none" class="ion-no-margin ion-no-padding">
+        <!-- <ion-input type="number" aria-label="N0.00" placeholder="N0.00" step="0.01" labelPlacement="stacked" [readonly]="true"
+        errorText="{{uiErrors.amount || 'Invalid account number'}}" formControlName="amount" class="fund-input"
+        ></ion-input> -->
+        <ion-label class="result">{{amount | currency:"NGN":"symbol-narrow"}}</ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" type="submit" (click)="onSubmit()">Continue</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(1)">
+        <ion-text>1</ion-text>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(2)">2</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(3)">3</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(4)">4</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(5)">5</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(6)">6</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(7)">7</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(8)">8</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(9)">9</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber('.')" style="font-weight: bolder;">.</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" class="pad" (click)="addNumber(0)">0</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button fill="none" (click)="addNumber('backspace')">
+        <ion-icon name="backspace-sharp" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

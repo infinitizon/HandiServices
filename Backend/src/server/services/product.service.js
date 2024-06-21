@@ -356,64 +356,85 @@ class ProductService {
          // Another one that looked even more accurate -> https://stackoverflow.com/questions/47619397/find-nearest-items-from-lat-lng-in-postgresql
          // `select * , ( point(lat, lng) <-> point(6.541994,3.3319645) )*111.325*1.60934 AS distance FROM addresses`
                     
-         // const vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAndCountAll({
-         //    // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
-         //    attributes: ['id', 'name', 'email', 'phone'],
-         //    include: [
-         //       {
-         //          model: db[process.env.DEFAULT_DB].models.Address,
-         //          attributes: ['id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', [db.Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
-         //          duplicating: false,
-         //       },
-         //       {
-         //          model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
-         //          attributes: ['id'],
-         //          duplicating: false,
-         //          // eslint-disable-next-line camelcase
-         //          // through: {scope: {commonType: 'tenant'}},
-         //          where: { subCategoryId: params.subCategoryId }
-         //       }
-         //    ],
-         //    where: {isEnabled: true, isLocked: false},
-         //    // order: [["distance", 'DESC']],
-         //    order: [[db.Sequelize.literal(`"Addresses.distance"`), 'ASC']],
-         //    limit, offset,
-         // });
+         const vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
+            // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
+            attributes: ['id', 'name', 'email', 'phone'],
+            include: [
+               {
+                  model: db[process.env.DEFAULT_DB].models.Address,
+                  attributes: [
+                     'id', 'houseNo', 'address1', 'address2', 'address3', 'city', 'lga', 'country', 'state', 'lat', 'lng', 
+                     // [db.Sequelize.literal(`(point(lat, lng) <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']
+                     // [db.Sequelize.literal(`( 7926.3352 * acos( cos( radians(${query.lng}) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(${query.lat}) ) + sin( radians(${query.lng}) ) * sin( radians( lat ) ) ) )`), 'distance1'],
+                     [db.Sequelize.literal(`ACOS( SIN(${query.lat}*PI()/180)*SIN(lat*PI()/180) + COS(${query.lat}*PI()/180)*COS(lat*PI()/180)*COS(lng*PI()/180-${query.lng}*PI()/180) ) * 6371`), 'distance']
+                  ],
+                  duplicating: false,
+               },
+               {
+                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
+                  attributes: ['id'],
+                  duplicating: false,
+                  // eslint-disable-next-line camelcase
+                  // through: {scope: {commonType: 'tenant'}},
+                  where: { subCategoryId: params.subCategoryId }
+               }
+            ],
+            where: {isEnabled: true, isLocked: false},
+            // order: [["distance", 'DESC']],
+            order: [[db.Sequelize.literal(`"Addresses.distance"`), 'ASC']],
+            limit, offset,
+         });      
+         const count = await db[process.env.DEFAULT_DB].models.Tenant.count({
+            // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
+            attributes: ['id', 'name', 'email', 'phone'],
+            include: [
+               {
+                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
+                  attributes: ['id'],
+                  duplicating: false,
+                  // eslint-disable-next-line camelcase
+                  // through: {scope: {commonType: 'tenant'}},
+                  where: { subCategoryId: params.subCategoryId }
+               }
+            ],
+            where: {isEnabled: true, isLocked: false},
+         });
          // column Addresses.commonType does not exist...I need to use direct queries to solve this
          
-         let qTntProducts = `
-            SELECT {{fields}}
-            FROM "tenants" t
-               LEFT OUTER JOIN "addresses" a ON t."id" = a."common_id" AND (a."deleted_at" IS NULL AND a."common_type" = 'tenant') 
-               INNER JOIN "product_vendor_xters" pvc ON t."id" = pvc."vendor_id" AND (pvc."deleted_at" IS NULL AND pvc."sub_category_id" = '${params.subCategoryId}')
-            GROUP BY t.id,a."id"
-            {{condition}}
-            {{order}}
-            {{pagination}}
-         `;
-         let qProducts = qTntProducts.replace(
-            /{{fields}}/g,
-            `t."id", t."name", t."email", t."phone", a."id" AS "Addresses.id", a."house_no" AS "Addresses.houseNo", a."address1" AS "Addresses.address1"
-            , a."address2" AS "Addresses.address2", a."address3" AS "Addresses.address3", a."city" AS "Addresses.city", a."lga" AS "Addresses.lga"
-            , a."country" AS "Addresses.country", a."state" AS "Addresses.state", a."lat" AS "Addresses.lat", a."lng" AS "Addresses.lng"
-            , (point(lat, lng) <-> point(${query.lat},${query.lng}))*111.325*1.60934 AS "Addresses.distance"`
-         );
-         qProducts = qProducts.replace(/{{condition}}/g, '');
+         return { success: true, status: 200, message: `Vendors fetched successfully`, count, data: vendors }
+         // let qTntProducts = `
+         //    SELECT {{fields}}
+         //    FROM "tenants" t
+         //       LEFT OUTER JOIN "addresses" a ON t."id" = a."common_id" AND (a."deleted_at" IS NULL AND a."common_type" = 'tenant') 
+         //       INNER JOIN "product_vendor_xters" pvc ON t."id" = pvc."vendor_id" AND (pvc."deleted_at" IS NULL AND pvc."sub_category_id" = '${params.subCategoryId}')
+         //    GROUP BY t.id,a."id"
+         //    {{condition}}
+         //    {{order}}
+         //    {{pagination}}
+         // `;
+         // let qProducts = qTntProducts.replace(
+         //    /{{fields}}/g,
+         //    `t."id", t."name", t."email", t."phone", a."id" AS "Addresses.id", a."house_no" AS "Addresses.houseNo", a."address1" AS "Addresses.address1"
+         //    , a."address2" AS "Addresses.address2", a."address3" AS "Addresses.address3", a."city" AS "Addresses.city", a."lga" AS "Addresses.lga"
+         //    , a."country" AS "Addresses.country", a."state" AS "Addresses.state", a."lat" AS "Addresses.lat", a."lng" AS "Addresses.lng"
+         //    , (point(lat, lng) <-> point(${query.lat},${query.lng}))*111.325*1.60934 AS "Addresses.distance"`
+         // );
+         // qProducts = qProducts.replace(/{{condition}}/g, '');
 
-         let countQuery = `SELECT COUNT(t.id) as count FROM (${qProducts}) t`;
-         countQuery = countQuery.replace(/{{order}}/g, '');
-         countQuery = countQuery.replace(/{{pagination}}/g, '');
-         const countResult = await db[process.env.DEFAULT_DB].query(countQuery, {
-            type: db.Sequelize.QueryTypes.SELECT,
-         });
+         // let countQuery = `SELECT COUNT(t.id) as count FROM (${qProducts}) t`;
+         // countQuery = countQuery.replace(/{{order}}/g, '');
+         // countQuery = countQuery.replace(/{{pagination}}/g, '');
+         // const countResult = await db[process.env.DEFAULT_DB].query(countQuery, {
+         //    type: db.Sequelize.QueryTypes.SELECT,
+         // });
          
-         qProducts = qProducts.replace(/{{order}}/g, `ORDER BY "Addresses.distance" ASC`);
-         qProducts = qProducts.replace(/{{pagination}}/g, `OFFSET ${offset} LIMIT ${limit}`);
-         const rTntProducts = await db[process.env.DEFAULT_DB].query(qProducts, {
-           nest: true,
-           type: db.Sequelize.QueryTypes.SELECT,
-         });
-         return { success: true, status: 200, message: `Vendors fetched successfully`, count: countResult[0]?.count, data: rTntProducts }
+         // qProducts = qProducts.replace(/{{order}}/g, `ORDER BY "Addresses.distance" ASC`);
+         // qProducts = qProducts.replace(/{{pagination}}/g, `OFFSET ${offset} LIMIT ${limit}`);
+         // const rTntProducts = await db[process.env.DEFAULT_DB].query(qProducts, {
+         //   nest: true,
+         //   type: db.Sequelize.QueryTypes.SELECT,
+         // });
+         // return { success: true, status: 200, message: `Vendors fetched successfully`, count: countResult[0]?.count, data: rTntProducts }
       } catch (error) {
             console.log(error.message)
          return new AppError(
@@ -427,6 +448,7 @@ class ProductService {
    
    async getRecommendedVendors({ params, query={} }) {
       try {
+         console.log(params);
          // const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
          const vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
             // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],

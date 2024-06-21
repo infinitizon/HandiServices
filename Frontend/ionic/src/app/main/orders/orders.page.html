@@ -1,0 +1,23 @@
+<ion-content [fullscreen]="true">
+  <app-header [role]="container.role"></app-header>
+  <ion-segment scrollable="true" swipeGesture="true" value="placed" (ionChange)="onSegmentChange($event)">
+    <ion-segment-button value="placed">
+      <ion-label>Not started</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="inprogress">
+      <ion-label>Ongoing/Delivered</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="cancelled">
+      <ion-label>Cancelled</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

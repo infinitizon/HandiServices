@@ -1,0 +1,46 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/home/product-providers"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon role="button" name="cart-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Cart</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">cart</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-grid>
+    <ion-row *ngFor="let p of providerXterData let i = index;">
+      <ion-col>
+        <ion-item>
+          <ion-label>
+            <h3>{{p.ProductVendorCharacter?.ProductCharacter?.name}} {{p.value}}</h3>
+            <p>{{p.ProductVendorCharacter?.Tenant?.name}}</p>
+          </ion-label>
+          <ion-note slot="end">{{+p.value * p?.ProductVendorCharacter?.price  |currency:"NGN":"symbol-narrow"}}</ion-note>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col></ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="ion-no-shadow ion-no-border">
+  <ion-grid class="ion-margin">
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" type="submit" (click)="onCheckOut()">Checkout ({{container['total'] || 0 | currency:"NGN":"symbol-narrow"}})</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

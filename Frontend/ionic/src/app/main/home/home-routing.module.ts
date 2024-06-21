@@ -15,6 +15,14 @@ const routes: Routes = [
     path: 'product-providers/:productId',
     loadChildren: () => import('./product-providers/product-providers.module').then( m => m.ProductProvidersPageModule)
   },
+  {
+    path: 'product-checkout/:providerId/:subCategoryId/characteristics',
+    loadChildren: () => import('./product-checkout/product-checkout.module').then( m => m.ProductCheckoutPageModule)
+  },
+  {
+    path: 'cart',
+    loadChildren: () => import('./cart/cart.module').then( m => m.CartPageModule)
+  },
 ];
 
 @NgModule({

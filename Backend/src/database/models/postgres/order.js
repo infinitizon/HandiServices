@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
          Order.belongsTo(models.User, {
             foreignKey: 'userId',
          });
-         Order.belongsTo(models.Tenant, {
-            foreignKey: 'tenantId',
-         });
          Order.belongsToMany(models.Address, {
             through: models.OrderAddress,
             foreignKey: 'orderId',
@@ -43,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
          defaultValue: DataTypes.UUIDV4
       },
       userId: DataTypes.UUID,
-      tenantId: DataTypes.UUID,
       status: {
          type: DataTypes.SMALLINT,
          defaultValue: 100,

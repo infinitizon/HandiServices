@@ -15,6 +15,7 @@ import { OTPComponent } from './components/otp/otp.component';
 import { SearchComponent } from './components/search/search.component';
 import { PMTGatewayComponent } from './components/payment/gateway/gateway.component';
 import { PMTCompleteComponent } from './components/payment/complete/complete.component';
+import { NumberKeyboardComponent } from './components/number-keyboard/number-keyboard.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { PMTCompleteComponent } from './components/payment/complete/complete.com
     OTPComponent,
     SearchComponent,
     PMTGatewayComponent, PMTCompleteComponent,
+    NumberKeyboardComponent,
   ],
   providers: [
   ],
@@ -47,7 +49,8 @@ import { PMTCompleteComponent } from './components/payment/complete/complete.com
     HeaderComponent,
     OTPComponent,
     SearchComponent,
-    PMTGatewayComponent, PMTCompleteComponent
+    PMTGatewayComponent, PMTCompleteComponent,
+    NumberKeyboardComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -14,7 +14,7 @@ class UserService {
          const emailExists = await db[process.env.DEFAULT_DB].models.User.findOne({
              attributes: ['id', 'email', 'bvn'],
              where: { [db.Sequelize.Op.or]: {
-                 email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: user.email}
+                 email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: user.email}
              } },
          });
          if (emailExists) throw new AppError('Email/BVN already registered', __line, __path.basename(__filename), { status: HttpStatus.CONFLICT, show: true });

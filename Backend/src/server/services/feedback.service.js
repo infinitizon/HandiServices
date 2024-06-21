@@ -11,8 +11,8 @@ class FeedbackService {
          const reportFilter = {
             where: {
                   ...(userId && {userId: { [db.Sequelize.Op.eq]: userId }} ), 
-                  ...(issue && {issue: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: issue }} ),
-                  ...(description && {description: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: description }} )
+                  ...(issue && {issue: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: issue }} ),
+                  ...(description && {description: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: description }} )
             },
             include: [{
                   model: db[process.env.DEFAULT_DB].models.User,

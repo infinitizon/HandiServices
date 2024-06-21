@@ -9,7 +9,7 @@ class OtpService {
     const t = transaction ?? await db[process.env.DEFAULT_DB].transaction();
     try {
       const user = await genericRepo.setOptions('User', {
-        condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } },
+        condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email } },
       }).findOne();
       if (!user) throw new AppError("Account not registered, please sign up", __line, __path.basename(__filename), { status: 404, show: true });
       let otp = Helper.generateOTCode(6, false);
@@ -48,7 +48,7 @@ class OtpService {
      try {
         if (!token) throw new AppError('Token is required', __line, __path.basename(__filename), { status: 400, show: true });
 
-        let user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email }} });
+        let user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email }} });
         if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
 
         const tokenExists = await db[process.env.DEFAULT_DB].models.Token.findOne({ where: { token, userId: user.id }, });

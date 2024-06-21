@@ -15,7 +15,11 @@ const routes: Routes = [
       {
         path: 'wallet',
         loadChildren: () => import('./wallet/wallet.module').then( m => m.WalletPageModule)
-      }
+      },
+      {
+        path: 'orders',
+        loadChildren: () => import('./orders/orders.module').then( m => m.OrdersPageModule)
+      },
     ]
   },
   {
@@ -26,7 +30,8 @@ const routes: Routes = [
     path: '',
     redirectTo: '/main/home',
     pathMatch: 'full'
-  },  {
+  },
+  {
     path: 'payment',
     loadChildren: () => import('./payment/payment.module').then( m => m.PaymentPageModule)
   },

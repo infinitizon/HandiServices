@@ -180,7 +180,8 @@ class PaymentService {
       // })
       call = [{
         ProductBankGateways: [
-          { id: 1, gateway: 'paystack', subAccountId: null, }
+          { id: 1, gateway: 'paystack', subAccountId: null, },
+          // { id: 2, gateway: 'flutterwave', subAccountId: null, },
         ]
       }];
 

@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
    class OrderItem extends Model {
       /**
@@ -27,6 +28,20 @@ module.exports = (sequelize, DataTypes) => {
       prodVendorXter: DataTypes.UUID,
       value: DataTypes.STRING,
       qty: DataTypes.FLOAT,
+      status: {
+         type: DataTypes.SMALLINT,
+         defaultValue: 100,
+         get() {
+             const rawValue = this.getDataValue('status');
+             return  DBEnums.OrderStatus.find(g=>g.code===rawValue).label
+         },
+         set(value) {
+            const result = DBEnums.OrderStatus.find(g=>g.code===value)
+                ? value
+                : DBEnums.OrderStatus.find(g=>g.label===value).code;
+             this.setDataValue('status', result);
+         }
+      },
    }, {
       sequelize,
       paranoid: true,

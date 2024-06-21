@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
-import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 // import jwt_decode from 'jwt-decode';
 
 import { StorageService } from './storage.service';
@@ -17,7 +17,7 @@ export class AuthService {
 
   constructor(
     private storageService: StorageService,
-    private router: Router,
+    private navCtrl: NavController,
     private appCtx: ApplicationContextService
   ) {
     this.loadToken();
@@ -37,6 +37,6 @@ export class AuthService {
     this.storageService.remove('token');
     this.storageService.remove('role');
     this.storageService.remove('uuid');
-    this.router.navigate([url??'/main/home']);
+    this.navCtrl.navigateBack([url??'/main/home']);
   }
 }

@@ -38,9 +38,6 @@ module.exports = (sequelize, DataTypes) => {
          Tenant.hasMany(models.ProductVendorCharacter, {
             foreignKey: 'vendorId',
          });
-         Tenant.hasMany(models.Order, {
-            foreignKey: 'tenantId',
-         });
          Tenant.hasMany(models.ChatSession, {
             foreignKey: 'tenantId',
          });
