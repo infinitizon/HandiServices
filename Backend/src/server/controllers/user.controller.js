@@ -186,7 +186,7 @@ class UserController {
       */
       try {
          const refCodes = await genericRepo.setOptions('User', {
-            condition: { refCode: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: '%' + req.query.q + '%',} },
+            condition: { refCode: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: '%' + req.query.q + '%',} },
             selectOptions: ['id', 'refCode', 'firstName', 'middleName', 'lastName'],
             order: [['firstName', 'ASC']]
          }).findAll();

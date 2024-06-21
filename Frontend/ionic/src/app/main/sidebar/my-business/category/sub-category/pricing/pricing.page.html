@@ -33,9 +33,9 @@
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
-    <ion-item *ngIf="container['pricingsLoading']">
+    <ion-item *ngIf="container['pricingsLoading']" class="ion-text-center" lines="none">
       <ion-label>
-        Refreshing list
+        <i>Refreshing list...</i>
       </ion-label>
     </ion-item>
   </ion-list>
@@ -50,7 +50,7 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <form [formGroup]="priceForm" (ngSubmit)="onSubmitPriceForm()">
+        <form [formGroup]="priceForm" (ngSubmit)="onSubmitPriceForm(modalService)">
           <ion-grid class="ion-margin">
             <ion-row class="ion-margin-top mt-3">
               <ion-col>

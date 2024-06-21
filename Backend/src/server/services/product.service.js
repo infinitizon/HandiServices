@@ -293,11 +293,11 @@ class ProductService {
       const where = {
          [db.Sequelize.Op.or]: [
             {...(!isNaN(q) && {'$ProductVendorCharacter.price$' : { [db.Sequelize.Op.eq]: q } })},
-            {'$Product.title$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
-            {'$Product.summary$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
-            {'$Product.description$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
-            {'$Tenant.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
-            {'$ProductCharacter.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${q}%` } },
+            {'$Product.title$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${q}%` } },
+            {'$Product.summary$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${q}%` } },
+            {'$Product.description$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${q}%` } },
+            {'$Tenant.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${q}%` } },
+            {'$ProductCharacter.name$' : { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${q}%` } },
          ],
       }
       try {
@@ -386,11 +386,11 @@ class ProductService {
          });      
          const count = await db[process.env.DEFAULT_DB].models.Tenant.count({
             // attributes: ['id', 'name', 'email', 'phone', [db.Sequelize.literal(`( point("Addresses"."lat", "Addresses"."lng") <-> point(${query.lat},${query.lng}) )*111.325*1.60934`), 'distance']],
-            attributes: ['id', 'name', 'email', 'phone'],
+            // attributes: [db.Sequelize.literal(`COUNT("Tenant"."id")`)],
             include: [
                {
                   model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter,
-                  attributes: ['id'],
+                  attributes: [],
                   duplicating: false,
                   // eslint-disable-next-line camelcase
                   // through: {scope: {commonType: 'tenant'}},
@@ -398,6 +398,7 @@ class ProductService {
                }
             ],
             where: {isEnabled: true, isLocked: false},
+            group: [`Tenant.id`]
          });
          // column Addresses.commonType does not exist...I need to use direct queries to solve this
          
@@ -436,7 +437,7 @@ class ProductService {
          // });
          // return { success: true, status: 200, message: `Vendors fetched successfully`, count: countResult[0]?.count, data: rTntProducts }
       } catch (error) {
-            console.log(error.message)
+         console.log(error.message)
          return new AppError(
             error.message,
             error.line || __line,

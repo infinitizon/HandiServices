@@ -23,10 +23,10 @@
       <ion-col>
         <ion-item>
           <ion-label>
-            <h3>{{p.ProductVendorCharacter?.ProductCharacter?.name}} {{p.value}}</h3>
+            <h3>{{p.ProductVendorCharacter?.ProductCharacter?.name}}</h3>
             <p>{{p.ProductVendorCharacter?.Tenant?.name}}</p>
           </ion-label>
-          <ion-note slot="end">{{+p.value * p?.ProductVendorCharacter?.price  |currency:"NGN":"symbol-narrow"}}</ion-note>
+          <ion-note slot="end">({{p.value}}) {{+p.value * p?.ProductVendorCharacter?.price  |currency:"NGN":"symbol-narrow"}}</ion-note>
         </ion-item>
       </ion-col>
     </ion-row>

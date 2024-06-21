@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { StorageService } from '@app/_shared/services/storage.service';
 import { SegmentChangeEventDetail } from '@ionic/angular';
 import { environment } from '@environments/environment';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -48,13 +49,14 @@ export class OrdersPage implements OnInit {
   getOrders(status: string) {
     this.http
         .get(`${environment.baseApiUrl}/users/orders?status=${status}`)
-    .subscribe({
-        next: (response: any) => {
-          this.orders = response.data;
-        },
-        error: (errResp) => {
-          // this.container['paymentLoading'] = false;
-        }
-      });
+        .pipe(take(1))
+        .subscribe({
+          next: (response: any) => {
+            this.orders = response.data;
+          },
+          error: (errResp) => {
+            // this.container['paymentLoading'] = false;
+          }
+        });
   }
 }
