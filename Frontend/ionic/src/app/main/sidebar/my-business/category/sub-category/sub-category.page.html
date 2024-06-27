@@ -26,9 +26,9 @@
         <p>{{service.summary}}</p>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="container['servicesLoading']">
+    <ion-item *ngIf="container['servicesLoading']" class="ion-text-center" lines="none">
       <ion-label>
-        Refreshing list
+        <i>Refreshing list...</i>
       </ion-label>
     </ion-item>
   </ion-list>

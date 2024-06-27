@@ -3,6 +3,9 @@ require('./server/utils/stack-trace');
 require('dotenv').config();
 const express = require('express');
 const { Server } = require('socket.io');
+const axios = require('axios');
+axios.default.timeout = 10000;
+
 // const Socket = require("./server/utils/socket.io");
 // const db = require('./database/models');
 

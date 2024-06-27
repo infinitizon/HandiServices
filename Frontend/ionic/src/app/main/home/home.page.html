@@ -36,6 +36,11 @@
               </ion-card>
             </div>
           </div>
+          <div class="text-center ion-text-center">
+            <ion-item *ngIf="!categoriesData || categoriesData?.length <=0" class="ion-padding" lines="none">
+              <ion-spinner *ngIf="container['categoriesLoading']"></ion-spinner><ion-label *ngIf="!container['categoriesLoading']">No Recommended providers yet</ion-label>
+            </ion-item>
+          </div>
         </div>
       </ion-col>
     </ion-row>
@@ -67,7 +72,7 @@
             </ion-label>
           </ion-item>
           <ion-item *ngIf="!container['recommended'] || container['recommended']?.length <=0" class="ion-padding" lines="none">
-            <ion-label>No Recommended providers yet</ion-label>
+            <ion-spinner *ngIf="container['recommendedLoading']"></ion-spinner><ion-label *ngIf="!container['recommendedLoading']">No Recommended providers yet</ion-label>
           </ion-item>
         </ion-list>
       </ion-col>

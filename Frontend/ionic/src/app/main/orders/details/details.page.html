@@ -1,0 +1,46 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/orders"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button fill="none">
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Order Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true" color="light">
+  <ion-item detail="false" class="ion-margin-vertical">
+    <ion-label>
+      <h3>Order No: {{order?.id}}</h3>
+      <p><ion-note>Total Items: <b>{{count}}</b></ion-note></p>
+      <p><ion-note>Placed on: {{order?.createdAt | date}}</ion-note></p>
+    </ion-label>
+  </ion-item>
+  <ion-label class="ion-margin">ITEMS IN YOUR ORDER</ion-label>
+  <ion-card *ngFor="let item of items">
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h3>{{item.ProductVendorCharacter.ProductCharacter.name}}</h3>
+          <p>{{+item.value * item.ProductVendorCharacter.price | currency:"NGN":"symbol-narrow"}}</p>
+        </ion-label>
+      </ion-item>
+      <ion-button fill="clear" expand="block">SEE STATUS HISTORY</ion-button>
+    </ion-card-content>
+  </ion-card>
+  <ion-label class="ion-margin">DELIVERY INFORMATION</ion-label>
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h3>Shipping Address</h3>
+          <p>Abimbola Hassan</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

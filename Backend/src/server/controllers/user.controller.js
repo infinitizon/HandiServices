@@ -186,7 +186,7 @@ class UserController {
       */
       try {
          const refCodes = await genericRepo.setOptions('User', {
-            condition: { refCode: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: '%' + req.query.q + '%',} },
+            condition: { refCode: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: '%' + req.query.q + '%',} },
             selectOptions: ['id', 'refCode', 'firstName', 'middleName', 'lastName'],
             order: [['firstName', 'ASC']]
          }).findAll();
@@ -650,6 +650,32 @@ class UserController {
       }
    }
 
+   static async getOrderDetails (req, res, next) {
+      try {
+         const auth = res.locals.user;
+         // const params = req.params;
+         let query = req.query;
+         query = { ...query, userId: auth.userId }
+         const orderService = new OrderService
+
+         const orders = await orderService.getOrders({ auth, query })
+         if(!orders || !orders.success)
+            throw new AppError(orders.show?orders.message:`Error occured while fetching orders`, orders.line||__line, orders.file||__path.basename(__filename), { status: orders.status||409, show: orders.show});
+         
+         res.status(orders.status).json(orders);
+      } catch (error) {
+         console.error(error.message);
+         return next(
+            new AppError(
+               error.message,
+               error.line || __line,
+               error.file || __path.basename(__filename),
+               { name: error.name, status: error.status ?? 500, show: error.show }
+            )
+         );
+      }
+   }
+
    static async updateStatus (req, res, next) {
       try {
          const orderService = new OrderService
@@ -712,23 +738,47 @@ class UserController {
       }
    }
    static async checkout (req, res, next) {
-      console.log(`Trying to complete the spayment`)
+      const t = await db[process.env.DEFAULT_DB].transaction()
       try {
          const auth = res.locals.user;
+         const body = req.body;
          if(auth.role!=='CUSTOMER') 
-            throw new AppError(`You need to login as a customer to checkout a request`,__line, __path.basename(__filename), { status: 400, show: true })
+            throw new AppError(`You need to login as a customer to checkout a request`,__line, __path.basename(__filename), { status: 400, show: true });
          const orderService = new OrderService;
-         const cart = await orderService.getOrderDetails({ userId: auth.userId, orderId: req.body?.callbackParams?.assetId })
+
+         const order = await orderService.getOrder({ orderId: body?.callbackParams?.assetId });
+         if(!order || !order.success)
+            throw new AppError(order.show?order.message:`We couldn't fetch this order`, order.line||__line, order.file||__path.basename(__filename), { status: order.status||400, show: order.show });
+
+         const user = await UserService.getDetails({ userId: auth.userId });
+         if(body.useCurrentLoc) {
+            const address = await (new AddressService()).addAddress({ user, ...body.address, transaction: t });
+            if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
+
+            await order.data.addAddress(address.data, { transaction: t });
+         } else {
+            const addresses = await (new AddressService()).getAddresses({ userId: user.id, transaction: t });
+            if (!addresses.success) throw new AppError(addresses.message, addresses.line||__line, addresses.file||__path.basename(__filename), { status: addresses.status||404, show: addresses.show||true });
+            for(const addy of addresses.data) {
+               if(addy.isActive) {
+                  await order.data.addAddress(addy, { transaction: t });
+                  break;
+               }
+            }
+         }
+         
+         await t.commit();
+         const cart = await orderService.getOrderDetails({ userId: auth.userId, orderId: body?.callbackParams?.assetId })
          if(!cart || !cart.success)
             throw new AppError(cart.show?cart.message:`We couldn't fetch your cart details`, cart.line||__line, cart.file||__path.basename(__filename), { status: cart.status||400, show: cart.show })
          let amount = 0;
-         cart.data?.forEach(p=>{
+         cart.data?.items?.forEach(p=>{
             amount += (+p.value * p?.ProductVendorCharacter?.price)
          })
          let data = {
-            ...req.body, 
+            ...body, 
             amount, 
-            description: `Payment for order ${req.body?.callbackParams?.assetId}`
+            description: `Payment for order ${body?.callbackParams?.assetId}`
          };
          const pmt = await orderService.call3rdPartyServices({
             authorization: req.headers.authorization,
@@ -739,9 +789,11 @@ class UserController {
             throw new AppError(pmt.show?pmt.message:'Payment could not be initiated', pmt.line||__line, pmt.file||__path.basename(__filename), { status: pmt.status||400, show: pmt.show });
             
          data = { ...data, authorizationUrl: pmt.data.authorization_url, ...pmt.data};
+
          res.status(pmt.status).send(pmt);
       } catch (error) {
          console.error(error.message);
+         await t.rollback();
          return next(
             new AppError(
                error.message

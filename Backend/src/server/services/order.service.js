@@ -8,7 +8,7 @@ class OrderService {
    async createOrder({ auth, params, orders, transaction }) {
       const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
-         const existingOrder = await db[process.env.DEFAULT_DB].models.Order.findOne({where: {userId: auth.userId, status: 'pending'}});
+         const existingOrder = await db[process.env.DEFAULT_DB].models.Order.findOne({where: {userId: auth.userId, status: DBEnums.OrderStatus.find(g=>g.label==='pending').code}});
          let cOrder = [];
          for(const o in orders) {
             let ord = {
@@ -37,7 +37,6 @@ class OrderService {
                   await oi[0].update({value: +oi[0].value + +o.value}, {transaction: t})
                }
             }
-            console.log(existingOrder);
          } else {
             const order = {
                userId: auth.userId,
@@ -110,30 +109,67 @@ class OrderService {
    
    async getOrders({ auth, tenantId, query={} }) { 
       try {
-         // const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         let vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
+         const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
+         const status = DBEnums.OrderStatus.filter(status => query.status?.split(',').includes(status.label)).map(status => status.code);
+         let cases = '';
+         DBEnums.OrderStatus.forEach(enums=>{
+            cases += ` WHEN "ProductVendorCharacters->OrderItems->Order"."status"=${enums.code} THEN '${enums.label}' `;
+         })
+         console.log(cases);
+         let orders = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
             attributes: ["id", "name", 
+               // [db.Sequelize.literal(`COUNT("Tenant"."id")`), 'tnts'], 
                [db.Sequelize.literal(`COUNT("ProductVendorCharacters->OrderItems"."id")`), 'totalItems'], 
             ],
             include: [
                {
-                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: ["id"],
-                  duplicating: false, required: true,
+                  model: db[process.env.DEFAULT_DB].models.Media,
+                  required: false,
+               },
+               {
+                  model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
+                  required: true,
                   include: [{
-                     model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: ["id"],
-                     duplicating: false, required: true,
+                     model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: [],
+                     required: true, where: {status},
                      include: [{
-                        model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", "status", 'createdAt'],
+                        model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", [db.Sequelize.literal(`CASE ${cases} END`), 'status'], 'createdAt'],
                         where: {...(query.userId && {userId: query.userId})},
-                        duplicating: false, required: true,
+                        required: true,
                      }]
                   }]
                }
             ],
-            group: [`Tenant.id`,`ProductVendorCharacters->OrderItems->Order.id`],
+            raw: true, nest: true,// plain: true,
+            group: [`Tenant.id`, `ProductVendorCharacters->OrderItems->Order.id`, `Media.id`,],
             // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
-         })
-         return { success: true, status: 200, message: `Orders fetched successfully`, data: vendors }
+         });
+         
+         // let orders = await db[process.env.DEFAULT_DB].models.Order.findAll({
+         //    attributes: ["id", "status", "createdAt"],
+         //    include: [
+         //       {
+         //          model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: [],
+         //          required: true,
+         //          include: [{
+         //             model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
+         //             required: true,
+         //             include: [{
+         //                model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"],
+         //                required: true,
+         //                include: [{
+         //                   model: db[process.env.DEFAULT_DB].models.Media,
+         //                }]
+         //             }]
+         //          }]
+         //       }
+         //    ],
+         //    where: {...(query.userId && {userId: query.userId})},
+         //    raw: true, nest: true,// plain: true,
+         //    group: [`Order.id`, `OrderItems->ProductVendorCharacter->Tenant.id`, `OrderItems->ProductVendorCharacter->Tenant->Media.id`],
+         //    // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
+         // })
+         return { success: true, status: 200, message: `Orders fetched successfully`, data: orders }
 
          // let orders = await db[process.env.DEFAULT_DB].models.Order.findAndCountAll({
          //    attributes: [
@@ -230,20 +266,33 @@ class OrderService {
    async getOrderDetails({ userId, orderId, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
+         let order = null;
+         if(orderId) {
+            order = await db[process.env.DEFAULT_DB].models.Order.findByPk(orderId, {
+               include: [
+                  {
+                     model: db[process.env.DEFAULT_DB].models.Address, as: 'Addresses'
+                  },
+                  {
+                     model: db[process.env.DEFAULT_DB].models.User,
+                     attributes: ['id', 'firstName', 'middleName', 'lastName'],
+                  },
+               ]
+            });
+         }
          let orders = await db[process.env.DEFAULT_DB].models.OrderItem.findAndCountAll({
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: db[process.env.DEFAULT_DB].models.Order,
+                  model: db[process.env.DEFAULT_DB].models.Order, attributes: [],
                   duplicating: false,
-                  attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
-                  include: [
+                  ...(!!orderId && {include: [
                      {
                         model: db[process.env.DEFAULT_DB].models.User,
                         attributes: ['id', 'firstName', 'middleName', 'lastName'],
-                     }
-                  ],
+                     },
+                  ]}),
                   where: { ...(orderId && {id: orderId}), ...(userId && {userId}), ...(query.status && {status:  DBEnums.OrderStatus.find(g=>g.label===query.status).code}) },
                },
                {
@@ -258,13 +307,13 @@ class OrderService {
                         attributes: ['id', 'name'],
                      }
                   ],
-                  where: { ...(tenantId && {vendorId: tenantId}) },
+                  where: { ...((tenantId || query.tenantId) && {vendorId: tenantId || query.tenantId}) },
                }
             ],
             limit, offset,
             order: [['createdAt', 'DESC']],
          });
-         return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count, data: orders?.rows }
+         return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count, data: { order, items: orders?.rows } }
       } catch (error) {
          console.log(error.message)
          return new AppError(
@@ -304,8 +353,11 @@ class OrderService {
          if(!order || !order.success)
             throw new AppError('Order not found', __line, __path.basename(__filename), { status: 404, show: true});
 
-         await order.data.update({ status: DBEnums.OrderStatus.find(g=>g.label===status).code }, {transaction: t});
-         // db[process.env.DEFAULT_DB].models.OrderItem.update()
+         const dbStatus = DBEnums.OrderStatus.find(g=>g.label===status).code;
+         await order.data.update({ status: dbStatus }, {transaction: t});
+         await db[process.env.DEFAULT_DB].models.OrderItem.update(
+            { status: dbStatus }, 
+            { where: { orderId: order.data.id }, transaction: t})
 
          transaction ? 0 : await t.commit();
          return { success: true, status: 200, message: `Order status updated successfully`, data: order }

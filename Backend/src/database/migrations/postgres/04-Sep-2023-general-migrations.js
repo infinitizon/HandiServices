@@ -4,7 +4,7 @@
 
 // npx sequelize-cli db:migrate
 // npx sequelize-cli db:migrate:undo
-const db = require('../../models');
+const db = require("../../models");
 
 
 

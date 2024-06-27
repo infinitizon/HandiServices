@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
   <app-header [role]="container.role"></app-header>
-  <ion-segment scrollable="true" swipeGesture="true" value="placed" (ionChange)="onSegmentChange($event)">
+  <ion-segment scrollable="true" swipeGesture="true" [value]="container.selectedTab" (ionChange)="onSegmentChange($event)">
     <ion-segment-button value="placed">
       <ion-label>Not started</ion-label>
     </ion-segment-button>
@@ -14,9 +14,23 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <ion-item>
-
-        </ion-item>
+          <ion-list inset="true">
+            <ion-item button="true" detail="false" *ngFor="let order of orders" [routerLink]="['/main/orders/details', order.ProductVendorCharacters.OrderItems.Order.id, order.id]">
+              <ion-label>
+                <strong>Order No: {{order.ProductVendorCharacters.OrderItems.Order.id}}</strong>
+                <p class="w-100 d-flex justify-content-between">
+                  <ion-note color="medium" class="ion-text-wrap">
+                    {{order.name}}
+                  </ion-note>
+                  <ion-note>Total Items: <b>{{order.totalItems}}</b></ion-note>
+                </p>
+              </ion-label>
+              <div class="metadata-end-wrapper" slot="end">
+                <ion-note color="medium">{{order.ProductVendorCharacters.OrderItems.Order.createdAt | date}}</ion-note>
+                <ion-icon color="medium" name="chevron-forward"></ion-icon>
+              </div>
+            </ion-item>
+          </ion-list>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -6,6 +6,7 @@ import { InAppBrowser, InAppBrowserEvent } from '@awesome-cordova-plugins/in-app
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
 import { of, switchMap, take } from 'rxjs';
+import { PMTWebviewComponent } from '../webview/webview.component';
 
 @Component({
   selector: 'app-gateway',
@@ -54,6 +55,7 @@ export class PMTGatewayComponent implements OnInit {
     this.container.loadingPartners = true;
     this.http
       .get(this.data?.gatewayEndpoints ?? `${environment.baseApiUrl}/3rd-party-services/gateway?module=${this.data?.callbackParams?.module}&id=${this.data?.callbackParams?.assetId}`)
+      .pipe(take(1))
       .subscribe({
         next: (response: any) => {
           this.container.loadingPartners = false;
@@ -96,7 +98,7 @@ export class PMTGatewayComponent implements OnInit {
         .subscribe({
           next: (response: any) => {
             loadinEl.dismiss();
-            this.completePmt(response, modal)
+            this.completePmt(response.data.authorization_url, modal)
           },
           error: (err: any) => {
             loadinEl.dismiss();
@@ -107,8 +109,19 @@ export class PMTGatewayComponent implements OnInit {
       });
     })
   }
-  completePmt(response: any, modal: IonModal) {
-    const browser = this.iab.create(response.data.authorization_url, '_blank', {
+  async completePmt(url: string, modal: IonModal) {
+
+    // const modalEl = await this.modalCtrl.create({
+    //   component: PMTWebviewComponent,
+    //   id: 'main-gateway',
+    //   componentProps: {data: {url}},
+    //   backdropDismiss: false,
+    //   animated: true,
+    //   keyboardClose: false,
+    // });
+    // await modalEl.present();
+    // let { data: result, role } = await modalEl.onDidDismiss();
+    const browser = this.iab.create(url, '_blank', {
       hideurlbar: 'yes',
       hidenavigationbuttons: 'yes',
       toolbarcolor: '#ffffff',

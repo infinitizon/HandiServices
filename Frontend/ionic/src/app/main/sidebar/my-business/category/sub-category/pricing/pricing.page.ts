@@ -89,7 +89,7 @@ export class PricingPage implements OnInit {
     });
     priceSliding.close()
   }
-  onSubmitPriceForm() {
+  onSubmitPriceForm(modalService: IonModal) {
     this.priceForm.markAllAsTouched();
     if (this.priceForm.invalid) {
       this.uiErrors = JSON.parse(JSON.stringify(this.formErrors))
@@ -104,17 +104,25 @@ export class PricingPage implements OnInit {
       prices: [fd]
     }
 
-    this.http.post(`${environment.baseApiUrl}/admin/vendors/product-price/${this.container.serviceId}`, payload)
-      .subscribe({
-        next: (response: any) => {
-        },
-        error: async (err: any) => {
-          console.log(err);
+    this.loadingCtrl.create({message: `Please wait...`})
+        .then(loadingEl=>{
+          loadingEl.present();
+          this.http.post(`${environment.baseApiUrl}/admin/vendors/product-price/${this.container.serviceId}`, payload)
+            .subscribe({
+              next: (response: any) => {
+                loadingEl.dismiss();
+                modalService.dismiss();
+                this.priceForm.reset()
+                this.getPricing(this.container.serviceId);
+              },
+              error: async (err: any) => {
+                loadingEl.dismiss();
 
-          const toastEl = await this.toastCtrl.create({message: err?.error?.error?.message||`Error saving pricing`, duration: 3500, color: 'danger'})
-          await toastEl.present();
-      }
-    });
+                const toastEl = await this.toastCtrl.create({message: err?.error?.error?.message||`Error saving pricing`, duration: 3500, color: 'danger'})
+                await toastEl.present();
+            }
+          });
+        })
 
   }
 }

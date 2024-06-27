@@ -33,7 +33,7 @@ class PaystackService {
             url: `${process.env.PAYSTACK_BASE_URL}/transaction/initialize`,
             method: 'POST',
             headers: this.headers,
-            timeout: 4000,
+            // timeout: 4000,
             data: payload,
          });
    

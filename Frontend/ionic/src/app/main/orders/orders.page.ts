@@ -3,25 +3,24 @@ import { HttpClient } from '@angular/common/http';
 import { StorageService } from '@app/_shared/services/storage.service';
 import { SegmentChangeEventDetail } from '@ionic/angular';
 import { environment } from '@environments/environment';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.page.html',
   styleUrls: ['./orders.page.scss'],
 })
-export class OrdersPage implements OnInit {
+export class OrdersPage {
   orders: any
   container: any = {
-    role: ''
+    role: '',
+    selectedTab: 'placed'
   };
   constructor(
     private storageService: StorageService,
     private http: HttpClient,
   ) { }
 
-  ngOnInit() {
-    const x=0
-  }
 
   ionViewWillEnter() {
     console.log('Entering Home view');
@@ -30,6 +29,7 @@ export class OrdersPage implements OnInit {
       console.log(role);
       this.container.role = role;
     });
+    this.getOrders('success,placed')
   }
   onSegmentChange(event: CustomEvent<SegmentChangeEventDetail>) {
     let status=''
@@ -41,20 +41,21 @@ export class OrdersPage implements OnInit {
         status = 'done,cancelled,completed';
         break;
       default:
-        status = 'success,placed,pending'
+        status = 'success,placed'
     }
     this.getOrders(status);
   }
   getOrders(status: string) {
     this.http
         .get(`${environment.baseApiUrl}/users/orders?status=${status}`)
-    .subscribe({
-        next: (response: any) => {
-          this.orders = response.data;
-        },
-        error: (errResp) => {
-          // this.container['paymentLoading'] = false;
-        }
-      });
+        .pipe(take(1))
+        .subscribe({
+          next: (response: any) => {
+            this.orders = response.data;
+          },
+          error: (errResp) => {
+            // this.container['paymentLoading'] = false;
+          }
+        });
   }
 }
