@@ -36,6 +36,8 @@ router.route('/address')
 
 router.route('/orders/:tenantId?')
       .get( AuthController.authenticate, AuthController.authorize(['CUSTOMER']), UserController.getOrders )
+router.route('/orders/:orderId/details')
+      .get( AuthController.authenticate, AuthController.authorize(['CUSTOMER']), UserController.getOrderDetails )
 router.route('/order/:orderId/status')
       .patch(AuthController.authenticate, AuthController.authorize(['CUSTOMER']), JoiMW.validateReq(OrderValidator.customerStatus), UserController.updateStatus )
 router.post('/cartify/:tenantId/:subCategoryId', UserController.cartify);

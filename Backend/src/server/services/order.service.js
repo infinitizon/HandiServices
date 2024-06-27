@@ -110,29 +110,66 @@ class OrderService {
    async getOrders({ auth, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
-         let vendors = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
+         const status = DBEnums.OrderStatus.filter(status => query.status?.split(',').includes(status.label)).map(status => status.code);
+         let cases = '';
+         DBEnums.OrderStatus.forEach(enums=>{
+            cases += ` WHEN "ProductVendorCharacters->OrderItems->Order"."status"=${enums.code} THEN '${enums.label}' `;
+         })
+         console.log(cases);
+         let orders = await db[process.env.DEFAULT_DB].models.Tenant.findAll({
             attributes: ["id", "name", 
+               // [db.Sequelize.literal(`COUNT("Tenant"."id")`), 'tnts'], 
                [db.Sequelize.literal(`COUNT("ProductVendorCharacters->OrderItems"."id")`), 'totalItems'], 
             ],
             include: [
                {
+                  model: db[process.env.DEFAULT_DB].models.Media,
+                  required: false,
+               },
+               {
                   model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
-                  duplicating: false, required: true,
+                  required: true,
                   include: [{
                      model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: [],
-                     duplicating: false, required: true,
+                     required: true, where: {status},
                      include: [{
-                        model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", "status", 'createdAt'],
+                        model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", [db.Sequelize.literal(`CASE ${cases} END`), 'status'], 'createdAt'],
                         where: {...(query.userId && {userId: query.userId})},
-                        duplicating: false, required: true,
+                        required: true,
                      }]
                   }]
                }
             ],
-            group: [`ProductVendorCharacters->OrderItems->Order.id`,`Tenant.id`,],
+            raw: true, nest: true,// plain: true,
+            group: [`Tenant.id`, `ProductVendorCharacters->OrderItems->Order.id`, `Media.id`,],
             // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
-         })
-         return { success: true, status: 200, message: `Orders fetched successfully`, data: vendors }
+         });
+         
+         // let orders = await db[process.env.DEFAULT_DB].models.Order.findAll({
+         //    attributes: ["id", "status", "createdAt"],
+         //    include: [
+         //       {
+         //          model: db[process.env.DEFAULT_DB].models.OrderItem, attributes: [],
+         //          required: true,
+         //          include: [{
+         //             model: db[process.env.DEFAULT_DB].models.ProductVendorCharacter, attributes: [],
+         //             required: true,
+         //             include: [{
+         //                model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"],
+         //                required: true,
+         //                include: [{
+         //                   model: db[process.env.DEFAULT_DB].models.Media,
+         //                }]
+         //             }]
+         //          }]
+         //       }
+         //    ],
+         //    where: {...(query.userId && {userId: query.userId})},
+         //    raw: true, nest: true,// plain: true,
+         //    group: [`Order.id`, `OrderItems->ProductVendorCharacter->Tenant.id`, `OrderItems->ProductVendorCharacter->Tenant->Media.id`],
+         //    // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
+         // })
+         return { success: true, status: 200, message: `Orders fetched successfully`, data: orders }
 
          // let orders = await db[process.env.DEFAULT_DB].models.Order.findAndCountAll({
          //    attributes: [
@@ -229,20 +266,33 @@ class OrderService {
    async getOrderDetails({ userId, orderId, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
+         let order = null;
+         if(orderId) {
+            order = await db[process.env.DEFAULT_DB].models.Order.findByPk(orderId, {
+               include: [
+                  {
+                     model: db[process.env.DEFAULT_DB].models.Address, as: 'Addresses'
+                  },
+                  {
+                     model: db[process.env.DEFAULT_DB].models.User,
+                     attributes: ['id', 'firstName', 'middleName', 'lastName'],
+                  },
+               ]
+            });
+         }
          let orders = await db[process.env.DEFAULT_DB].models.OrderItem.findAndCountAll({
             attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
             duplicating: false,
             include: [
                {
-                  model: db[process.env.DEFAULT_DB].models.Order,
+                  model: db[process.env.DEFAULT_DB].models.Order, attributes: [],
                   duplicating: false,
-                  attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
-                  include: [
+                  ...(!!orderId && {include: [
                      {
                         model: db[process.env.DEFAULT_DB].models.User,
                         attributes: ['id', 'firstName', 'middleName', 'lastName'],
-                     }
-                  ],
+                     },
+                  ]}),
                   where: { ...(orderId && {id: orderId}), ...(userId && {userId}), ...(query.status && {status:  DBEnums.OrderStatus.find(g=>g.label===query.status).code}) },
                },
                {
@@ -257,13 +307,13 @@ class OrderService {
                         attributes: ['id', 'name'],
                      }
                   ],
-                  where: { ...(tenantId && {vendorId: tenantId}) },
+                  where: { ...((tenantId || query.tenantId) && {vendorId: tenantId || query.tenantId}) },
                }
             ],
             limit, offset,
             order: [['createdAt', 'DESC']],
          });
-         return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count, data: orders?.rows }
+         return { success: true, status: 200, message: `Orders fetched successfully`, count: orders?.count, data: { order, items: orders?.rows } }
       } catch (error) {
          console.log(error.message)
          return new AppError(

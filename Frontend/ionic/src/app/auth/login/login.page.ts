@@ -53,10 +53,10 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: [
-        'infinitizon+5@gmail.com',
+        'infinitizon+9@gmail.com',
         [Validators.required, Validators.pattern(this.commonService.email)],
       ],
-      password: ['Dickele_1', [Validators.required, Validators.minLength(8)]],
+      password: ['123456789', [Validators.required, Validators.minLength(8)]],
       rememberMe: [null],
     });
     this.useFingetPrint();
@@ -109,6 +109,7 @@ export class LoginPage implements OnInit {
             await loadingEl.dismiss();
             this.successLogin(response);
           }, error: async err =>{
+            console.log("Status: ", err);
             await loadingEl.dismiss();
             if(err?.status !== 423 && err?.status !== 419) {
               const toast = await this.toastCtrl.create({
@@ -120,9 +121,7 @@ export class LoginPage implements OnInit {
               await toast.present();
               // this.loginSub$.unsubscribe()
             }
-
             if(err?.status === 419) {
-              console.log("Status: ", err.status);
               this.container.requireOTP = true;
               this.container.OTPOptions = {
                 ...this.container.OTPOptions,

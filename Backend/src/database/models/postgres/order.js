@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
          type: DataTypes.UUID,
          defaultValue: DataTypes.UUIDV4
       },
+      orderNo: {
+         type: DataTypes.INTEGER,
+         autoIncrement: true,
+      },
       userId: DataTypes.UUID,
       status: {
          type: DataTypes.SMALLINT,
@@ -60,6 +64,7 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       tableName: 'orders',
       modelName: 'Order',
+      initialAutoIncrement: 1002000,
    });
    return Order;
 };

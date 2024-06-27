@@ -19,7 +19,7 @@ let smtpTransport = nodemailer.createTransport(mandrill);
 
 const sendEmail = async options => {
     const replacements = options;
-    let url = new URL('/emailTemplates/', process.env.APP_BASE_URL).href;
+    let url = new URL('/emailTemplates/', process.env.BACKEND_BASE).href;
 
     replacements.image = url + "assets/" + (Math.floor(Math.random() * 10) + 1) + ".jpg";
     replacements.url = url

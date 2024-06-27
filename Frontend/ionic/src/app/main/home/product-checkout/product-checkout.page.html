@@ -11,11 +11,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">product-checkout</ion-title>
-    </ion-toolbar>
-  </ion-header>
   <form [formGroup]="priceForm" [autocomplete]="'off'" *ngIf="providerXterData" (ngSubmit)="onSubmit()">
     <ion-grid>
       <ion-row *ngFor="let p of providerXterData let i = index;">

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { CommonService } from '@app/_shared/services/common.service';
 import { environment } from '@environments/environment';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { switchMap } from 'rxjs';
 
 @Component({
@@ -35,6 +35,7 @@ export class ProductCheckoutPage implements OnInit {
     private aRoute: ActivatedRoute,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
     public appCtx: ApplicationContextService,
     private commonService: CommonService,
   ) { }
@@ -113,22 +114,28 @@ export class ProductCheckoutPage implements OnInit {
     }
     let payload = { orders: JSON.parse(JSON.stringify(this.priceForm.value))};
 
-    this.http.post(`${environment.baseApiUrl}/users/cartify/${this.providerId}/${this.subCategoryId}`, payload)
-      .subscribe({
-        next: (response: any) => {
-          this.navCtrl.navigateForward(`/main/home/cart`);
-        },
-        error: async (errResp) => {
-          if(errResp.status === 402) {
-            const alertEl = await this.alertCtrl.create({
-              header: 'Login Required', message: errResp?.error?.error?.message,
-              buttons: [{
-                text: 'Ok', handler: ()=>{ this.navCtrl.navigateRoot('/main/home')}
-              }]
-            })
-            await alertEl.present();
-          }
-        }
-    });
+    this.loadingCtrl.create({message: `Saving...`})
+        .then(loadingEl=>{
+          loadingEl.present();
+          this.http.post(`${environment.baseApiUrl}/users/cartify/${this.providerId}/${this.subCategoryId}`, payload)
+            .subscribe({
+              next: (response: any) => {
+                loadingEl.dismiss();
+                this.navCtrl.navigateForward(`/main/home/cart`);
+              },
+              error: async (errResp) => {
+                loadingEl.dismiss();
+                if(errResp.status === 402) {
+                  const alertEl = await this.alertCtrl.create({
+                    header: 'Login Required', message: errResp?.error?.error?.message,
+                    buttons: [{
+                      text: 'Ok', handler: ()=>{ this.navCtrl.navigateRoot('/main/home')}
+                    }]
+                  })
+                  await alertEl.present();
+                }
+              }
+          });
+        })
   }
 }

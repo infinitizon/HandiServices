@@ -15,6 +15,7 @@ import { OTPComponent } from './components/otp/otp.component';
 import { SearchComponent } from './components/search/search.component';
 import { PMTGatewayComponent } from './components/payment/gateway/gateway.component';
 import { PMTCompleteComponent } from './components/payment/complete/complete.component';
+import { PMTWebviewComponent } from './components/payment/webview/webview.component';
 import { NumberKeyboardComponent } from './components/number-keyboard/number-keyboard.component';
 
 @NgModule({
@@ -25,7 +26,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     HeaderComponent,
     OTPComponent,
     SearchComponent,
-    PMTGatewayComponent, PMTCompleteComponent,
+    PMTGatewayComponent, PMTCompleteComponent, PMTWebviewComponent,
     NumberKeyboardComponent,
   ],
   providers: [
@@ -49,7 +50,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     HeaderComponent,
     OTPComponent,
     SearchComponent,
-    PMTGatewayComponent, PMTCompleteComponent,
+    PMTGatewayComponent, PMTCompleteComponent, PMTWebviewComponent,
     NumberKeyboardComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -1,0 +1,11 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Custom Header WebView
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <iframe [src]="webViewUrl || 'about:blank'" (load)="changed($event)" width="100%" height="100%" frameborder="0" #iframe></iframe>
+</ion-content>
