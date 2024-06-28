@@ -43,13 +43,13 @@ export class ChatComponent implements OnInit {
   }
   startSession() {
     this.chats = [];
-    const session = { sessionId: this.data.id, tenantId: this.data?.Tenant?.id }
+    const session = { orderId: this.data.id, tenantId: this.data?.Tenant?.id }
     this.http.post(`${environment.baseApiUrl}/chats/claim-session`, {session})
               .subscribe({
                 next: (response: any) => {
                   this.container['startSessMsg'] = null;
 
-                  this.socket.emit(`joinRoom`, {userId: this.container['user'].id, sessionId: this.data.id })
+                  this.socket.emit(`joinRoom`, {userId: this.container['user'].id, orderId: this.data.id })
                   this.container['session'] = response.data;
                   this.getChatHistory(session)
                 },

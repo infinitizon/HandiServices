@@ -1,7 +1,7 @@
 <ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/main/orders"></ion-back-button>
+      <ion-back-button defaultHref="/main/sidebar/orders"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button fill="none">
@@ -13,12 +13,16 @@
 
 
 <ion-content [fullscreen]="true" color="light">
-  <ion-item detail="false" class="ion-margin-vertical">
+  <ion-item class="order" detail="false" class="ion-margin-vertical">
     <ion-label>
-      <h3>Order No: {{order?.id}}</h3>
+      <strong>Order No: {{order?.id}}</strong>
       <p><ion-note>Total Items: <b>{{count}}</b></ion-note></p>
       <p><ion-note>Placed on: {{order?.createdAt | date}}</ion-note></p>
     </ion-label>
+    <ion-button fill="clear" color="primary" slot="end" class="metadata-end-wrapper" [routerLink]="['/main/sidebar/orders/details/chat',container.orderId,container.tenantId]">
+      <ion-icon color="medium" name="chatbubble-ellipses-outline"></ion-icon>
+      <ion-note color="medium">Chat with {{container.role==='CUSTOMER'? 'vendor': 'customer'}}</ion-note>
+    </ion-button>
   </ion-item>
   <ion-label class="ion-margin">ITEMS IN YOUR ORDER</ion-label>
   <ion-card *ngFor="let item of items">

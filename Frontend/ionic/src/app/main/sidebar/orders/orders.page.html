@@ -1,0 +1,51 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBackHome()" defaultHref="/main/home"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="primary">
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Orders</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="ion-no-padding">
+  <ion-segment scrollable="true" swipeGesture="true" [value]="container.selectedTab" (ionChange)="onSegmentChange($event)">
+    <ion-segment-button value="placed">
+      <ion-label>Not started</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="inprogress">
+      <ion-label>Ongoing/Delivered</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="cancelled">
+      <ion-label>Cancelled</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col>
+          <ion-list inset="true">
+            <ion-item button="true" detail="false" *ngFor="let order of orders" [routerLink]="['/main/sidebar/orders/details', order.ProductVendorCharacters.OrderItems.Order.id, order.id]">
+              <ion-label>
+                <strong>Order No: {{order.ProductVendorCharacters.OrderItems.Order.id}}</strong>
+                <p class="w-100 d-flex justify-content-between">
+                  <ion-note color="medium" class="ion-text-wrap" *ngIf="container.role==='CUSTOMER'">
+                    {{order.name}}
+                  </ion-note>
+                  <ion-note color="medium" class="ion-text-wrap" *ngIf="container.role!=='CUSTOMER'">
+                    {{ order.ProductVendorCharacters.OrderItems.Order.User.firstName }} {{ order.ProductVendorCharacters.OrderItems.Order.User.lastName }}
+                  </ion-note>
+                  <ion-note>Total Items: <b>{{order.totalItems}}</b></ion-note>
+                </p>
+              </ion-label>
+              <div class="metadata-end-wrapper" slot="end">
+                <ion-note color="medium">{{order.ProductVendorCharacters.OrderItems.Order.createdAt | date}}</ion-note>
+                <ion-icon color="medium" name="chevron-forward"></ion-icon>
+              </div>
+            </ion-item>
+          </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

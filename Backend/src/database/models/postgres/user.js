@@ -52,11 +52,9 @@ module.exports = (sequelize, DataTypes) => {
          });
          User.hasMany(models.ChatSession, {
             foreignKey: "userId",
-            as: 'Customer',
          });
-         User.hasMany(models.ChatSession, {
-            foreignKey: "claim",
-            as: 'Admin',
+         User.hasMany(models.ChatSessionAdminClaim, {
+            foreignKey: "userId",
          });
          User.hasMany(models.ChatMessage, {
             foreignKey: "userId",

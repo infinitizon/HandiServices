@@ -141,8 +141,8 @@ export class MyOrdersComponent implements OnInit {
       return  this.http
         .get(`${environment.baseApiUrl}/users/orders?page=${this.paginator.pageIndex}&perPage=${this.paginator.pageSize}`)
       })
-    ).subscribe(
-        (response: any) => {
+    ).subscribe({
+        next: (response: any) => {
           this.neworders = new MatTableDataSource<any>(response.data);
           this.orders = response.data;
           this.orders = this.orders.map((t: any) => {
@@ -164,10 +164,10 @@ export class MyOrdersComponent implements OnInit {
           this.total_count = response.total;
           this.container['ordersLoading'] = false;
         },
-        (errResp) => {
+        error: (errResp) => {
           // this.container['paymentLoading'] = false;
         }
-      );
+      });
   }
 
   objectKey(obj: any) {

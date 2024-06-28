@@ -1,45 +1,40 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-   class ChatSession extends Model {
+   class ChatSessionAdminClaim extends Model {
       /**
        * Helper method for defining associations.
        * This method is not a part of DataTypes lifecycle.
        * The `models/index` file will call this method automatically.
        */
       static associate(models) {
-         ChatSession.belongsTo(models.User, {
-            foreignKey: 'userId',
-         });
-         ChatSession.belongsTo(models.Tenant, {
-            foreignKey: 'tenantId',
-         });
-         ChatSession.belongsTo(models.Order, {
-            foreignKey: 'orderId',
-         });
-         ChatSession.hasMany(models.ChatSessionAdminClaim, {
+         ChatSessionAdminClaim.belongsTo(models.ChatSession, {
             foreignKey: 'sessionId',
+         });
+         ChatSessionAdminClaim.belongsTo(models.User, {
+            foreignKey: 'userId',
          });
       }
    };
-   ChatSession.init({
+   ChatSessionAdminClaim.init({
       id: {
          allowNull: false,
          primaryKey: true,
          type: DataTypes.UUID,
          defaultValue: DataTypes.UUIDV4
       },
-      orderId: DataTypes.UUID,
-      tenantId: DataTypes.UUID,
-      userId: DataTypes.UUID,
+      sessionId: DataTypes.UUID,
+      userId: DataTypes.UUID,    //UserId of the user in Tenant
+      isActive: DataTypes.BOOLEAN,
+      sessionEnd: DataTypes.DATE,
    }, {
       sequelize,
       paranoid: true,
       underscored: true,
-      modelName: 'ChatSession',
-      tableName: 'chat_sessions',
+      modelName: 'ChatSessionAdminClaim',
+      tableName: 'chat_sessions_admin_claims',
    });
-   return ChatSession;
+   return ChatSessionAdminClaim;
 };
 
 
