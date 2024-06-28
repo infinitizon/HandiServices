@@ -132,7 +132,7 @@ export class LoginComponent implements OnInit {
   }
 
   sendOtp(email: string) {
-    this.http.post(`${environment.baseApiUrl}/auth/generateOTP`, {email: email, subject: 'Verification'})
+    this.http.post(`${environment.baseApiUrl}/auth/otp/generate`, {email: email, subject: 'Verification'})
     .subscribe((response: any) => {
       this.submitting = false;
     },
