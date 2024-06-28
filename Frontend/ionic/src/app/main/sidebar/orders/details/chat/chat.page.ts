@@ -75,6 +75,8 @@ export class ChatPage implements OnInit, AfterViewInit {
         })
     this.socket.on(`getMessage`, (msg: IChatMsg) =>{
       console.log(msg);
+      if(msg.userId != this.loggedInUser.id)
+        this.chats = [...this.chats, msg];
 
     })
   }
@@ -84,15 +86,14 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   startSession() {
     this.chats = [];
-    const session = { orderId: this.container.orderId, tenantId: this.container.tenantId }
-    this.http.post(`${environment.baseApiUrl}/chats/claim-session`, {session})
+    this.http.post(`${environment.baseApiUrl}/chats/claim-session`, {session: { orderId: this.container.orderId, tenantId: this.container.tenantId }})
         .pipe(take(1))
         .subscribe({
           next: (response: any) => {
             this.chatSession = response.data;
 
             this.socket.emit(`joinRoom`, {userId: this.loggedInUser?.id, sessionId: this.chatSession.id })
-            this.getChatHistory(session)
+            this.getChatHistory(this.chatSession)
           },
           error: async (err: any) => {
             const toastEl = await this.toastCtrl.create({ message: `Error creating a chat session`, duration: 3500, color: 'danger'});
@@ -105,7 +106,7 @@ export class ChatPage implements OnInit, AfterViewInit {
     this.http.post(`${environment.baseApiUrl}/chats/history`, session)
             .subscribe({
               next: (response: any) => {
-                console.log(`Got history...`, session, this.chatSession, response.data);
+                console.log(response.data);
                 this.chats = [...response.data];
                 this.content.scrollToBottom();
               },
@@ -125,6 +126,7 @@ export class ChatPage implements OnInit, AfterViewInit {
     this.msgForm.patchValue({message: null});
 
     this.saveChat(chat);
+    this.socket.emit(`sendMessage`, chat)
   }
   saveChat(chat: any) {
     this.http.post(`${environment.baseApiUrl}/chats/messages`, chat)

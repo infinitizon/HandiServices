@@ -210,8 +210,7 @@ class ChatController {
         } */
         try {
             const chatService = new ChatService;
-            const body = req.body;
-            const msg = await chatService.chatHistory( body )
+            const msg = await chatService.chatHistory( { sessionId: req.body?.id } )
             if (!msg || !msg.success)
             throw new AppError(msg.show?msg.message:`Error fetching feedbacks`, msg.line||__line, msg.file||__path.basename(__filename), { status: msg.status||404, show: msg.show });
 
