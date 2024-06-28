@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'orderId',
          });
          Order.hasMany(models.ChatSession, {
-            foreignKey: 'sessionId',
+            foreignKey: 'orderId',
          });
          Order.hasMany(models.TxnHeader, {
             foreignKey: 'commonId',

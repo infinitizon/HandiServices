@@ -64,6 +64,8 @@ module.exports = {
             console.log('Feedback');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.ChatSession.tableName, db[process.env.DEFAULT_DB].models.ChatSession.tableAttributes, { transaction })
             console.log('ChatSession');
+            await queryInterface.createTable(db[process.env.DEFAULT_DB].models.ChatSessionAdminClaim.tableName, db[process.env.DEFAULT_DB].models.ChatSessionAdminClaim.tableAttributes, { transaction })
+            console.log('ChatSessionAdminClaim');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.ChatMessage.tableName, db[process.env.DEFAULT_DB].models.ChatMessage.tableAttributes, { transaction })
             console.log('ChatMessage');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.SecurityQuestion.tableName, db[process.env.DEFAULT_DB].models.SecurityQuestion.tableAttributes, { transaction })

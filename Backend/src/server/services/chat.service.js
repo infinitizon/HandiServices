@@ -1,5 +1,5 @@
 const db = require('../../database/models');
-const Pagination = require('../utils/pagination')
+// const Pagination = require('../utils/pagination')
 const AppError = require("../../config/apiError");
 
 class ChatService {
@@ -128,28 +128,42 @@ class ChatService {
    }
    async claimSession({ auth, session, transaction }) { 
       const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
-      try {
-         let sessions = null
-         let sesn = await db[process.env.DEFAULT_DB].models.ChatSession.findOne({where: { sessionId: session.sessionId }, transaction: t });
-         if(auth.role === 'PROVIDER_ADMIN') {
-            if(sesn.claim) 
-               throw new AppError(`Chat session already claimed by `, __line, __path.basename(__filename), { status: 409, show: true });
-            sessions = await sesn.update({
-               claim: auth.userId
-            }, { transaction: t });
-         }
-         if(auth.role === 'CUSTOMER') {
-            if(!sesn) {
-               sessions = await db[process.env.DEFAULT_DB].models.ChatSession.create(
-                  { userId: auth.userId, tenantId: session.tenantId, sessionId: session.sessionId},
-                  { transaction: t }
-               );
-            } else {
-               sessions = sesn;
-            }
+      try {         
+         let [sess, created] = await db[process.env.DEFAULT_DB].models.ChatSession.findOrCreate({
+            where: {orderId: session.orderId, tenantId: session.tenantId},
+            defaults: {
+               tenantId: session.tenantId, orderId: session.orderId,
+            },
+            transaction: t
+         },);
+         console.log(created);
+         if(auth.role !== 'CUSTOMER') {
+            let claims = await sess.getChatSessionAdminClaims({
+               include: [
+                  {
+                     model: db[process.env.DEFAULT_DB].models.User,
+                     attributes: ['id', 'firstName', 'lastName'],
+                  },
+               ],
+               where: { isActive: true, userId: {[db.Sequelize.Op.ne]: auth.userId},}
+            })
+            if(claims.length > 0)
+               throw new AppError(`Chat session already claimed by ${claims[0].User.firstName}`, __line, __path.basename(__filename), { status: 409, show: true });
+
+            let [claim, created]= await db[process.env.DEFAULT_DB].models.ChatSessionAdminClaim.findOrCreate({
+               where: { sessionId: sess.id, userId: auth.userId, isActive: true },
+               defaults: {
+                  sessionId: sess.id, userId: auth.userId, isActive: true
+               },
+               transaction: t
+            },);
+            console.log(claim, created);
+         } 
+         if (auth.role === 'CUSTOMER' && !sess.userId) {
+            await sess.update({userId: auth.userId}, {transaction: t});
          }
          transaction ? 0 : await t.commit();
-         return { success: true, status: 200, message: `Sessions fetched successfully`, data: sessions }
+         return { success: true, status: 200, message: `Sessions fetched successfully`, data: sess }
       } catch (error) {
          console.log(error.message)
          transaction ? 0 : await t.rollback();
@@ -165,7 +179,7 @@ class ChatService {
       try {
          // const { limit, offset } = Pagination.getPagination(query?.page, query?.perPage);
          let order = await db[process.env.DEFAULT_DB].models.ChatMessage.findAll({
-            attributes: { exclude: [ 'updatedAt', 'deletedAt' ]},
+            attributes: ['id', 'pId', 'sessionId', 'userId', 'message', 'isDeleted', ['created_at', 'timestamp']],
             duplicating: false,
             include: [
                {

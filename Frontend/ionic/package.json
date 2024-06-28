@@ -47,6 +47,7 @@
     "ionicons": "^7.0.0",
     "jwt-decode": "^4.0.0",
     "ng-otp-input": "^1.9.3",
+    "ngx-socket-io": "^4.6.1",
     "remixicon": "^4.2.0",
     "rxjs": "~7.8.0",
     "swiper": "^11.1.4",

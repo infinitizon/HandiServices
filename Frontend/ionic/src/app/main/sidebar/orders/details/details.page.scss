@@ -1,0 +1,24 @@
+ion-item {
+  ion-label {
+    strong {
+      display: block;
+      max-width: calc(100% - 160px);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .metadata-end-wrapper {
+    position: absolute;
+    top: 5px;
+    inset-inline-end: 10px;
+    // font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+ion-label ion-note {
+  font-size: 0.7rem;
+}

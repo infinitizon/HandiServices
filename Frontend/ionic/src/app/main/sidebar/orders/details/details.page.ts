@@ -4,6 +4,7 @@ import { take } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
 import { NavController } from '@ionic/angular';
+import { StorageService } from '@app/_shared/services/storage.service';
 
 @Component({
   selector: 'app-details',
@@ -19,14 +20,19 @@ export class DetailsPage implements OnInit {
   container = {
     orderId: '',
     tenantId: '',
+    role: '',
   }
   constructor(
     private http: HttpClient,
     private aRoute: ActivatedRoute,
     private navCtrl: NavController,
+    private storageService: StorageService,
   ) { }
 
   ngOnInit() {
+    this.storageService.get('role').then(role=>{
+      this.container.role = role;
+    });
     this.aRoute.paramMap
         .subscribe(params=>{
           if(!params.has('orderId')) {

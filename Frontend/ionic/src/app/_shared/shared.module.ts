@@ -6,6 +6,9 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgOtpInputModule } from 'ng-otp-input';
+import { environment } from '@environments/environment';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: environment.SOCKET_BASE, options: {} };
 // Pipes
 import { ColorPipe, ImagePipe } from './pipes/random-color.pipe';
 // Components
@@ -38,12 +41,14 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     HttpClientModule,
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,
+    SocketIoModule.forRoot(config),
   ],
   exports: [
     CommonModule, HttpClientModule,
     RouterModule,
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,
+    SocketIoModule,
     ColorPipe,
     ImagePipe,
     ImgPickerComponent,

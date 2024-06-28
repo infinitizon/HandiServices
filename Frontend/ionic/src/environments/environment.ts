@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
 
-  baseApiUrl: 'https://services-gen.azurewebsites.net/api/v1',
-  SOCKET_BASE: 'https://services-gen.azurewebsites.net',
+  baseApiUrl: 'http://192.168.146.198:2330/api/v1',
+  SOCKET_BASE: 'http://192.168.146.198:2330',
 
   SECRET_KEY: 'NjIwMjA0NTcxfQ.27VYXVdIMvIbQFJFZ',
   IV_KEY: '5Bl83ks5O9XN80Kj',

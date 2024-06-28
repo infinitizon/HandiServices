@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '@app/_shared/shared.module';
 
-import { OrdersPageRoutingModule } from './orders-routing.module';
+import { ChatPageRoutingModule } from './chat-routing.module';
 
-import { OrdersPage } from './orders.page';
+import { ChatPage } from './chat.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    OrdersPageRoutingModule
+    ChatPageRoutingModule,
+    SharedModule,
   ],
-  declarations: [OrdersPage]
+  declarations: [ChatPage]
 })
-export class OrdersPageModule {}
+export class ChatPageModule {}

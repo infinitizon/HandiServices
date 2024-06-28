@@ -110,6 +110,7 @@ class OrderService {
    async getOrders({ auth, tenantId, query={} }) { 
       try {
          const { limit, offset } = Pagination.getPagination(query.page, query.perPage);
+         console.log(auth, limit, offset);
          const status = DBEnums.OrderStatus.filter(status => query.status?.split(',').includes(status.label)).map(status => status.code);
          let cases = '';
          DBEnums.OrderStatus.forEach(enums=>{
@@ -136,6 +137,9 @@ class OrderService {
                         model: db[process.env.DEFAULT_DB].models.Order, attributes: ["id", [db.Sequelize.literal(`CASE ${cases} END`), 'status'], 'createdAt'],
                         where: {...(query.userId && {userId: query.userId})},
                         required: true,
+                        ...(tenantId && {include: [{
+                           model: db[process.env.DEFAULT_DB].models.User, attributes: ["id", "firstName", "middleName", "lastName"],
+                        }]})
                      }]
                   }]
                }
@@ -143,6 +147,7 @@ class OrderService {
             raw: true, nest: true,// plain: true,
             group: [`Tenant.id`, `ProductVendorCharacters->OrderItems->Order.id`, `Media.id`,],
             // order: [[`ProductVendorCharacters->OrderItems->Order.createdAt`, 'DESC']],
+            where: {...(tenantId && { id: tenantId })},
          });
          
          // let orders = await db[process.env.DEFAULT_DB].models.Order.findAll({

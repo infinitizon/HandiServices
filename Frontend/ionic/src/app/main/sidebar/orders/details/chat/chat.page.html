@@ -1,0 +1,50 @@
+<ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/sidebar/orders"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button fill="none">
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{'Chat'}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content class="ion-padding">
+  <ion-list class="chats">
+    <ion-item lines="none" *ngFor="let chat of chats" [class]="chat.userId !== loggedInUser?.id ? 'sender': 'user'">
+      <ion-label [slot]="chat.userId === loggedInUser?.id ? 'end' : 'start'" class="ion-text-wrap">
+        <ion-text>{{chat.message}}</ion-text>
+        <ion-note>
+          <small>{{chat.timestamp | date: 'HH:mm'}}</small>
+          <ion-icon [color]="chat.userId === loggedInUser?.id ? 'light' : 'primary'" name="checkmark-done-outline"></ion-icon>
+        </ion-note>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <!-- <ion-grid>
+    <ion-row class="ion-align-items-center">
+      <ion-col>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+</ion-content>
+<ion-footer>
+  <form [formGroup]="msgForm" class="bg-light" *ngIf="chatSession">
+    <ion-toolbar>
+      <ion-textarea autoGrow="true" rows="1" placeholder="Send Message" formControlName="message">
+        <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
+        <ion-button fill="clear" slot="end" aria-label="Show/hide">
+          <ion-icon slot="icon-only" name="eye" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </ion-textarea>
+      <ion-buttons slot="end">
+        <ion-fab-button size="small" (click)="onChatSubmit(msgForm.value)">
+          <ion-icon name="send"></ion-icon>
+        </ion-fab-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </form>
+</ion-footer>
