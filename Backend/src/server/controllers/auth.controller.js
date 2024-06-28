@@ -127,7 +127,7 @@ class AuthController {
           let { email } = req.body;
           if (!email) throw new AppError('Email required', __line, __path.basename(__filename), { status: 400, show: true });
           email = email.toLowerCase();
-          const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } }, });
+          const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email } }, });
           if (!user) throw new AppError('Account not registered, please sign up', __line, __path.basename(__filename), { status: 404, show: true });
           let otp = Helper.generateOTCode(6, false);
           const token = await db[process.env.DEFAULT_DB].models.Token.create({
@@ -202,7 +202,7 @@ class AuthController {
             if (!email || !password) throw new AppError('Email and Password required', __line, __path.basename(__filename), { status: 400, show: true });
             password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);
             email = email.toLowerCase();
-            const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } }, });
+            const user = await db[process.env.DEFAULT_DB].models.User.findOne({ where: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email } }, });
             if (!user) throw new AppError('User does not exist.', __line, __path.basename(__filename), { status: 404, show: true });
             const hashedPassword = Bcrypt.hashSync(password, 10);
             await user.update({ password: hashedPassword });
@@ -611,7 +611,7 @@ class AuthController {
         let { email, password } = req.body;
         try {
             let user = await genericRepo.setOptions('User', {
-                condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email } },
+                condition: { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email } },
             }).findOne();
             if(password) {
                 password = (new CryptoJS({ aesKey: process.env.SECRET_KEY_AES, ivKey: process.env.SECRET_KEY_IV })).decryptWithKeyAndIV(password);

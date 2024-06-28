@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
          Order.belongsTo(models.User, {
             foreignKey: 'userId',
          });
-         Order.belongsTo(models.Tenant, {
-            foreignKey: 'tenantId',
-         });
          Order.belongsToMany(models.Address, {
             through: models.OrderAddress,
             foreignKey: 'orderId',
@@ -42,8 +39,11 @@ module.exports = (sequelize, DataTypes) => {
          type: DataTypes.UUID,
          defaultValue: DataTypes.UUIDV4
       },
+      orderNo: {
+         type: DataTypes.INTEGER,
+         autoIncrement: true,
+      },
       userId: DataTypes.UUID,
-      tenantId: DataTypes.UUID,
       status: {
          type: DataTypes.SMALLINT,
          defaultValue: 100,
@@ -64,6 +64,7 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       tableName: 'orders',
       modelName: 'Order',
+      initialAutoIncrement: 1002000,
    });
    return Order;
 };

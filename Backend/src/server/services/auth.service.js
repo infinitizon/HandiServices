@@ -72,15 +72,20 @@ class JwtService {
       try {
          let user = await db[process.env.DEFAULT_DB].models.User.findOne({
             attributes: ["id","bvn","firstName","lastName","firstLogin", "email","password", "refCode", "isEnabled", "isLocked", "twoFactorAuth", "uuidToken"],
-            where: { email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: email}, },
+            where: { email: {[db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: email}, },
             include: [
-                {
-                    model: db[process.env.DEFAULT_DB].models.TenantUserRole, 
-                    include: [
-                        { model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"], },
-                        { model: db[process.env.DEFAULT_DB].models.Role, attributes: ["name"], },
-                    ]
-                }
+               {
+                  model: db[process.env.DEFAULT_DB].models.TenantUserRole, 
+                  include: [
+                     { model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"], },
+                     { model: db[process.env.DEFAULT_DB].models.Role, attributes: ["name"], },
+                  ]
+               },
+               {
+                  model: db[process.env.DEFAULT_DB].models.Address,
+                  where: { isActive: true},
+                  required: false
+               }
             ],
          });
          if (!user) throw new AppError('User not found', __line, __path.basename(__filename), { status: 404, show: true });

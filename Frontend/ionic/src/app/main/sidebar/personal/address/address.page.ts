@@ -4,6 +4,7 @@ import { IAddress } from '@app/_shared/models/address.interface';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
 import { IonModal, ToastController } from '@ionic/angular';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-address',
@@ -26,32 +27,35 @@ export class AddressPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.appContext.getUserInformation().subscribe({
-      next: (data: any) => {
-        this.userInformation = data;
-        this.getAddress();
-      },
-    });
+    this.appContext.getUserInformation()
+        .pipe(take(1))
+        .subscribe({
+          next: (data: any) => {
+            this.userInformation = data;
+            this.getAddress();
+          },
+        });
   }
 
   getAddress() {
     this.container['addressLoading'] = true;
     this.http.get(`${environment.baseApiUrl}/users/address`)
-      .subscribe({
-        next: (response: any) => {
-          this.container.addresses = response.data;
-          if(this.container.addresses.length > 0) {
-            this.container.addresses.forEach((address: any) => {
-              address.state = {code: address.state, }
-              address.country = {code: address.country, }
-            });;
+        .pipe(take(1))
+        .subscribe({
+          next: (response: any) => {
+            this.container.addresses = response.data;
+            if(this.container.addresses.length > 0) {
+              this.container.addresses.forEach((address: any) => {
+                address.state = {code: address.state, }
+                address.country = {code: address.country, }
+              });;
+            }
+            this.container['addressLoading'] = false;
+          },
+          error: (errResp) => {
+            this.container['addressLoading'] = false;
           }
-          this.container['addressLoading'] = false;
-        },
-        error: (errResp) => {
-          this.container['addressLoading'] = false;
-        }
-    });
+      });
   }
   onEditAddress(a: any, modalAddress: IonModal) {
     this.container.modalTitle = 'Edit Address'

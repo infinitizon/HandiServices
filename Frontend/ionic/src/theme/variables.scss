@@ -17,7 +17,7 @@
 
 	--ion-color-tertiary: #EAE8F2;
 	--ion-color-tertiary-rgb: 234,232,242;
-	--ion-color-tertiary-contrast: #000000;
+	--ion-color-tertiary-contrast: var(--ion-color-primary);
 	--ion-color-tertiary-contrast-rgb: 0,0,0;
 	--ion-color-tertiary-shade: #ceccd5;
 	--ion-color-tertiary-tint: #eceaf3;
@@ -75,13 +75,19 @@
     }
   }
   ion-item {
+
+    // ion-input {
+    //   --background: var(--ion-color-tertiary);
+    // }
     ion-label {
-      h3 {
+      h2,h3 {
         margin: 0; padding: 0;
       }
-      p {font-size: 0.8rem;}
+      p {margin: 0; padding: 0; font-size: 0.8rem;}
     }
   }
-
+  :host(.button-block) .button-native {
+    padding: 0.8rem
+  }
 }
 

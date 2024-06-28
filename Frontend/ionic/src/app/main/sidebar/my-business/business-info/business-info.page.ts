@@ -8,6 +8,7 @@ import { environment } from '@environments/environment';
 import { IonInput, IonModal, LoadingController, ToastController } from '@ionic/angular';
 import { GMapService, Maps } from '@app/_shared/services/google-map.service';
 import { IAddress } from '@app/_shared/models/address.interface';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-business-info',
@@ -75,6 +76,7 @@ export class BusinessInfoPage implements OnInit {
       address: [null, [Validators.required]],
     });
     this.appCtx.getUserInformation()
+      .pipe(take(1))
       .subscribe({
         next: (data: any) => {
           if(data) {

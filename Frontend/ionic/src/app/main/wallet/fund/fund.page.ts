@@ -5,7 +5,7 @@ import { environment } from '@environments/environment';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { ModalController } from '@ionic/angular';
 import { PMTGatewayComponent } from '@app/_shared/components/payment/gateway/gateway.component';
-import { of, switchMap } from 'rxjs';
+import { Subscription, of, switchMap, take } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '@app/_shared/services/common.service';
 
@@ -16,6 +16,7 @@ import { CommonService } from '@app/_shared/services/common.service';
 })
 export class FundPage implements OnInit {
 
+  walletSubscription$ = new Subscription
   walletForm!: FormGroup;
   errors: any = [];
   formErrors: any = FormErrors;
@@ -52,6 +53,7 @@ export class FundPage implements OnInit {
     const getUrl = window.location;
     this.appCtx.getWalletBalance()
                 .pipe(
+                  take(1),
                   switchMap(wallet=>{
                     if(wallet) return of({data: wallet})
                     else return this.http.get(`${environment.baseApiUrl}/users/wallet/fetch`)
@@ -59,7 +61,8 @@ export class FundPage implements OnInit {
                 )
                 .subscribe(async (response: any)=>{
                   const wallet = response.data
-                  console.log(wallet);
+                  this.appCtx.walletBalance$.next(response.data);
+                  this.walletSubscription$.unsubscribe()
 
                   const data = {
                     ...fd,
@@ -84,14 +87,14 @@ export class FundPage implements OnInit {
                     breakpoints: [1]
                   });
                   await modalEl.present();
-                  console.log('data came back from modal');
                   let { data: result, role } = await modalEl.onDidDismiss();
+                  if(!result || role==='canccel') return;
                   result = (result as URL)
                   const complete = {
                     success: (result.searchParams)?.get('success') == 'true' ? true : false,
                     message: (result.searchParams)?.get('message') ?? ((result.searchParams)?.get('success') == 'true'?'Wallet top up succesfully': 'Error completing payment')
                   }
-                  this.commonService.paymentComplete(complete, '/main/wallet');
+                  // this.commonService.paymentComplete(complete, '/main/wallet');
                 })
 
   }

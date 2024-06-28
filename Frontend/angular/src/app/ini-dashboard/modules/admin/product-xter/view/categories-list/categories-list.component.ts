@@ -25,7 +25,9 @@ export class CategoriesListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  container: any = {};
+  container: any = {
+    category: []
+  };
   total_count: number = 0;
   pageSize: number = 10;
 
@@ -47,7 +49,9 @@ export class CategoriesListComponent implements OnInit {
       .get(`${environment.baseApiUrl}/products/category`)
       .subscribe(
         (response: any) => {
-          this.container['category'] = response;
+          this.container['category'] = response.data;
+          console.log(this.container['category']);
+
           // this.total_count = response.data.length;
           this.container['categoriesLoading'] = false;
         },

@@ -59,9 +59,9 @@ class TenantService {
             condition = {
                ...condition,
                [db.Sequelize.Op.or]: [
-                  { name: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
-                  { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
-                  { phone: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${search}%` }, },
+                  { name: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%` }, },
+                  { email: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%` }, },
+                  { phone: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${search}%` }, },
                ],
             };
          }
@@ -121,7 +121,7 @@ class TenantService {
          for (const tnt of tenants) {
             tnt.pId = creatorTenant.id;
             
-            const exists = await db[process.env.DEFAULT_DB].models.Tenant.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: tnt.email }} })
+            const exists = await db[process.env.DEFAULT_DB].models.Tenant.findOne({ where: { email: { [ db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: tnt.email }} })
             if(exists) throw new AppError(`Email provided already exists. No two businesses can have thesame email`, __line, __path.basename(__filename), { status: 404, show: true });
 
             const category = await db[process.env.DEFAULT_DB].models.Product.findOne({where: {id: [tnt.category]}});

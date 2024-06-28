@@ -1,43 +1,61 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { IAddress } from '@app/_shared/models/address.interface';
+import { ApplicationContextService } from '@app/_shared/services/application-context.service';
+import { GMapService, Maps } from '@app/_shared/services/google-map.service';
 import { StorageService } from '@app/_shared/services/storage.service';
 import { AlertController, NavController } from '@ionic/angular';
-import { from, take } from 'rxjs';
+import { Subscription, from, take } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent  implements OnInit {
-
+export class HeaderComponent {
+  @Input() role = '';
+  currentLocation!: IAddress;
+  location$ = new Subscription;
+  container = {
+    currentLocation: {},
+  }
   constructor(
     private alertCtrl: AlertController,
     private navCtrl: NavController,
-    private storageService: StorageService
-  ) { }
+    private storageService: StorageService,
+    private gMapService: GMapService,
+    public appCtx: ApplicationContextService,
+  ) {
 
-  ngOnInit() {
-    console.log('');
+    this.gMapService.api.then(async (maps) => {
+      this.setCurrentLocation(maps);
+    });
   }
 
+  ionViewWillEnter() {
+    console.log('Entering header view');
+
+    // this.storageService.get('role').then(role=>{
+    //   console.log(role);
+    //   this.container.role = role;
+    // });
+  }
   async onOpenModal(type: string) {
     const token = await this.storageService.get('token');
-    console.log(token);
-
-    // if(!token) {
-    //   const alert = await this.alertCtrl.create({
-    //     header: 'Login required',
-    //     subHeader: 'You need to login to see profile',
-    //     // message: 'A message should be a short, complete sentence.',
-    //     buttons: [{
-    //       text: 'Login',
-    //       handler: () => {
-    //         return this.navCtrl.navigateForward('/auth/login')
-    //       }
-    //     }],
-    //   });
-    //   return alert.present();
-    // }
-    return this.navCtrl.navigateForward('/main/sidebar')
+    this.navCtrl.navigateForward('/main/sidebar')
+  }
+  setCurrentLocation(maps: Maps) {
+    this.location$ = this.appCtx.location$
+      .pipe(take(1))
+        .subscribe(coord=>{
+          let coords = coord.geometry;
+          const geocoder = new maps.Geocoder();
+          geocoder.geocode({location: {lat: coords?.lat ||0, lng: coords?.lng||0} },  (results, status)=>{
+            if (status == maps.GeocoderStatus.OK) {
+              this.currentLocation = this.gMapService.getAddresses(results?.find(a=>a.types.includes("street_address") && !a.plus_code)?.address_components);
+              this.appCtx.location$.next({...coord, ...this.currentLocation })
+              this.location$.unsubscribe()
+            }
+          })
+        })
   }
 }

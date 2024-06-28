@@ -18,7 +18,7 @@ export class ProductProvidersPage implements OnInit {
     providersLoading: false,
   }
   productId = '';
-  providersData: any
+  providersData!: any[]
   constructor(
     private aRoute: ActivatedRoute,
     private navCtrl: NavController,

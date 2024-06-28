@@ -25,15 +25,16 @@ export class MainPage implements OnInit {
   ionViewWillEnter() {
 
     this.appContext.getUserInformation()
-                  .subscribe(user=>{
-                    if(!user?.id) {
-                      this.auth.isAuthenticated.pipe(take(1)).subscribe(auth=>{
-                        if (auth) {
-                          this.getUserInformation();
-                        }
-                      })
-                    }
-                  })
+        .pipe(take(1))
+        .subscribe(user=>{
+          if(!user?.id) {
+            this.auth.isAuthenticated.pipe(take(1)).subscribe(auth=>{
+              if (auth) {
+                this.getUserInformation();
+              }
+            })
+          }
+        })
 
   }
 

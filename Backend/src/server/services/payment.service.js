@@ -31,7 +31,7 @@ class PaymentService {
     callbackParams
   }) {
     try {
-      let callbackUrl = gatewayCallbackUrl ? gatewayCallbackUrl : process.env.APP_BASE_URL + '/savings/payment';
+      let callbackUrl = gatewayCallbackUrl ? gatewayCallbackUrl : process.env.BACKEND_BASE + '/savings/payment';
       
       const Gateway = await (new Gateways[gateway+'Service']({gatewayParams}));
       return await Gateway.intitializeTransaction({
@@ -180,7 +180,8 @@ class PaymentService {
       // })
       call = [{
         ProductBankGateways: [
-          { id: 1, gateway: 'paystack', subAccountId: null, }
+          { id: 1, gateway: 'paystack', subAccountId: null, },
+          // { id: 2, gateway: 'flutterwave', subAccountId: null, },
         ]
       }];
 

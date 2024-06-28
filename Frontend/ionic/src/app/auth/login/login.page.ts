@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Crypto } from '@app/_shared/classes/Crypto';
 import { CommonService } from '@app/_shared/services/common.service';
@@ -12,8 +11,8 @@ import { ILogin } from '@app/_shared/models/Login';
 import { FormErrors, ValidationMessages } from './login.validators';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { IOTPVerified } from '@app/_shared/models/otp.model';
-import { IonModal } from '@ionic/angular/common';
-import { Subscription } from 'rxjs';
+import { IonModal, NavController } from '@ionic/angular/common';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -43,7 +42,7 @@ export class LoginPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router,
+    private navCtrl: NavController,
     private commonService: CommonService,
     private storageService: StorageService,
     public appContext: ApplicationContextService,
@@ -54,10 +53,10 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: [
-        'infinitizon+5@gmail.com',
+        'infinitizon+9@gmail.com',
         [Validators.required, Validators.pattern(this.commonService.email)],
       ],
-      password: ['Dickele_1', [Validators.required, Validators.minLength(8)]],
+      password: ['123456789', [Validators.required, Validators.minLength(8)]],
       rememberMe: [null],
     });
     this.useFingetPrint();
@@ -103,36 +102,36 @@ export class LoginPage implements OnInit {
       message: `Logging you in...`
     });
     await loadingEl.present();
-    this.loginSub$ = this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
-              .subscribe({
-                next: async (response: Partial<ILogin>)=>{
-                  await loadingEl.dismiss();
-                  this.successLogin(response);
-                }, error: async err =>{
-                  await loadingEl.dismiss();
-                  if(err?.status !== 423 && err?.status !== 419) {
-                    const toast = await this.toastCtrl.create({
-                      header: 'Error',
-                      duration: 3000,
-                      color: 'danger',
-                      message: err?.error?.error?.message
-                    });
-                    await toast.present();
-                    this.loginSub$.unsubscribe()
-                  }
-
-                  if(err?.status === 419) {
-                    console.log("Status: ", err.status);
-                    this.container.requireOTP = true;
-                    this.container.OTPOptions = {
-                      ...this.container.OTPOptions,
-                      email: fd.email,
-                      formData: fd,
-                      endpoint: `${environment.baseApiUrl}/auth/user/login`
-                    }
-                  }
-                }
-            })
+    this.http.post(`${environment.baseApiUrl}/auth/user/login`, fd)
+        .pipe(take(1))
+        .subscribe({
+          next: async (response: Partial<ILogin>)=>{
+            await loadingEl.dismiss();
+            this.successLogin(response);
+          }, error: async err =>{
+            console.log("Status: ", err);
+            await loadingEl.dismiss();
+            if(err?.status !== 423 && err?.status !== 419) {
+              const toast = await this.toastCtrl.create({
+                header: 'Error',
+                duration: 3000,
+                color: 'danger',
+                message: err?.error?.error?.message
+              });
+              await toast.present();
+              // this.loginSub$.unsubscribe()
+            }
+            if(err?.status === 419) {
+              this.container.requireOTP = true;
+              this.container.OTPOptions = {
+                ...this.container.OTPOptions,
+                email: fd.email,
+                formData: fd,
+                endpoint: `${environment.baseApiUrl}/auth/user/login`
+              }
+            }
+          }
+      })
   }
   successLogin(response: any) {
     this.loginSub$.unsubscribe()
@@ -148,7 +147,7 @@ export class LoginPage implements OnInit {
       //   this.router.navigate([this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')]);
       //   this.authService.redirectUrl = '';
       // } else {
-        this.router.navigateByUrl('/main/home');
+        this.navCtrl.navigateBack('/main/home');
       // }
     }
   }

@@ -80,10 +80,10 @@ class TxnService {
                ...condition,
                [db.Sequelize.Op.or]: [
                   {
-                  gatewayReference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${query.search}%` },
+                  gatewayReference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${query.search}%` },
                   },
                   {
-                  reference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'ilike':'like']]: `%${query.search}%` },
+                  reference: { [db.Sequelize.Op[process.env.DEFAULT_DB=='postgres'?'iLike':'like']]: `%${query.search}%` },
                   },
                ],
             };

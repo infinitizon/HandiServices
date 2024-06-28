@@ -6,6 +6,7 @@ import { ModalController, NavController, ToastController, } from '@ionic/angular
 // import { GMapService } from '@app/_shared/services/google-map.service';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
+import { StorageService } from '@app/_shared/services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,8 @@ import { environment } from '@environments/environment';
 export class HomePage implements OnInit {
 
   container: any = {
-    categoriesLoading: true
+    categoriesLoading: true,
+    role: ''
   };
   categoriesData: any;
 
@@ -23,61 +25,57 @@ export class HomePage implements OnInit {
     private http: HttpClient,
     private navCtrl: NavController,
     private appContext: ApplicationContextService,
-    // private gMapService: GMapService,
+    private storageService: StorageService,
   ) {
-    // this.gMapService.api.then((maps) => {
-    //   this.getLocation(maps);
-    //   this.container['loadedMaps'] = true;
-    // });
   }
 
   ngOnInit() {
     this.getCategories();
     this.getRecommended();
     this.appContext.setCurrentCoord();
-
-  }
-  getLocation(maps: any) {
-    this.appContext.location$
-    .subscribe(coord=>{
-      console.log(coord)
-      // `https://maps.googleapis.com/maps/api/geocode/json?latlng=44.4647452,7.3553838&key=YOUR_API_KEY`
-      // const geocoder = maps.Geocoder();
-      // geocoder.geocode({location: maps.LatLng(coord.latitude, coord.longitude) },  (results: any, status: any)=>{
-      //   console.log(coord, results, status);
-
-      //   // if (status == google.maps.GeocoderStatus.OK) {
-      //   //   this.container.address = this.gMapService.getAddresses(results?.find(a=>a.types.includes("street_address") && !a.plus_code)?.address_components);
-      //   // }
-      // })
-    })
   }
 
+  ionViewWillEnter() {
+    console.log('Entering Home view');
+
+    this.storageService.get('role').then(role=>{
+      console.log(role);
+      this.container.role = role;
+    });
+  }
+  ionViewDidEnter() {
+    console.log('Entered Home view');
+
+    this.storageService.get('role').then(role=>{
+      console.log(role);
+      this.container.role = role;
+    });
+  }
   getCategories() {
     this.container['categoriesLoading'] = true;
     this.http
       .get(`${environment.baseApiUrl}/products/category`)
-      .subscribe(
-        (response: any) => {
+      .subscribe({
+        next: (response: any) => {
           this.categoriesData = response.data;
           this.container['categoriesLoading'] = false;       },
-        (errResp) => {
+        error: (errResp) => {
           this.container['categoriesLoading'] = false;
         }
-      );
+      });
   }
   getRecommended() {
     this.container['recommendedLoading'] = true;
     this.http
       .get(`${environment.baseApiUrl}/users/vendors/recommend`)
-      .subscribe(
-        (response: any) => {
+      .subscribe({
+        next: (response: any) => {
           this.container['recommended'] =  response.data?.filter((r:any)=>r.Products?.find((p:any)=>p.pId));
           this.container['recommendedLoading'] = false;       },
-        (errResp) => {
+        error: (errResp) => {
           this.container['recommendedLoading'] = false;
         }
-      );
+      });
   }
   onCategoryClick(c: any) {
     this.navCtrl.navigateForward(`/main/home/category/${c?.id}`);

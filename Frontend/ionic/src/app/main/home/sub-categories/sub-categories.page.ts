@@ -18,7 +18,7 @@ export class SubCategoriesPage implements OnInit {
       title: ''
     }
   };
-  subCategoriesData: any
+  subCategoriesData!: any[]
   categoryId = ''
   constructor(
     private aRoute: ActivatedRoute,

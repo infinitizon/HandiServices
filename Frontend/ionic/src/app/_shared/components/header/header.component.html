@@ -7,14 +7,22 @@
       </ion-avatar>
       <small class="location">
         Your Location <i class="ri-arrow-down-s-line"></i><br>
-        <b>Lagos</b>
+        <b>{{this.currentLocation?.houseNo??'' + ' '+this.currentLocation?.address1||'' + ' '+this.currentLocation?.address2||''}}</b>
       </small>
     </ion-buttons>
     <!-- <ion-avatar>
       <ion-img role="button" [src]="'/assets/images/no-user.svg'" (click)="onOpenModal('menu')" style="border:1px solid #FFF"></ion-img>
     </ion-avatar> -->
-    <ion-buttons slot="primary" class="notifications">
-        <ion-img role="button" [src]="'/assets/images/notification.svg'" (click)="onOpenModal('menu')"></ion-img>
+    <ion-buttons slot="primary">
+
+      <ion-button shape="round" color="tertiary" fill="solid" routerLink="/main/home/cart" *ngIf="role?.toLowerCase() === 'customer'">
+        <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+      </ion-button>
+      <ion-button shape="round" color="tertiary" fill="solid" (click)="onOpenModal('menu')">
+        <ion-icon slot="icon-only" mode="ios" name="notifications-outline"></ion-icon>
+        <!-- <ion-badge color="danger">1</ion-badge> -->
+      </ion-button>
+        <!-- <ion-img role="button" [src]="'/assets/images/notification.svg'" (click)="onOpenModal('menu')"></ion-img> -->
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

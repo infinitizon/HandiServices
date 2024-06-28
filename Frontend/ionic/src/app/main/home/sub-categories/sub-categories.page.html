@@ -3,7 +3,8 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/main/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>My Account</ion-title>
+    <ion-title>{{container['category'].title}}</ion-title>
+    <ion-progress-bar type="indeterminate" *ngIf="container['subCategoriesLoading']"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
@@ -32,6 +33,11 @@
             </div>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="subCategoriesData?.length===0">
+      <ion-col class="ion-text-center">
+        <ion-label>{{!container['subCategoriesLoading'] && subCategoriesData.length===0 ? 'No sub category for '+container['category'].title : 'Fetching '+container['category'].title+' types'}}</ion-label>
       </ion-col>
     </ion-row>
   </ion-grid>

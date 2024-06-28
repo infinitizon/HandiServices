@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastController } from '@ionic/angular';
 import { FingerprintAIO } from '@awesome-cordova-plugins/fingerprint-aio';
+import { IAddress } from '../models/address.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class ApplicationContextService {
   private _notificationInformationObs = new ReplaySubject(1);
 
   userInformation$ = new BehaviorSubject<any>(null);
-  location$ = new BehaviorSubject<any>(null)
+  location$ = new BehaviorSubject<IAddress>({})
   walletBalance$ = new BehaviorSubject<any>(null)
 
   constructor(
@@ -80,14 +81,16 @@ export class ApplicationContextService {
       return;
     }
     Geolocation.getCurrentPosition().then(coordinates=>{
-      this.location$.next(coordinates);
+
+      this.location$.next({
+        geometry: {lat: coordinates.coords.latitude, lng: coordinates.coords.longitude}
+      });
     }).catch(error=>{
       this.toastCtrl.create({
         duration: 2000,
         message: `Could not locate your position`,
         color: 'danger'
       }).then(toastEl=>toastEl.present())
-
     });
   }
   authByFingerPrint(): Promise<any> {
