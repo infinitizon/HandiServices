@@ -257,7 +257,7 @@ export class SignupPage {
           const toast = await this.toastCtrl.create({
             header: 'Error',
             duration: 3000,
-            color: 'danger',
+            color: 'danger', position: 'top',
             message: err?.error?.message || `Error updating your password. Try doing a password reset or contact admin`
           });
           await toast.present()
@@ -320,7 +320,7 @@ export class SignupPage {
             const toast = await this.toastCtrl.create({
               header: 'Error',
               duration: 3000,
-              color: 'danger',
+              color: 'danger', position: 'top',
               message: err?.error?.message || `Error updating your password. Try doing a password reset or contact admin`
             });
             await toast.present()

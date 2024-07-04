@@ -752,10 +752,13 @@ class UserController {
 
          const user = await UserService.getDetails({ userId: auth.userId });
          if(body.useCurrentLoc) {
-            const address = await (new AddressService()).addAddress({ user, ...body.address, transaction: t });
-            if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
+            const existingAddy = await order.data.getAddresses();
+            if(existingAddy.length == 0) {
+               const address = await (new AddressService()).addAddress({ user, ...body.address, transaction: t });
+               if (!address.success) throw new AppError(address.message, address.line||__line, address.file||__path.basename(__filename), { status: address.status||404, show: address.show||true });
 
-            await order.data.addAddress(address.data, { transaction: t });
+               await order.data.addAddress(address.data, { transaction: t });
+            }
          } else {
             const addresses = await (new AddressService()).getAddresses({ userId: user.id, transaction: t });
             if (!addresses.success) throw new AppError(addresses.message, addresses.line||__line, addresses.file||__path.basename(__filename), { status: addresses.status||404, show: addresses.show||true });
@@ -792,8 +795,8 @@ class UserController {
 
          res.status(pmt.status).send(pmt);
       } catch (error) {
-         console.error(error.message);
-         await t.rollback();
+            console.error(error.message);
+         if(t.finished && t.finished != 'commit') await t.rollback();
          return next(
             new AppError(
                error.message

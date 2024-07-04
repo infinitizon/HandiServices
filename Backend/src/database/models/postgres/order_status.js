@@ -1,22 +1,23 @@
 'use strict';
 const { Model } = require('sequelize');
+const DBEnums = require('../../db-enums');
 module.exports = (sequelize, DataTypes) => {
-   class OrderStatus extends Model {
+   class OrderItemStatus extends Model {
       /**
        * Helper method for defining associations.
        * This method is not a part of DataTypes lifecycle.
        * The `models/index` file will call this method automatically.
        */
       static associate(models) {
-         OrderStatus.belongsTo(models.OrderItem, {
+         OrderItemStatus.belongsTo(models.OrderItem, {
             foreignKey: 'orderItemId',
          });
-         OrderStatus.belongsTo(models.User, {
+         OrderItemStatus.belongsTo(models.User, {
             foreignKey: 'movedBy',
          });
       }
    };
-   OrderStatus.init({
+   OrderItemStatus.init({
       id: {
          allowNull: false,
          primaryKey: true,
@@ -25,15 +26,28 @@ module.exports = (sequelize, DataTypes) => {
       },
       orderItemId: DataTypes.UUID,
       movedBy: DataTypes.UUID,
-      status: DataTypes.STRING,
+      status: {
+         type: DataTypes.SMALLINT,
+         defaultValue: 100,
+         get() {
+             const rawValue = this.getDataValue('status');
+             return  DBEnums.OrderStatus.find(g=>g.code===rawValue).label
+         },
+         set(value) {
+            const result = DBEnums.OrderStatus.find(g=>g.code===value)
+                ? value
+                : DBEnums.OrderStatus.find(g=>g.label===value).code;
+             this.setDataValue('status', result);
+         }
+      },
    }, {
       sequelize,
       paranoid: true,
       underscored: true,
-      tableName: 'order_items',
-      modelName: 'OrderStatus',
+      tableName: 'order_item_status',
+      modelName: 'OrderItemStatus',
    });
-   return OrderStatus;
+   return OrderItemStatus;
 };
 
 

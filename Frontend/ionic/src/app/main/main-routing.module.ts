@@ -18,7 +18,11 @@ const routes: Routes = [
       },
       {
         path: 'orders',
-        loadChildren: () => import('./orders/orders.module').then( m => m.OrdersPageModule)
+        loadChildren: () => import('./sidebar/orders/orders.module').then( m => m.OrdersPageModule)
+      },
+      {
+        path: 'checkout/address',
+        loadChildren: () => import('./sidebar/personal/address/address.module').then( m => m.AddressPageModule)
       },
     ]
   },

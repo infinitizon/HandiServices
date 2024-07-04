@@ -1,14 +1,14 @@
 <ion-header [translucent]="true" class="ion-no-shadow ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/main/sidebar"></ion-back-button>
+      <ion-back-button [defaultHref]="container.isCheckout ? '/main/home/cart': '/main/sidebar'"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button id="open-modal" color="primary">
         <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="ion-text-center">Addresses</ion-title>
+    <ion-title class="ion-text-center">{{container.isCheckout?'Set delivery address':'Addresses'}}</ion-title>
     <ion-progress-bar type="indeterminate" *ngIf="container['addressLoading']"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
@@ -17,7 +17,39 @@
   <ion-grid class="ion-no-padding ion-margin-vertical mt-5">
     <ion-row>
       <ion-col>
-        <ion-card *ngFor="let a of container.addresses">
+        <ion-radio-group [value]="container.selectedAddy" #address>
+          <ion-item detail="false" lines="none" *ngFor="let a of container.addresses">
+            <ion-radio slot="start" [value]="a.id" aria-label="Custom checkbox" label-placement="end">
+              <ion-label>
+                <h3>{{a?.firstName}} {{a?.lastName}}</h3>
+                <p>
+                  {{a?.houseNo ? a?.houseNo +',':''}} {{a?.address1 ? a?.address1 + ",":''}} {{a?.address2 ? a?.address2+',' : ''}}<br>
+                  {{a?.city ? a?.city+',':''}} {{a?.state?.name ? a?.state?.name+',' : ''}}<br>
+                  {{a?.country?.name ? a?.country?.name : ''}}
+                </p>
+              </ion-label>
+
+              <ion-button style="--padding-top: -5px;--padding-bottom: -5px;" color="tertiary" *ngIf="a.isActive" [disabled]="a.isActive" (click)="onSetDefaultAddress(a)">
+                DEFAULT ADDRESS
+              </ion-button>
+            </ion-radio>
+          </ion-item>
+        </ion-radio-group>
+        <ion-grid class="ion-padding">
+          <ion-row>
+            <ion-col size="10">
+              <ion-button color="primary" expand="block" (click)="onSetDefaultAddress({id: address.value, navigateToCart: true})">
+                <ion-label>Select Address</ion-label>
+              </ion-button>
+            </ion-col>
+            <ion-col size="2">
+              <ion-button fill="outline" expand="block" (click)="modalAddress.isOpen=true" style="--padding-top: 0.7rem;--padding-bottom: 0.7rem;">
+                <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <!-- <ion-card *ngFor="let a of container.addresses">
           <ion-card-content>
             <ion-label>
               <p>
@@ -28,19 +60,22 @@
               </p>
             </ion-label>
           </ion-card-content>
-          <ion-item lines="none" color="secondary">
-            <ion-button fill="clear" color="tertiary" [disabled]="a.isActive" (click)="onSetDefaultAddress(a)">
-              SET AS DEFAULT <ion-spinner name="dots" *ngIf="a.settingDefault"></ion-spinner>
+          <ion-item lines="none">
+            <ion-button fill="clear" color="secondary" [disabled]="a.isActive" (click)="onSetDefaultAddress(a)">
+              {{a.isActive?'DEFAULT ADDRESS':'SET AS DEFAULT'}} <ion-spinner name="dots" *ngIf="a.settingDefault"></ion-spinner>
             </ion-button>
-            <ion-button fill="outline" shape="round" slot="end" color="tertiary" (click)="onEditAddress(a, modalAddress)">
+            <ion-button fill="outline" shape="round" slot="end" color="secondary" (click)="onEditAddress(a, modalAddress)">
               <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
             </ion-button>
             <ion-button fill="outline" shape="round" slot="end" color="danger" (click)="onDeleteAddress(a)">
               <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-item>
-        </ion-card>
+        </ion-card> -->
       </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col></ion-col>
     </ion-row>
     <ion-row *ngIf="container.addresses.length===0">
       <ion-col class="ion-text-center">
@@ -48,7 +83,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-modal  trigger="open-modal" [initialBreakpoint]="0.5" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalAddress>
+  <ion-modal  trigger="open-modal" [initialBreakpoint]="0.75" [breakpoints]="[0.5, 0.65, 0.75, 0.85, 0.95, 1]" #modalAddress>
     <ng-template>
       <ion-header>
         <ion-toolbar>

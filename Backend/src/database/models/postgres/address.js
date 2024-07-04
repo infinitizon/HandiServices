@@ -38,6 +38,8 @@ module.exports = (sequelize, DataTypes) => {
          type: DataTypes.UUID,
          allowNull: false
       },
+      firstName: DataTypes.STRING(30),
+      lastName: DataTypes.STRING(30),
       phone: DataTypes.STRING(20),
       houseNo: DataTypes.STRING(20),
       address1: DataTypes.STRING(100),

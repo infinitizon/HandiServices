@@ -20,6 +20,8 @@ import { PMTGatewayComponent } from './components/payment/gateway/gateway.compon
 import { PMTCompleteComponent } from './components/payment/complete/complete.component';
 import { PMTWebviewComponent } from './components/payment/webview/webview.component';
 import { NumberKeyboardComponent } from './components/number-keyboard/number-keyboard.component';
+import { IonIntlTelInputModule } from '@jongbonga/ion-intl-tel-input';
+import { AddAddressComponent } from './components/add-address/add-address.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     SearchComponent,
     PMTGatewayComponent, PMTCompleteComponent, PMTWebviewComponent,
     NumberKeyboardComponent,
+    AddAddressComponent,
   ],
   providers: [
   ],
@@ -42,6 +45,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,
     SocketIoModule.forRoot(config),
+    IonIntlTelInputModule,
   ],
   exports: [
     CommonModule, HttpClientModule,
@@ -49,6 +53,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     FormsModule, ReactiveFormsModule,
     NgOtpInputModule,
     SocketIoModule,
+    IonIntlTelInputModule,
     ColorPipe,
     ImagePipe,
     ImgPickerComponent,
@@ -57,6 +62,7 @@ import { NumberKeyboardComponent } from './components/number-keyboard/number-key
     SearchComponent,
     PMTGatewayComponent, PMTCompleteComponent, PMTWebviewComponent,
     NumberKeyboardComponent,
+    AddAddressComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

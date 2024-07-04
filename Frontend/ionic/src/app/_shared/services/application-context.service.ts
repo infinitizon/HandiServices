@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, of, switchMap, take } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastController } from '@ionic/angular';
 import { FingerprintAIO } from '@awesome-cordova-plugins/fingerprint-aio';
 import { IAddress } from '../models/address.interface';
+import { GMapService, Maps } from './google-map.service';
+import { environment } from '@environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -42,11 +45,14 @@ export class ApplicationContextService {
   private _notificationInformationObs = new ReplaySubject(1);
 
   userInformation$ = new BehaviorSubject<any>(null);
+  userRole$ = new BehaviorSubject<any>(null);
   location$ = new BehaviorSubject<IAddress>({})
   walletBalance$ = new BehaviorSubject<any>(null)
 
   constructor(
+    private http: HttpClient,
     private toastCtrl: ToastController,
+    private gMapService: GMapService,
   ) { }
 
 
@@ -76,21 +82,51 @@ export class ApplicationContextService {
   getWalletBalance(): Observable<any> {
     return this.walletBalance$.asObservable();
   }
-  setCurrentCoord() {
+  setUserInformation() {
+    this.getUserInformation()
+        .pipe(
+          take(1),
+          switchMap((user: any)=>{
+            if(!user) {
+              return this.http.get(`${environment.baseApiUrl}/users`)
+            }
+            return of({data: user})
+          }),
+          take(1),
+        )
+        .subscribe((user: any)=>{
+          if (user) {
+            console.log(`this.userInformation => `, user);
+            this.userInformation$.next(user.data);
+            this.userRole$.next(user.data?.Tenant[0].Roles[0].name);
+          }
+        })
+  }
+  setCurrentLocation() {
+    this.gMapService.api.then(async (maps) => {
+      this.setLocation(maps);
+    });
+  }
+  setLocation(maps: Maps) {
     if(!Capacitor.isPluginAvailable('Geolocation')) {
+      this.toastCtrl.create({ message: `Your phone does not support location services`, duration: 2000, color: 'danger', position: 'top', })
+          .then(toastEl=>{
+            toastEl.present();
+          })
       return;
     }
-    Geolocation.getCurrentPosition().then(coordinates=>{
-
-      this.location$.next({
-        geometry: {lat: coordinates.coords.latitude, lng: coordinates.coords.longitude}
-      });
-    }).catch(error=>{
-      this.toastCtrl.create({
-        duration: 2000,
-        message: `Could not locate your position`,
-        color: 'danger'
-      }).then(toastEl=>toastEl.present())
+    Geolocation.getCurrentPosition({ timeout: 10000 }).then(coordinates=>{
+      const geometry = {lat: coordinates.coords.latitude, lng: coordinates.coords.longitude};
+      const geocoder = new maps.Geocoder();
+      geocoder.geocode({location: {lat: geometry?.lat ||0, lng: geometry?.lng||0} },  (results, status)=>{
+        if (status == maps.GeocoderStatus.OK) {
+          const currentLocation = this.gMapService.getAddresses(results?.find(a=>(a.types.includes("street_address")||a.types.includes("premise")) && !a.plus_code)?.address_components);
+          this.location$.next({...geometry, ...currentLocation })
+        }
+      })
+    }).catch( async error=>{
+      const toastEl = await this.toastCtrl.create({ message: `Could not locate your position`, duration: 2000, color: 'danger', position: 'top', });
+      await toastEl.present();
     });
   }
   authByFingerPrint(): Promise<any> {

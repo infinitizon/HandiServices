@@ -57,12 +57,13 @@ export class AddAddressComponent  implements OnInit {
   ngOnInit() {
     this.enteredAddress = this.data
     this.enteredAddress.houseNo = this.data?.houseNo;
-    console.log(this.data?.houseNo??'', this.data?.address1||'', this.data?.address2||'')
-    const address = ((this.data?.houseNo??'') + ' '+this.data?.address1||'' + ' '+this.data?.address2||'')?.replace(' ', '')
+    const address = ((this.data?.houseNo??'') + ' ' + (this.data?.address1??'') + ' ' + (this.data?.address2??''))?.trim();
     this.addressForm = this.fb.group({
       isDefault: [this.data?.isActive||true],
+      firstName: [this.data?.firstName, [Validators.required]],
+      lastName: [this.data?.lastName, [Validators.required]],
       phone: [this.data?.phone, [Validators.required]],
-      address: [address, [Validators.required]],
+      address: [address||null, [Validators.required]],
     });
   }
 
@@ -86,6 +87,8 @@ export class AddAddressComponent  implements OnInit {
     }
     let fd = JSON.parse(JSON.stringify(this.addressForm.value));
     (this.enteredAddress?.number && this.data?.houseNo != this.enteredAddress?.number) ? (fd.houseNo = this.enteredAddress?.number) : 0;
+    this.data?.firstName != this.enteredAddress?.firstName ?(fd.firstName = this.enteredAddress?.firstName) : 0;
+    this.data?.lastName != this.enteredAddress?.lastName ?(fd.lastName = this.enteredAddress?.lastName) : 0;
     this.data?.address1 != this.enteredAddress?.address1 ?(fd.address1 = this.enteredAddress?.address1) : 0;
     this.data?.address2 != this.enteredAddress?.address2 ?(fd.address2 = this.enteredAddress?.address2) : 0;
     this.data?.city != this.enteredAddress?.city ?(fd.city = this.enteredAddress?.city) : 0;

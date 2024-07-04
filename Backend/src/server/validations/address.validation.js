@@ -2,6 +2,14 @@ const Joi = require('joi').extend(require('@joi/date'));
 
 const createAddress = {
   body: Joi.object().keys({
+    firstName: Joi.string().required().messages({
+      'string.empty': `First Name cannot be an empty field`,
+      'any.required': `First Name is a required field`,
+    }),
+    lastName: Joi.string().required().messages({
+      'string.empty': `Last Name cannot be an empty field`,
+      'any.required': `Last number is a required field`,
+    }),
     houseNo: Joi.string().required().messages({
       'string.empty': `House number cannot be an empty field`,
       'any.required': `House number is a required field`,
@@ -39,6 +47,14 @@ const createAddress = {
 
 const updateAddress = {
   body: Joi.object().keys({
+    firstName: Joi.string().optional().messages({
+      'string.empty': `First Name cannot be an empty field`,
+      'any.required': `First Name is a required field`,
+    }),
+    lastName: Joi.string().optional().messages({
+      'string.empty': `Last Name cannot be an empty field`,
+      'any.required': `Last number is a required field`,
+    }),
     houseNo: Joi.string().optional().messages({
       'string.empty': `House number cannot be an empty field`,
       'any.required': `House number is a required field`,

@@ -88,7 +88,7 @@ export class SubCategoryPage implements OnInit {
               },
               error: (err) => {
                 loadingEl.dismiss();
-                this.toastCtrl.create({message: err.error.message||`Error adding service`, duration:3500, color: 'danger'})
+                this.toastCtrl.create({message: err.error.message||`Error adding service`, duration:3500, color: 'danger', position: 'top'})
               }
             });
         })

@@ -118,7 +118,7 @@ export class PricingPage implements OnInit {
               error: async (err: any) => {
                 loadingEl.dismiss();
 
-                const toastEl = await this.toastCtrl.create({message: err?.error?.error?.message||`Error saving pricing`, duration: 3500, color: 'danger'})
+                const toastEl = await this.toastCtrl.create({message: err?.error?.error?.message||`Error saving pricing`, duration: 3500, color: 'danger', position: 'top'})
                 await toastEl.present();
             }
           });

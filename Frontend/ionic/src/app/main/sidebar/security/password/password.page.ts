@@ -99,7 +99,7 @@ export class PasswordPage implements OnInit {
         const toast = await this.toastCtrl.create({
           ...toastData,
           header: 'Error',
-          color: 'danger',
+          color: 'danger', position: 'top',
           message: errResp?.error?.error.message || `Error changing password`
         });
         await toast.present()

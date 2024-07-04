@@ -3,7 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/main/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{container['category'].title}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{container['category'].title}}</ion-title>
     <ion-progress-bar type="indeterminate" *ngIf="container['subCategoriesLoading']"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>

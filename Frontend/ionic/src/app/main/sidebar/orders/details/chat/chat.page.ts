@@ -96,7 +96,7 @@ export class ChatPage implements OnInit, AfterViewInit {
             this.getChatHistory(this.chatSession)
           },
           error: async (err: any) => {
-            const toastEl = await this.toastCtrl.create({ message: `Error creating a chat session`, duration: 3500, color: 'danger'});
+            const toastEl = await this.toastCtrl.create({ message: `Error creating a chat session`, duration: 3500, color: 'danger', position: 'top'});
             await toastEl.present();
           }
         })
@@ -111,7 +111,7 @@ export class ChatPage implements OnInit, AfterViewInit {
                 this.content.scrollToBottom();
               },
               error: async (err: any) => {
-                const toastEl = await this.toastCtrl.create({ message: `Error fetching your chat history`, duration: 3500, color: 'danger'});
+                const toastEl = await this.toastCtrl.create({ message: `Error fetching your chat history`, duration: 3500, color: 'danger', position: 'top'});
                 await toastEl.present();
               }
             })

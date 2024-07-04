@@ -67,7 +67,7 @@ export class BankPage implements OnInit {
           error: async err => {
             await loadingEl.dismiss();
             const toast = await this.toastCtrl.create({
-              header: 'Error', color: 'danger', duration: 3000,
+              header: 'Error', color: 'danger', position: 'top', duration: 3000,
               message: err?.error?.message || `Error updating your next of kin information`
             });
             await toast.present()
@@ -91,7 +91,7 @@ export class BankPage implements OnInit {
     if (!this.bankForm.get('bankCode')?.value) {
       this.bankForm?.get('nuban')?.patchValue(null, { emitEvent: false });
       this.toastCtrl.create({
-        color: 'danger', duration: 3000, message: `Please select a bank first`
+        color: 'danger', position: 'top', duration: 3000, message: `Please select a bank first`
       }).then(toastEl=>{ toastEl.present(); });
       return null;
     }
@@ -114,7 +114,7 @@ export class BankPage implements OnInit {
             error: async (err) => {
               loadingEl.dismiss();
               const toast = await this.toastCtrl.create({
-                header: 'Error', color: 'danger', duration: 3000,
+                header: 'Error', color: 'danger', position: 'top', duration: 3000,
                 message: err?.error?.message || `Error fetching account information. Please try again later`
               });
               await toast.present()

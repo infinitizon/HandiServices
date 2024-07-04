@@ -46,6 +46,8 @@ module.exports = {
             console.log('ProductVendorCharacter');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.OrderItem.tableName, db[process.env.DEFAULT_DB].models.OrderItem.tableAttributes, { transaction })
             console.log('OrderItem');
+            await queryInterface.createTable(db[process.env.DEFAULT_DB].models.OrderItemStatus.tableName, db[process.env.DEFAULT_DB].models.OrderItemStatus.tableAttributes, { transaction })
+            console.log('OrderItemStatus');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.Card.tableName, db[process.env.DEFAULT_DB].models.Card.tableAttributes, { transaction })
             console.log('card');
             await queryInterface.createTable(db[process.env.DEFAULT_DB].models.Beneficiary.tableName, db[process.env.DEFAULT_DB].models.Beneficiary.tableAttributes, { transaction })

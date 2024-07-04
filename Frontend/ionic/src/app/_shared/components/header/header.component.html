@@ -7,7 +7,7 @@
       </ion-avatar>
       <small class="location">
         Your Location <i class="ri-arrow-down-s-line"></i><br>
-        <b>{{this.currentLocation?.houseNo??'' + ' '+this.currentLocation?.address1||'' + ' '+this.currentLocation?.address2||''}}</b>
+        <b>{{(this.currentLocation.houseNo??'') + ' '+(this.currentLocation.address1||'') + ' '+(this.currentLocation.address2||'')}}</b>
       </small>
     </ion-buttons>
     <!-- <ion-avatar>

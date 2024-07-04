@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IAddress } from '@app/_shared/models/address.interface';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
-import { IonModal, ToastController } from '@ionic/angular';
+import { IonModal, LoadingController, NavController, ToastController } from '@ionic/angular';
 import { take } from 'rxjs';
 
 @Component({
@@ -13,10 +14,12 @@ import { take } from 'rxjs';
 })
 export class AddressPage implements OnInit {
   container: any = {
+    selectedAddy: {},
     addresses: [],
     workingAddress: {},
     modalTitle: null,
-    settingDefault: false
+    settingDefault: false,
+    isCheckout: false
   };
   userInformation!: any;
 
@@ -24,9 +27,16 @@ export class AddressPage implements OnInit {
     public appContext: ApplicationContextService,
     private http: HttpClient,
     private toastCtrl: ToastController,
+    private loadingCtrl: LoadingController,
+    private navCtrl: NavController,
+    private aRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    if(this.router.url.includes('checkout')) {
+      this.container.isCheckout = true;
+    }
     this.appContext.getUserInformation()
         .pipe(take(1))
         .subscribe({
@@ -45,6 +55,7 @@ export class AddressPage implements OnInit {
           next: (response: any) => {
             this.container.addresses = response.data;
             if(this.container.addresses.length > 0) {
+              this.container.selectedAddy = this.container.addresses[0]?.id
               this.container.addresses.forEach((address: any) => {
                 address.state = {code: address.state, }
                 address.country = {code: address.country, }
@@ -56,6 +67,10 @@ export class AddressPage implements OnInit {
             this.container['addressLoading'] = false;
           }
       });
+  }
+  onSelectAddress(value: any) {
+    console.log(value);
+
   }
   onEditAddress(a: any, modalAddress: IonModal) {
     this.container.modalTitle = 'Edit Address'
@@ -81,45 +96,52 @@ export class AddressPage implements OnInit {
     const fd = {
       isActive: true,
     };
-    a.settingDefault = true;
-    this.http
-      .patch(`${environment.baseApiUrl}/users/address/${a.id}`, fd)
-      .subscribe({
-        next: (response: any) => {
-          a.settingDefault = false;
-          this.getAddress();
-        },
-        error: (errResp) => {
-          a.settingDefault = false;
-          this.toastCtrl.create({
-            message: errResp?.error?.error?.message,
-            duration: 3500
-          }).then(toastEl=>toastEl.present());
-        }
-      });
+    this.loadingCtrl.create({message: `Please wait`})
+        .then(loadingEl=>{
+          loadingEl.present();
+          this.http
+              .patch(`${environment.baseApiUrl}/users/address/${a.id}`, fd)
+              .subscribe({
+                next: async (response: any) => {
+                  loadingEl.dismiss();
+                  if(a.navigateToCart) {
+                    const toastEl = await this.toastCtrl.create({ message: `Your default address was successfully saved`, duration: 3500, color: 'success'});
+                    await toastEl.present();
+                    this.navCtrl.navigateBack('/main/home/cart')
+                  } else {
+                    this.getAddress();
+                  }
+                },
+                error: async (errResp) => {
+                  loadingEl.dismiss();
+                  const toastEl = await this.toastCtrl.create({ message: errResp?.error?.error?.message, duration: 3500, color: 'danger' });
+                  await toastEl.present();
+                }
+              });
+        })
   }
   onDeleteAddress(a: any) {
     if(!a.id) return;
-    a.settingDefault = true;
-    this.http
-      .delete(`${environment.baseApiUrl}/users/address/${a.id}`)
-      .subscribe({
-        next: (response: any) => {
-          a.settingDefault = false;
-          this.getAddress();
-          this.toastCtrl.create({
-            message: response.message||'Address deleted successfully',
-            duration: 3500, color: 'success'
-          }).then(toastEl=>toastEl.present());
-        },
-        error: (errResp) => {
-          a.settingDefault = false;
-          this.toastCtrl.create({
-            message: errResp?.error?.error?.message,
-            duration: 3500,
-            color: 'danger'
-          }).then(toastEl=>toastEl.present());
-        }
-      });
+    this.loadingCtrl.create({message: `Please wait`})
+        .then(loadingEl=>{
+          loadingEl.present();
+          this.http
+            .delete(`${environment.baseApiUrl}/users/address/${a.id}`)
+            .subscribe({
+              next: (response: any) => {
+                loadingEl.dismiss();
+                this.getAddress();
+                this.toastCtrl.create({
+                  message: response.message||'Address deleted successfully',
+                  duration: 3500, color: 'success'
+                }).then(toastEl=>toastEl.present());
+              },
+              error: async (errResp) => {
+                loadingEl.dismiss();
+                const toastEl = await this.toastCtrl.create({ message: errResp?.error?.error?.message, duration: 3500, color: 'danger', position: 'top' })
+                await toastEl.present();
+              }
+            });
+    })
   }
 }

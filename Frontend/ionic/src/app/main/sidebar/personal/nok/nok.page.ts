@@ -71,7 +71,7 @@ export class NokPage implements OnInit {
           error: async err => {
             await loadingEl.dismiss();
             const toast = await this.toastCtrl.create({
-              header: 'Error', color: 'danger', duration: 3000,
+              header: 'Error', color: 'danger', position: 'top', duration: 3000,
               message: err?.error?.message || `Error updating your next of kin information`
             });
             await toast.present()
@@ -130,7 +130,7 @@ export class NokPage implements OnInit {
           error: async err => {
             await loadingEl.dismiss();
             const toast = await this.toastCtrl.create({
-              header: 'Error', color: 'danger', duration: 3000,
+              header: 'Error', color: 'danger', position: 'top', duration: 3000,
               message: err?.error?.message || `Error updating your next of kin information`
             });
             await toast.present()
