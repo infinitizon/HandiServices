@@ -15,7 +15,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-grid class="ion-no-padding ion-margin-vertical mt-5">
-    <ion-row>
+    <ion-row *ngIf="container.isCheckout">
       <ion-col>
         <ion-radio-group [value]="container.selectedAddy" #address>
           <ion-item detail="false" lines="none" *ngFor="let a of container.addresses">
@@ -74,8 +74,32 @@
         </ion-card> -->
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col></ion-col>
+    <ion-row *ngIf="!container.isCheckout">
+      <ion-col>
+        <ion-item class="address" detail="false" lines="none" *ngFor="let a of container.addresses">
+          <ion-label>
+            <h3>{{a?.firstName}} {{a?.lastName}}</h3>
+            <p>
+              {{a?.houseNo ? a?.houseNo +',':''}} {{a?.address1 ? a?.address1 + ",":''}} {{a?.address2 ? a?.address2+',' : ''}}<br>
+              {{a?.city ? a?.city+',':''}} {{a?.state?.name ? a?.state?.name+',' : ''}}<br>
+              {{a?.country?.name ? a?.country?.name : ''}}
+            </p>
+            <div class="d-flex justify-content-between">
+              <ion-button fill="clear" color="secondary" [disabled]="a.isActive" (click)="onSetDefaultAddress(a)">
+                {{a.isActive?'DEFAULT ADDRESS':'SET AS DEFAULT'}} <ion-spinner name="dots" *ngIf="a.settingDefault"></ion-spinner>
+              </ion-button>
+              <div>
+                <ion-button fill="outline" shape="round" slot="end" color="secondary" (click)="onEditAddress(a, modalAddress)">
+                  <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="outline" shape="round" slot="end" color="danger" (click)="onDeleteAddress(a)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-col>
     </ion-row>
     <ion-row *ngIf="container.addresses.length===0">
       <ion-col class="ion-text-center">
