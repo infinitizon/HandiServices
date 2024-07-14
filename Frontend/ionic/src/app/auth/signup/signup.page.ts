@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControlOptions, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,6 +15,7 @@ import { StorageService } from '@app/_shared/services/storage.service';
 import { GMapService, Maps } from '@app/_shared/services/google-map.service';
 import { IAddress } from '@app/_shared/models/address.interface';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -73,6 +74,9 @@ export class SignupPage {
     private renderer: Renderer2,
     private gMapService: GMapService,
   ) {
+  }
+
+  ionViewDidEnter () {
     let interval = setInterval(()=>{
       this.container.countdown--
       if(this.container['loadedMaps']) {
@@ -88,7 +92,17 @@ export class SignupPage {
       this.initAutocomplete(maps, input);
       this.renderer.setProperty(this.address, 'placeholder', 'Search and pick your address here...');
     });
-   }
+  }
+  initAutocomplete(maps: Maps, input: any) {
+    console.log(maps, input);
+
+    const autocomplete = new maps.places.Autocomplete(input);
+    autocomplete.addListener('place_changed', () => {
+      const  place  =  autocomplete.getPlace();
+      this.selectedAddress= this.gMapService.getAddresses(place?.address_components);
+      this.selectedAddress= {...this.selectedAddress, geometry: {lng: place?.geometry?.location?.lng(), lat: place?.geometry?.location?.lat()}}
+    });
+  }
 
   async ionViewWillEnter() {
     this.container.showVendorForm = await this.storageService.get('vendor');
@@ -264,14 +278,6 @@ export class SignupPage {
         }
      });
   }
-  initAutocomplete(maps: Maps, input: any) {
-    const autocomplete = new maps.places.Autocomplete(input);
-    autocomplete.addListener('place_changed', () => {
-      const  place  =  autocomplete.getPlace();
-      this.selectedAddress= this.gMapService.getAddresses(place?.address_components);
-      this.selectedAddress= {...this.selectedAddress, geometry: {lng: place?.geometry?.location?.lng(), lat: place?.geometry?.location?.lat()}}
-    });
-  }
   async onSubmitVendor() {
     this.signupVendorForm.markAllAsTouched();
     if (this.signupVendorForm.invalid) {
@@ -303,6 +309,7 @@ export class SignupPage {
     });
     loadingEl.present();
       this.http.post(`${environment.baseApiUrl}/auth/tenant/complete`, fd,)
+        .pipe(take(1))
         .subscribe({
           next: async (response: any) => {
             await loadingEl.dismiss();
@@ -316,12 +323,13 @@ export class SignupPage {
             await toast.present()
           },
           error: async err => {
+
             await loadingEl.dismiss();
             const toast = await this.toastCtrl.create({
               header: 'Error',
               duration: 3000,
               color: 'danger', position: 'top',
-              message: err?.error?.message || `Error updating your password. Try doing a password reset or contact admin`
+              message: err?.error?.message || err?.error?.error?.message || `Error updating your password. Try doing a password reset or contact admin`
             });
             await toast.present()
           }

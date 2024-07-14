@@ -20,6 +20,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-list class="ion-margin-vertical mt-3">
+
     <ion-item detail *ngFor="let service of services" [routerLink]="['/main/sidebar/my-business/category/sub-category/pricing/', categoryId, service.id]">
       <ion-label>
         <h3>{{service.title}}</h3>

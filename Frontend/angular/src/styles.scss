@@ -314,10 +314,10 @@ body {
 
 .auth-first-column {
   background-color: var(--primary);
-  height: 116vh;
+  height: 100vh;
 
   &.v1 {
-    height: 116vh;
+    height: 100vh;
   }
 }
 
@@ -786,6 +786,7 @@ mat-sidenav-container {
       }
 
       .blink-soft {
+        font-size: 16px;
         animation: blinker 1.5s linear infinite;
       }
       @keyframes blinker {
@@ -3222,4 +3223,7 @@ a { text-decoration: none;}
   --mdc-filled-button-label-text-color: #000;
 }
 
+.mat-horizontal-stepper-header-container {
+  display: none !important;
+}
 

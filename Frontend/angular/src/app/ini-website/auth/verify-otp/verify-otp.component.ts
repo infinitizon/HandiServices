@@ -17,6 +17,7 @@ import * as moment from 'moment';
   styleUrls: ['./verify-otp.component.scss']
 })
 export class VerifyOtpComponent implements OnInit {
+
   otpInputConfig: NgxOtpInputConfig = {
     otpLength: 6,
     autofocus: true,
@@ -132,7 +133,7 @@ export class VerifyOtpComponent implements OnInit {
          token: this.otp
     }
     this.submitting = true;
-    this.http.patch(`${environment.baseApiUrl}/auth/completeSignup`, fd)
+    this.http.patch(`${environment.baseApiUrl}/auth/otp/verify`, fd)
       .subscribe((response: any) => {
         this.submitting = false;
         this.successSnackBar("Verification successful")

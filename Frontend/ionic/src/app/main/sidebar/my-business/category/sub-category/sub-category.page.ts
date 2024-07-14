@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
+
 import { AlertController, IonModal, LoadingController, NavController, ToastController } from '@ionic/angular';
 
 @Component({
@@ -10,6 +11,7 @@ import { AlertController, IonModal, LoadingController, NavController, ToastContr
   styleUrls: ['./sub-category.page.scss'],
 })
 export class SubCategoryPage implements OnInit {
+
 
   selectedservice: any
   services!: any;
