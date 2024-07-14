@@ -32,7 +32,7 @@ class AddressService {
                );
       }
    }
-   async addAddress ({ user, phone, houseNo, address1, address2, city, country, state, lga, lat, lng, isDefault=true, transaction }) {
+   async addAddress ({ user, firstName, lastName, phone, houseNo, address1, address2, city, country, state, lga, lat, lng, isDefault=true, transaction }) {
       const t = transaction ?? await db[process.env.DEFAULT_DB].transaction()
       try {
          const addresses = await user.getAddresses();
@@ -42,7 +42,7 @@ class AddressService {
             }
          }
          const address = await user.createAddress({
-            phone, houseNo, address1, address2, city, country, state, lga, lat, lng,
+            firstName: firstName??user.firstName, lastName: lastName??user.lastName, phone, houseNo, address1, address2, city, country, state, lga, lat, lng,
             isActive: (isDefault?isDefault:addresses.length === 0)
          }, { transaction: t });
 

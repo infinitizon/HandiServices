@@ -109,7 +109,7 @@ class JwtService {
    async getUserAndTenant ({ userId, tenantId }) {
       try {
          let user = await db[process.env.DEFAULT_DB].models.User.findOne({
-            attributes: ["id","bvn","firstName","lastName","email","password", "isEnabled", "isLocked"],
+            attributes: ["id","bvn","firstName","lastName","email", "password", "isEnabled", "isLocked"],
             where: { id: userId },
             include: [
                {

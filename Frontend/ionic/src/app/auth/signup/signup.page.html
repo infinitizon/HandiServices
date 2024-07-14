@@ -256,9 +256,8 @@
           <ion-row>
             <ion-col>
               <ion-item lines="none" class="ion-no-margin ion-no-padding">
-                <ion-input type="text" label="Enter your address" labelPlacement="floating" placeholder="Please wait, loading..."
-                errorText="{{uiErrors.address || 'Invalid address'}}" #address formControlName="address"
-                ></ion-input>
+                <ion-input #address type="text" label="Enter your address" labelPlacement="floating" placeholder="Please wait, loading..."
+                errorText="{{uiErrors.address || 'Invalid address'}}"  formControlName="address"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>

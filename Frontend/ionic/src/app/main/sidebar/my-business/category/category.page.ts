@@ -41,7 +41,7 @@ export class CategoryPage implements OnInit {
           },
           error: async (err) => {
             loadingEl.dismiss();
-            const toastEl = await this.toastCtrl.create({ message: err.error.message||'Error fetching categories', duration:3500, color: 'danger'});
+            const toastEl = await this.toastCtrl.create({ message: err.error.message||'Error fetching categories', duration:3500, color: 'danger', position: 'top'});
             toastEl.present();
             this.container['categoriesLoading'] = false;
           }

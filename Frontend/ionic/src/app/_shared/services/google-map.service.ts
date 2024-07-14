@@ -48,33 +48,30 @@ export class GMapService {
     let address: any = {}
     for(var i = 0; i < address_components.length; i += 1) {
       var addressObj = address_components[i];
-      for(var j = 0; j < addressObj.types.length; j += 1) {
-        switch(addressObj.types[j]) {
-          case 'street_number':
-            address['number'] = addressObj.short_name;
-            break;
-          case 'route':
-            address['address1'] = addressObj.short_name;
-            break;
-          case 'administrative_area_level_2':
-            address['lga'] = addressObj.short_name;
-            break;
-          case 'administrative_area_level_3':
-            address['address2'] = addressObj.short_name;
-            break;
-          case 'neighborhood':
-            address['city'] = addressObj.short_name;
-            break;
-          case 'postal_code':
-            address['postal_code'] = addressObj.short_name;
-            break;
-          case 'country':
-          case 'administrative_area_level_1':
-            address[addressObj.types[j]=='country'?'country':'state'] = {code: addressObj.short_name, name: addressObj.long_name};
-            break;
-          // default:
-          //   address[addressObj.types[j]] = addressObj.short_name;
-        }
+      if(addressObj.types.includes('street_number')) {
+        address['number'] = addressObj.short_name;
+        address['houseNo'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('route')) {
+        address['address1'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('administrative_area_level_2')) {
+        address['lga'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('administrative_area_level_3')) {
+        address['address2'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('neighborhood')) {
+        address['city'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('postal_code')) {
+        address['postal_code'] = addressObj.short_name;
+      }
+      if(addressObj.types.includes('administrative_area_level_1')) {
+        address['state'] = {code: addressObj.short_name, name: addressObj.long_name};
+      }
+      if(addressObj.types.includes('country')) {
+        address['country'] = {code: addressObj.short_name, name: addressObj.long_name};
       }
     }
     return address;

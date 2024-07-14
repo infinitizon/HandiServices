@@ -3,7 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/main/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Choose Provider</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Choose Provider</ion-title>
     <ion-progress-bar type="indeterminate" *ngIf="container['providersLoading']"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>

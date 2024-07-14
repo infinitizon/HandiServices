@@ -13,10 +13,8 @@ import { Subscription, from, take } from 'rxjs';
 })
 export class HeaderComponent {
   @Input() role = '';
-  currentLocation!: IAddress;
-  location$ = new Subscription;
+  @Input() currentLocation: IAddress = {};
   container = {
-    currentLocation: {},
   }
   constructor(
     private alertCtrl: AlertController,
@@ -26,9 +24,6 @@ export class HeaderComponent {
     public appCtx: ApplicationContextService,
   ) {
 
-    this.gMapService.api.then(async (maps) => {
-      this.setCurrentLocation(maps);
-    });
   }
 
   ionViewWillEnter() {
@@ -42,20 +37,5 @@ export class HeaderComponent {
   async onOpenModal(type: string) {
     const token = await this.storageService.get('token');
     this.navCtrl.navigateForward('/main/sidebar')
-  }
-  setCurrentLocation(maps: Maps) {
-    this.location$ = this.appCtx.location$
-      .pipe(take(1))
-        .subscribe(coord=>{
-          let coords = coord.geometry;
-          const geocoder = new maps.Geocoder();
-          geocoder.geocode({location: {lat: coords?.lat ||0, lng: coords?.lng||0} },  (results, status)=>{
-            if (status == maps.GeocoderStatus.OK) {
-              this.currentLocation = this.gMapService.getAddresses(results?.find(a=>a.types.includes("street_address") && !a.plus_code)?.address_components);
-              this.appCtx.location$.next({...coord, ...this.currentLocation })
-              this.location$.unsubscribe()
-            }
-          })
-        })
   }
 }

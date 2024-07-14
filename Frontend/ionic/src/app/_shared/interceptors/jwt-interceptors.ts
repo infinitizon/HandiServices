@@ -12,34 +12,41 @@ import { AuthService } from '../services/auth.service';
 import { environment } from '@environments/environment';
 import { StorageService } from '../services/storage.service';
 import { Observable, combineLatest, from, of } from 'rxjs';
+import { ApplicationContextService } from '../services/application-context.service';
 
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   constructor(
     private auth: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private appCtx: ApplicationContextService
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // add auth header with jwt if user is logged in and request is to the api url
     return of({})// from(this.storageService.get('token'))
           .pipe(
-            switchMap(() =>{
+            switchMap(()=> {
+              return this.appCtx.userRole$;
+            }),
+            switchMap((role) =>{
               return combineLatest([
                 from(this.storageService.get('token')),
-                from(this.storageService.get('role')),
+                from(of(role)),
                 from(this.storageService.get('uuid')),
               ])
             }),
-            switchMap(([token, role, uuid]) => {
+            switchMap(([token, role, uuid, ]) => {
+              console.log(role);
+
                 if (token) {
                       const getUrl = new URL(request.url);
                       request = request.clone({
                         setHeaders: {
                           Authorization: 'Bearer ' + token,
                           "x-uuid-token": uuid,
-                          "role": role ? role : 'CUSTOMER'
+                          "role": role ?? 'CUSTOMER'
                         },
                       });
                 }

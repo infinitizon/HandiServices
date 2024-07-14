@@ -193,7 +193,7 @@ export class BusinessInfoPage implements OnInit {
                 this.container.file = null
               },
               error: async (err) => {
-                const toastEl = await this.toastCtrl.create({message: err?.error?.message  || `Error occured while updating record`, duration:3500, color: 'danger'})
+                const toastEl = await this.toastCtrl.create({message: err?.error?.message  || `Error occured while updating record`, duration:3500, color: 'danger', position: 'top'})
                 await toastEl.present();
                 loadingEl.dismiss();
               }

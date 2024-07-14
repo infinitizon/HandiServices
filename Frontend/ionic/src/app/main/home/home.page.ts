@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavController, ToastController, } from '@ionic/angular';
+import { Subscription, take } from 'rxjs';
 
 
 // import { GMapService } from '@app/_shared/services/google-map.service';
 import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { environment } from '@environments/environment';
 import { StorageService } from '@app/_shared/services/storage.service';
+import { GMapService, Maps } from '@app/_shared/services/google-map.service';
+import { IAddress } from '@app/_shared/models/address.interface';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +18,8 @@ import { StorageService } from '@app/_shared/services/storage.service';
 })
 export class HomePage implements OnInit {
 
+  currentLocation: IAddress = {};
+  location$ = new Subscription;
   container: any = {
     categoriesLoading: true,
     role: ''
@@ -24,32 +29,32 @@ export class HomePage implements OnInit {
   constructor(
     private http: HttpClient,
     private navCtrl: NavController,
-    private appContext: ApplicationContextService,
-    private storageService: StorageService,
+    private appCtx: ApplicationContextService,
   ) {
   }
 
   ngOnInit() {
     this.getCategories();
     this.getRecommended();
-    this.appContext.setCurrentCoord();
   }
 
   ionViewWillEnter() {
-    console.log('Entering Home view');
+    console.log(`Ion view will enter`);
 
-    this.storageService.get('role').then(role=>{
-      console.log(role);
-      this.container.role = role;
-    });
-  }
-  ionViewDidEnter() {
-    console.log('Entered Home view');
-
-    this.storageService.get('role').then(role=>{
-      console.log(role);
-      this.container.role = role;
-    });
+    this.appCtx.setUserInformation();
+    this.appCtx.userRole$
+      .subscribe(role=>{
+        this.container.role = role
+    })
+    this.appCtx.location$
+        .pipe(take(2))
+        .subscribe(location=>{
+          if(location && location.address1) {
+            this.currentLocation = location;
+            return
+          }
+          this.appCtx.setCurrentLocation();
+        })
   }
   getCategories() {
     this.container['categoriesLoading'] = true;

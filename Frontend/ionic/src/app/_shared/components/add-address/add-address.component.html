@@ -3,6 +3,24 @@
   <ion-grid class="ion-no-margin ion-no-padding mt-4">
     <ion-row>
       <ion-col>
+        <ion-item lines="none" class="ion-no-margin ion-no-padding">
+          <ion-input type="text" label="First Name" labelPlacement="floating" placeholder="First Name"
+          errorText="{{uiErrors.firstName || 'Invalid First Name'}}" formControlName="firstName"
+          ></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item lines="none" class="ion-no-margin ion-no-padding">
+          <ion-input type="text" label="Last Name" labelPlacement="floating" placeholder="Last Name"
+          errorText="{{uiErrors.lastName || 'Invalid Last Name'}}" formControlName="lastName"
+          ></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
         <ion-item class="ion-no-margin ion-no-padding">
           <ion-intl-tel-input formControlName="phone" fill="outline"
             [preferredCountries]="['ng', 'us', 'gb', 'ca']" [onlyCountries]="['ng']"
@@ -23,7 +41,7 @@
                 </ion-item>
                 <ion-item lines="none">
                   <ion-label>
-                    <p>At Home Service, we prioritize the security and protection of your financial information. That's why we require your phone number during the account creation process.</p>
+                    <p>At Home Service, we prioritize the security and protection of your information. That's why we require your phone number during the account creation process.</p>
                   </ion-label>
                 </ion-item>
               </div>

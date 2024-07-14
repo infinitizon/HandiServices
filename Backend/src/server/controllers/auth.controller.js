@@ -331,21 +331,41 @@ class AuthController {
             if(!authorized.success) throw new AppError('Authentication invalid/Expired. Please login again', __line, __path.basename(__filename), { status: 401, show: true });
             
             const user = await db[process.env.DEFAULT_DB].models.User.findOne({
-                attributes: ['id', 'uuidToken'],
+                attributes: ["id", "uuidToken", "isEnabled", "isLocked"],
                 where: { id: authorized.data.userId },
+                include: [
+                {
+                    required: false,
+                    model: db[process.env.DEFAULT_DB].models.TenantUserRole, 
+                    include: [
+                        { model: db[process.env.DEFAULT_DB].models.Tenant, attributes: ["id", "name"], },
+                        { model: db[process.env.DEFAULT_DB].models.Role, attributes: ["name"], },
+                    ]
+                }
+                ],
             });
+            // const user = await (new AuthService).getUserAndTenant({userId: authorized.data.userId})
             if (!user) 
                 throw new AppError('Account not registered, please sign up', __line, __path.basename(__filename), { status: 404, show: true});
 
+            const formattedUser = JSON.parse(JSON.stringify(user));
+            let foundRole = false;
+            for(const tur of formattedUser.TenantUserRoles) {
+                if(tur.Role.name == role) {
+                    foundRole = true; break;
+                }
+            }
+            if(!foundRole) role = formattedUser.TenantUserRoles[0].Role.name;
+            
             const UserUUIDToken = await AuthService.verifyToken(user.uuidToken);
             if (!UserUUIDToken || !UserUUIDToken.success) 
-                throw new AppError(UserUUIDToken.message, UserUUIDToken.line||__line, UserUUIDToken.file||__path.basename(__filename), { status: UserUUIDToken.status||404, show: true});
+                throw new AppError(UserUUIDToken.message, UserUUIDToken.line||__line, UserUUIDToken.file||__path.basename(__filename), { status: UserUUIDToken.status||401, show: true});
             
             if (auth !== process.env.REPORTING_KEY && (!user.uuidToken || UserUUIDToken?.data.uuid !== xUUIDToken)) {
                 throw new AppError('You are logged in on another device. Please log in again.', __line, __path.basename(__filename), { status: 401, show: true });
             }
             
-            console.log(new Date().getTime() - UserUUIDToken?.data?.lastActive, (new Date().getTime() - UserUUIDToken?.data?.lastActive) / 1000 / 60)
+            // console.log(new Date().getTime() - UserUUIDToken?.data?.lastActive, (new Date().getTime() - UserUUIDToken?.data?.lastActive) / 1000 / 60)
             if(UserUUIDToken?.data?.rememberMe) {
                 if(((new Date().getTime() - UserUUIDToken?.data?.lastActive) /1000/60/60/24/10) > process.env.UUID_TOKEN_TIMEOUT) //User has been active for more than 10days
                     throw new AppError('Session timeout. Please login again', __line, __path.basename(__filename), { status: 401, show: true });

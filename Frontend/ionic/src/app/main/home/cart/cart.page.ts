@@ -17,11 +17,12 @@ import { take } from 'rxjs';
 export class CartPage {
 
   providerXterData: any = [];
+  currentLocation: IAddress = {};
+  existingAddress: IAddress = {};
   container = {
     cartsLoading: false,
     total: 0,
     currentLocation: {},
-    existingAddress: {},
     useCurrentLoc: false,
   }
   constructor(
@@ -34,17 +35,30 @@ export class CartPage {
   ) {
   }
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
+    console.log(`Entry to cart page`);
+
+    this.appCtx.location$
+        .pipe(take(2))
+        .subscribe(location=>{
+          if(location && location.address1) {
+            this.currentLocation = location;
+            return
+          }
+          this.appCtx.setCurrentLocation();
+        })
     this.appCtx.getUserInformation()
         .pipe(take(1))
         .subscribe(async user=>{
           if(!user || ! user.id) {
-            const toastEl = await this.toastCtrl.create({message: `You need to login to view cart`, duration: 3500, color: 'danger'});
+            const toastEl = await this.toastCtrl.create({message: `You need to login to view cart`, duration: 3500, color: 'danger', position: 'top'});
             toastEl.present();
             this.navCtrl.navigateBack('/main/home'); return;
           }
-          this.container.existingAddress = user.Addresses.find((a: any)=>a.isActive) || {}
-          this.container.useCurrentLoc = Object.keys(this.container.existingAddress).length <= 0
+          this.existingAddress = user.Addresses.find((a: any)=>a.isActive) || {}
+          console.log(this.existingAddress);
+
+          this.container.useCurrentLoc = Object.keys(this.existingAddress).length <= 0
           this.getCart()
         })
   }
@@ -69,31 +83,15 @@ export class CartPage {
   }
   async onCheckOut() {
     if(!this.container['total'] || this.container['total'] <= 0) return;
-    if(this.container.useCurrentLoc) {
-      this.appCtx.location$
-          .subscribe(async (loc: IAddress)=>{
-            const extras = {
-              houseNo: loc?.number,
-              address1: loc?.address1,
-              address2: loc?.address2,
-              city: loc?.city,
-              lga: loc?.lga,
-              state: loc?.state?.code,
-              country: loc?.country?.code,
-              lat: loc?.geometry?.lat,
-              lng: loc?.geometry?.lng,
-            }
-            await this.checkout({address: extras})
-          })
-    } else {
-      await this.checkout({})
-    }
+    let address = JSON.parse(JSON.stringify(this.container.useCurrentLoc ? this.currentLocation : this.existingAddress));
+    address = {...address, country: address?.country?.code || address?.country, state: address?.state?.code || address?.state, }
+    this.checkout({address});
   }
 
-  async checkout(extras: any) {
+  async checkout(params: any) {
     const data = {
-      ...extras,
       useCurrentLoc: this.container.useCurrentLoc,
+      address: {...params.address},
       type: 'debit',
       currency: 'NGN',
       amount: this.container['total'],

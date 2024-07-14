@@ -103,7 +103,6 @@ io.on('connection', socket=>{
             ...data,
             socketId: socket.id
         });
-        console.log('Joining room', data)
         socket.join(data.sessionId);
         io.emit(`getOnlineUsers`, onlineUsers)
         console.log(io.sockets.in(data.sessionId))

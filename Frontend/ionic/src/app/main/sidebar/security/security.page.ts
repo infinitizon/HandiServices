@@ -125,7 +125,7 @@ export class SecurityPage {
                   this.container.loggin = false;
                   if(err?.status !== 423 && err?.status !== 419) {
                     this.loginSub$.unsubscribe()
-                    const toast = await this.toastCtrl.create({ header: 'Error', duration: 3000, color: 'danger', message: err?.error?.error?.message });
+                    const toast = await this.toastCtrl.create({ header: 'Error', duration: 3000, color: 'danger', position: 'top', message: err?.error?.error?.message });
                     await toast.present()
                   }
                   if(err?.status === 419) {

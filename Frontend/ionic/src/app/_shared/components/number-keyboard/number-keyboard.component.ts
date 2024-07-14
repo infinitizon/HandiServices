@@ -46,7 +46,7 @@ export class NumberKeyboardComponent {
   onSubmit() {
     if(this.amount === '0') {
       this.toastCtrl.create({
-        message: `Please enter a valid amount`, duration: 3000, color: 'danger'
+        message: `Please enter a valid amount`, duration: 3000, color: 'danger', position: 'top',
       }).then(toastEl=>{
         toastEl.present();
       })

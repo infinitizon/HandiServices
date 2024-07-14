@@ -64,30 +64,33 @@
 	--ion-color-dark-shade: #292929;
 	--ion-color-dark-tint: #444444;
 
-  --ion-font-family: "Roboto-Light", "Roboto" , "Helvetica-Neue", sans-serif !important;
+	--ion-font-family: "Roboto-Light", "Roboto" , "Helvetica-Neue", sans-serif !important;
 
-  ion-searchbar, ion-input {
-    --background: var(--ion-color-tertiary);
-  }
-  form {
-    ion-input {
-      --background: none
-    }
-  }
-  ion-item {
-
-    // ion-input {
-    //   --background: var(--ion-color-tertiary);
-    // }
-    ion-label {
-      h2,h3 {
-        margin: 0; padding: 0;
-      }
-      p {margin: 0; padding: 0; font-size: 0.8rem;}
-    }
-  }
-  :host(.button-block) .button-native {
-    padding: 0.8rem
-  }
+	ion-searchbar, ion-input {
+		--background: var(--ion-color-tertiary);
+	}
+	form {
+		ion-input {
+			--background: none
+		}
+	}
+	ion-item {
+		// ion-input {
+		//   --background: var(--ion-color-tertiary);
+		// }
+		ion-label {
+			h2,h3 {
+			margin: 0; padding: 0;
+			}
+			p {margin: 0; padding: 0; font-size: 0.8rem;}
+		}
+	}
+	ion-button {
+		--padding-top: 1rem;
+		--padding-bottom: 1rem;
+	}
+	:host(.button-block) .button-native {
+		padding: 0.8rem
+	}
 }
 

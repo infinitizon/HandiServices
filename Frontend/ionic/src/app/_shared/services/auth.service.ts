@@ -33,9 +33,9 @@ export class AuthService {
   }
 
   logout(url?: string) {
-    this.appCtx.userInformation$.next(null)
+    this.appCtx.userInformation$.next(null);
+    this.appCtx.userRole$.next(null);
     this.storageService.remove('token');
-    this.storageService.remove('role');
     this.storageService.remove('uuid');
     this.navCtrl.navigateBack([url??'/main/home']);
   }

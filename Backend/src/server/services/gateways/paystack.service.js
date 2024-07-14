@@ -50,7 +50,7 @@ class PaystackService {
          }
       } catch (error) {
          console.error( 'Paystack Standard Payment Gateway Transaction error: ', error);
-         return new AppError(error.response?.data?.message, error.line||__line, error.file||__path.basename(__filename), {status: error.response?.status});
+         return new AppError(error.response?.data?.message || error.message, error.line||__line, error.file||__path.basename(__filename), {status: error.response?.status});
       }
    }
    async verifyTransaction ({  query }) {

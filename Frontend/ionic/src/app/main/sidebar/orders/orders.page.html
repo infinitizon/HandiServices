@@ -10,7 +10,7 @@
     <ion-title class="ion-text-center">Orders</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content [fullscreen]="true" class="ion-no-padding">
+<ion-content class="ion-no-padding">
   <ion-segment scrollable="true" swipeGesture="true" [value]="container.selectedTab" (ionChange)="onSegmentChange($event)">
     <ion-segment-button value="placed">
       <ion-label>Not started</ion-label>
@@ -27,6 +27,9 @@
       <ion-col>
           <ion-list inset="true">
             <ion-item button="true" detail="false" *ngFor="let order of orders" [routerLink]="['/main/sidebar/orders/details', order.ProductVendorCharacters.OrderItems.Order.id, order.id]">
+              <div class="unread-indicator-wrapper" slot="start" *ngIf="isOnline(order)">
+                <div class="unread-indicator"></div>
+              </div>
               <ion-label>
                 <strong>Order No: {{order.ProductVendorCharacters.OrderItems.Order.id}}</strong>
                 <p class="w-100 d-flex justify-content-between">

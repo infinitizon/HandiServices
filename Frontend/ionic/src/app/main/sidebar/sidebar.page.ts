@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApplicationContextService } from '@app/_shared/services/application-context.service';
 import { AuthService } from '@app/_shared/services/auth.service';
 import { StorageService } from '@app/_shared/services/storage.service';
 import { NavController } from '@ionic/angular';
@@ -12,14 +13,20 @@ export class SidebarPage {
 
   container = {
     token: false,
+    role: ''
   }
   constructor(
     private authService: AuthService,
     private navCtrl: NavController,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private appCtx: ApplicationContextService,
   ) { }
 
   async ionViewWillEnter() {
+    this.appCtx.userRole$
+      .subscribe(role=>{
+        this.container.role = role
+    })
     const token = await this.storageService.get('token');
     if(token) {
       this.container.token = true

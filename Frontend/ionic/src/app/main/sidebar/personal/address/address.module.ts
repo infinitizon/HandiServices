@@ -8,8 +8,6 @@ import { AddressPageRoutingModule } from './address-routing.module';
 
 import { SharedModule } from '@app/_shared/shared.module';
 import { AddressPage } from './address.page';
-import { AddAddressComponent } from './add-address/add-address.component';
-import { IonIntlTelInputModule } from '@jongbonga/ion-intl-tel-input';
 
 @NgModule({
   imports: [
@@ -17,12 +15,10 @@ import { IonIntlTelInputModule } from '@jongbonga/ion-intl-tel-input';
     FormsModule,
     IonicModule,
     AddressPageRoutingModule,
-    IonIntlTelInputModule,
     SharedModule
   ],
   declarations: [
     AddressPage,
-    AddAddressComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
 })

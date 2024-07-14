@@ -44,7 +44,7 @@ export class ProductProvidersPage implements OnInit {
         this.toastCtrl.create({
           duration: 2000,
           message: `Ensure your location is on to use this service`,
-          color: 'danger'
+          color: 'danger', position: 'top'
         }).then(toastEl=>toastEl.present())
       });
     })

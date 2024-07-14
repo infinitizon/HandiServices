@@ -25,7 +25,7 @@ module.exports = {
             ], {transaction}),
             console.log('Products seeded')
             await queryInterface.bulkInsert('tenants', [
-                { id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', name: 'Super Admin', email: 'infinitizon@gmail.com', phone: '+2347065731242'
+                { id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', name: 'Super Admin', email: 'adannerica12345@gmail.com', phone: '+2347065731242'
                 , is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date()  },
                 { id: '274b082e-5257-497b-ae13-56e315955eec', p_id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', name: 'Laundry 1', email: 'infinitizon+1@gmail.com', phone: '+2347065731242'
                 , is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date()  },
@@ -38,6 +38,9 @@ module.exports = {
             await queryInterface.bulkInsert('users', [
                 { id: '646d4127-1c58-4ba0-a4a1-6943f178d16a',  bvn: '12345678901', first_name: 'Super', last_name: 'Admin', email: 'infinitizon+5@gmail.com'
                 , password: '$2a$10$Bg8dRZwJP5hBR75DgrVQHeeE3TkokdLIUEnYW0Db0E8DnVxf7o0wO', ref_code: 'SA123', is_enabled: true, is_locked: false
+                , created_at: new Date(), updated_at: new Date() },
+                { id: '646d4127-1c58-4ba0-a4a1-6943f178d16b',  bvn: '12345678901', first_name: 'Ada', last_name: 'Erica', email: 'adannerica12345@gmail.com'
+                , password: '$2a$10$Bg8dRZwJP5hBR75DgrVQHeeE3TkokdLIUEnYW0Db0E8DnVxf7o0wO', ref_code: 'AE123', is_enabled: true, is_locked: false
                 , created_at: new Date(), updated_at: new Date() },
                 { id: '96c6133d-6a77-49a2-a690-35a65defd608',  bvn: '12345678902', first_name: 'Olisa', last_name: 'Anderson', email: 'handiservicesltd@gmail.com'
                 , password: '$2a$10$Bg8dRZwJP5hBR75DgrVQHeeE3TkokdLIUEnYW0Db0E8DnVxf7o0wO', ref_code: 'OA123', is_enabled: true, is_locked: false
@@ -65,6 +68,7 @@ module.exports = {
             console.log('Roles seeded')
             await queryInterface.bulkInsert('wallets', [
                 { id: uuidv4(), user_id: '646d4127-1c58-4ba0-a4a1-6943f178d16a',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
+                { id: uuidv4(), user_id: '646d4127-1c58-4ba0-a4a1-6943f178d16b',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), user_id: '30e6b26b-4363-4c2a-ade2-ce97b1144d39',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
                 { id: uuidv4(), user_id: '062a83db-6764-41dd-aceb-fa454172e867',  currency: 'NGN', total: 0, is_enabled: true, is_locked: false, created_at: new Date(), updated_at: new Date() },
             ], {transaction}),
@@ -84,6 +88,7 @@ module.exports = {
             console.log('tenant_categories seeded')
             await queryInterface.bulkInsert('tenant_user_roles', [
                 { role_id: '302320b8-8417-4f09-bb70-15af7dfa8342',  user_id: '646d4127-1c58-4ba0-a4a1-6943f178d16a', tenant_id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', },
+                { role_id: '302320b8-8417-4f09-bb70-15af7dfa8342',  user_id: '646d4127-1c58-4ba0-a4a1-6943f178d16b', tenant_id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', },
                 { role_id: '302320b8-8417-4f09-bb70-15af7dfa8342',  user_id: '96c6133d-6a77-49a2-a690-35a65defd608', tenant_id: '77fa1eed-bbc8-4ae7-9237-0bec880b513d', },
                 { role_id: '79a62264-88b5-46e7-9bcc-b5cf0e2580cc',  user_id: '30e6b26b-4363-4c2a-ade2-ce97b1144d39', tenant_id: '274b082e-5257-497b-ae13-56e315955eec', },
                 { role_id: '79a62264-88b5-46e7-9bcc-b5cf0e2580cc',  user_id: 'b6e8118c-19fc-4097-927e-34a1d4da057f', tenant_id: '65e9d192-e7d6-4f8d-89a2-e0c79f3f7801', },

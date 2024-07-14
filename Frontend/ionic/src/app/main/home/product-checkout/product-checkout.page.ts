@@ -6,7 +6,7 @@ import { ApplicationContextService } from '@app/_shared/services/application-con
 import { CommonService } from '@app/_shared/services/common.service';
 import { environment } from '@environments/environment';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
-import { switchMap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-product-checkout',
@@ -44,8 +44,18 @@ export class ProductCheckoutPage implements OnInit {
     this.aRoute.paramMap.subscribe(paramMap => {
       this.providerId = paramMap.get('providerId');
       this.subCategoryId = paramMap.get('subCategoryId');
-      this.appCtx.setCurrentCoord();
       this.getProviderXteristics();
+
+    this.appCtx.location$
+    .pipe(take(2))
+    .subscribe(location=>{
+      if(location && location.address1) {
+        console.log(`Got location`, location);
+        // this.currentLocation = location;
+        return
+      }
+      this.appCtx.setCurrentLocation();
+    })
     })
     this.appCtx.getUserInformation().subscribe(user=>{
       this.activeAddress = user?.Addresses?.find((u: any)=>u.isActive)

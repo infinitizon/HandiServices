@@ -51,7 +51,7 @@ export class AddCategoryComponent implements OnInit {
     this.container['imageFile'] = {
       link: this.data?.Media?.find((i:any)=>i.objectType==="product-image")?.response?.url,
     };
-    console.log(this.container['imageFile']);
+    console.log(this.data?.pId);
 
   }
 
@@ -90,7 +90,7 @@ export class AddCategoryComponent implements OnInit {
       //   })
       // }
       Object.keys(this.categoryForm.getRawValue()).forEach(key=>{
-        if(key === 'sub_category') {
+        if(key === 'type'  &&  this.categoryForm.getRawValue()[key] === 'sub_category') {
           formData.append(`pId`, this.data.pId);
         }
         formData.append(key, this.categoryForm.getRawValue()[key]);

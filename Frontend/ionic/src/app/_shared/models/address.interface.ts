@@ -1,5 +1,7 @@
 export interface IAddress {
   id?: string;
+  firstName?: string;
+  lastName?: string;
   phone?: string;
   isActive?: boolean;
   houseNo?: number|null|undefined;

@@ -94,7 +94,7 @@ class ProductService {
             where: {id: product.id},
             include: [{
                model: db[process.env.DEFAULT_DB].models.Media,
-               attributes: ['id', 'name', 'link'],
+               attributes: ['id', 'name', 'response'],
             }],
             transaction: t
          })

@@ -115,7 +115,7 @@ export class LoginPage implements OnInit {
               const toast = await this.toastCtrl.create({
                 header: 'Error',
                 duration: 3000,
-                color: 'danger',
+                color: 'danger', position: 'top',
                 message: err?.error?.error?.message
               });
               await toast.present();
@@ -140,7 +140,6 @@ export class LoginPage implements OnInit {
         const user = response.user;
         this.storageService.set('token', response.token);
         this.storageService.set('uuid', response.xUUIDToken);
-        this.storageService.set('role', user?.Tenant[0]?.Roles[0]?.name ?? 'CUSTOMER');
         this.appContext.userInformation$.next(user);
 
       // if (this.authService.redirectUrl || this.aRoute.snapshot.queryParamMap.get('redirectUrl')) {
